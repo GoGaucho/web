@@ -5,6 +5,7 @@
 body {
   margin: 0px;
   font-family: sans-serif;
+  @apply bg-gray-50;
 }
 * {
   outline: none;
