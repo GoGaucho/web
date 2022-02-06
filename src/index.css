@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0px;
+  font-family: sans-serif;
+}
+* {
+  outline: none;
+}
+.all-transition {
+  transition: all 0.3s ease;
+}
+
+/* following are transitions */
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
