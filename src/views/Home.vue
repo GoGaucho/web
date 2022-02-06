@@ -1,5 +1,6 @@
 <script setup>
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+import { getFunctions, httpsCallable } from "firebase/functions";
 import { getDoc, doc } from 'firebase/firestore'
 import { db } from '../firebase.js'
 
@@ -25,10 +26,17 @@ async function data () {
   const docSnap = await getDoc(docRef)
   if (docSnap.exists()) console.log(docSnap.data())
 }
+
+async function call () {
+  const functions = getFunctions()
+  const cache = httpsCallable(functions, 'cache')
+  cache({}).then(console.log)
+}
 </script>
 
 <template>
   <h1>GoGaucho</h1>
-  <button @click="login">Try to login</button>
-  <button @click="data">Try to get data</button>
+  <button @click="login">Try to login</button><br>
+  <button @click="data">Try to get data</button><br>
+  <button @click="call">Try to call function</button><br>
 </template>
