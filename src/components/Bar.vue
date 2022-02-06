@@ -4,18 +4,18 @@ const router = useRouter()
 import { UserCircleIcon } from '@heroicons/vue/solid'
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
 
-let auth = getAuth(), avatar = $ref(auth.currentUser?.photoURL)
+let avatar = $ref('')
+const auth = getAuth()
+auth.onAuthStateChanged(user => {
+  avatar = user?.photoURL
+})
 
-async function login () {
+function login () {
   const provider = new GoogleAuthProvider()
-  provider.addScope('https://www.googleapis.com/auth/userinfo.email')
-  provider.addScope('https://www.googleapis.com/auth/userinfo.profile')
+  provider.addScope('email')
+  provider.addScope('profile')
   provider.setCustomParameters({ hd: 'ucsb.edu' })
-  try {
-    await signInWithPopup(auth, provider)
-    auth = getAuth()
-    avatar = auth.currentUser.photoURL
-  } catch (e) {}
+  signInWithPopup(auth, provider)
 }
 </script>
 
