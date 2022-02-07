@@ -2,7 +2,7 @@
 import { MinusSmIcon } from '@heroicons/vue/outline'
 import cache from '../utils/cache.js'
 
-let data = $ref({})
+let data = $ref(undefined)
 cache('waitz').then(d => { data = d })
 
 const classMap = {
@@ -13,7 +13,8 @@ const classMap = {
 <template>
   <div class="p-4 sm:p-10">
     <h1 class="text-2xl">Building Busyness</h1>
-    <p class="text-sm text-gray-500">Data from waitz.io</p>
+    <p v-if="!data" class="text-sm text-gray-500">Loading...</p>
+    <p v-else class="text-sm text-gray-500">Data from waitz.io</p>
     <div class="my-2 sm:my-4 p-4 sm:p-6 bg-white shadow rounded" v-for="(l, name) in data">
       <div class="flex items-center flex-wrap">
         <div class="flex-grow">
@@ -27,7 +28,7 @@ const classMap = {
         <div class="m-2 pb-2 rounded flex justify-between items-center relative overflow-hidden" v-for="s in l.locations">
           <div>
             <h4>{{ s.name }}</h4>
-            <p class="text-gray-500 text-xs">capacity: {{ l.capacity }}</p>
+            <p class="text-gray-500 text-xs">capacity: {{ s.capacity }}</p>
           </div>
           <div :class="s.class">{{ s.summary }}</div>
           <div class="absolute bottom-0 w-full bg-gray-200">
