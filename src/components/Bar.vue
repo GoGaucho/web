@@ -22,7 +22,7 @@ function login () {
 </script>
 
 <template>
-  <div class="sticky top-0 w-full px-4 h-14 flex items-center justify-between shadow-xl bg-white">
+  <div class="sticky top-0 z-20 w-full px-4 h-14 flex items-center justify-between shadow-xl bg-white">
     <h1 class="text-2xl font-bold flex items-center cursor-pointer group" @click="router.push('/')">
       <img class="mr-2 w-8 rounded" src="/logo.png">GoGaucho
     </h1>
