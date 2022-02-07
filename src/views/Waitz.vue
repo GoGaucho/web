@@ -28,7 +28,7 @@ const classMap = {
         <div class="m-2 pb-2 rounded flex justify-between items-center relative overflow-hidden" v-for="s in l.locations">
           <div>
             <h4>{{ s.name }}</h4>
-            <p class="text-gray-500 text-xs">capacity: {{ s.capacity }}</p>
+            <p class="text-gray-500 text-xs">capacity: {{ s.people }}/{{ s.capacity }}</p>
           </div>
           <div :class="s.class">{{ s.summary }}</div>
           <div class="absolute bottom-0 w-full bg-gray-200">
