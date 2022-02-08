@@ -15,7 +15,7 @@ router.beforeEach(() => { NProgress.start() })
 router.afterEach((to, from) => {
   Swal.close()
   NProgress.done()
-  logEvent(analytics, 'web_router', { to, from })
+  logEvent(analytics, 'web_router', { to: to.fullPath, from: from.fullPath })
 })
 
 export default router
