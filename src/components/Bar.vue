@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 import { UserCircleIcon } from '@heroicons/vue/solid'
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+import { log } from '../firebase.js'
 
 let userInfo = $ref(null), showUser = $ref(false)
 const auth = getAuth()
@@ -18,6 +19,7 @@ function login () {
   provider.addScope('profile')
   provider.setCustomParameters({ hd: 'ucsb.edu' })
   signInWithPopup(auth, provider)
+  log('auth')
 }
 </script>
 

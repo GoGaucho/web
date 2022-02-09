@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { getAnalytics } from 'firebase/analytics'
+import { getAnalytics, logEvent } from 'firebase/analytics'
 import { getFirestore } from 'firebase/firestore'
 
 const firebaseConfig = {
@@ -17,4 +17,5 @@ export const app = initializeApp(firebaseConfig)
 
 export const db = getFirestore()
 
-export const analytics = getAnalytics(app)
+const analytics = getAnalytics(app)
+export const log = (k, p = {}) => logEvent(analytics, 'web_' + k, p)
