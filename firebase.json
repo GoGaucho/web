@@ -1,6 +1,5 @@
 {
   "hosting": {
-    "target": "gogaucho",
     "public": "dist",
     "ignore": [
       "firebase.json",

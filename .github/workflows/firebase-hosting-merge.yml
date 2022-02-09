@@ -18,4 +18,3 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_FIREBASE_GOGAUCHO }}'
           channelId: live
           projectId: firebase-gogaucho
-          target: gogaucho

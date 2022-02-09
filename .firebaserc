@@ -1,14 +1,5 @@
 {
   "projects": {
     "default": "firebase-gogaucho"
-  },
-  "targets": {
-    "firebase-gogaucho": {
-      "hosting": {
-        "gogaucho": [
-          "gogaucho"
-        ]
-      }
-    }
   }
 }
