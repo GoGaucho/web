@@ -1,9 +1,10 @@
 <script setup>
+import { getDoc, doc } from 'firebase/firestore'
+import { db } from '../firebase.js'
 import { MinusSmIcon } from '@heroicons/vue/outline'
-import cache from '../utils/cache.js'
 
 let data = $ref(undefined)
-cache('waitz').then(d => { data = d })
+getDoc(doc(db, 'cache', 'waitz.')).then(r => { data = JSON.parse(r.data().data) })
 
 const classMap = {
   'Busy': 'busy', 'Not Busy': 'not-busy', 'Very Busy': 'very-busy'
