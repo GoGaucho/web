@@ -4,7 +4,7 @@ import { db } from '../firebase.js'
 import { MinusSmIcon } from '@heroicons/vue/outline'
 
 let data = $ref(undefined)
-getDoc(doc(db, 'cache', 'waitz.')).then(r => { data = JSON.parse(r.data().data) })
+getDoc(doc(db, 'cache', 'waitz')).then(r => { data = JSON.parse(r.data().data) })
 
 const classMap = {
   'Busy': 'busy', 'Not Busy': 'not-busy', 'Very Busy': 'very-busy'
