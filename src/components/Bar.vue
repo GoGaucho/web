@@ -3,22 +3,33 @@ import User from './User.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 import { UserCircleIcon } from '@heroicons/vue/solid'
-import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
 import { log } from '../firebase.js'
 
 let userInfo = $ref(null), showUser = $ref(false)
-const auth = getAuth()
-auth.onAuthStateChanged(user => {
-  userInfo = user
-  if (!user) return showUser = false
+
+async function listener (user) {
+  const profile = user.getBasicProfile()
+  gapi.token = user.getAuthResponse().id_token
+  if (!profile || !gapi.token) {
+    userInfo = null
+    showUser = false
+    return
+  }
+  userInfo = {
+    name: profile.getName(),
+    photoURL: profile.getImageUrl(),
+    email: profile.getEmail()
+  }
+}
+
+gapi.load('auth2', async () => {
+  gapi.auth2.init({ client_id: '1083649636208-smr7a1d16cl4bl9ufmn0otn8b1pnk4jc.apps.googleusercontent.com', hosted_domain: 'ucsb.edu' })
+  gapi.auth2.getAuthInstance().currentUser.listen(listener)
 })
 
 function login () {
-  const provider = new GoogleAuthProvider()
-  provider.addScope('email')
-  provider.addScope('profile')
-  provider.setCustomParameters({ hd: 'ucsb.edu' })
-  signInWithPopup(auth, provider)
+  const auth = gapi.auth2.getAuthInstance()
+  auth.signIn({ scope: 'profile email' })
   log('auth')
 }
 </script>
