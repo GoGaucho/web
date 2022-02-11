@@ -2,19 +2,18 @@
 import User from './User.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
+import { getAuth, signInWithCredential, GoogleAuthProvider } from 'firebase/auth'
 import { UserCircleIcon } from '@heroicons/vue/solid'
 import { log } from '../firebase.js'
 
+const provider = new GoogleAuthProvider(), auth = getAuth()
 let userInfo = $ref(null), showUser = $ref(false)
 
 async function listener (user) {
   const profile = user.getBasicProfile()
   gapi.token = user.getAuthResponse().id_token
-  if (!profile || !gapi.token) {
-    userInfo = null
-    showUser = false
-    return
-  }
+  if (!profile || !gapi.token) return userInfo = showUser = null
+  await signInWithCredential(auth, GoogleAuthProvider.credential(gapi.token))
   userInfo = {
     name: profile.getName(),
     photoURL: profile.getImageUrl(),
@@ -30,7 +29,7 @@ gapi.load('auth2', async () => {
 function login () {
   const auth = gapi.auth2.getAuthInstance()
   auth.signIn({ scope: 'profile email' })
-  log('auth')
+  log('login')
 }
 </script>
 
