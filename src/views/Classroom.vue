@@ -5,7 +5,7 @@ import * as parse from '../utils/parse.js'
 
 let data = $ref(undefined), quarter = $ref('')
 let building = $ref(''), day = $ref(3)
-const date = new Date(), W = 9, S = 420 // 7:00 - 22:00
+const date = new Date(), W = 9.6, S = 480 // 8:00 - 24:00
 const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 day = (date.getDay() + 6) % 7
 getDoc(doc(db, 'cache', 'classroom')).then(r => {
@@ -36,18 +36,19 @@ const currentStyle = `left: ${(date.getHours()*60 + date.getMinutes() - S) / W}%
       </select>
     </h1>
     <p class="text-sm text-gray-500 mb-4">{{ quarter || 'Loading...' }}</p>
-    <label class="font-bold bg-white py-2 px-4 rounded-full shadow-md">Day 
-      <select v-if="data" v-model="day">
-        <option v-for="(d, i) in days" :value="i">{{ d }}</option>
-      </select>
-    </label>
-    <div class="mt-6" v-if="data && building">
-      <div v-for="(ps, room) in data[building]" class="w-full relative my-2 font-bold">
-        {{ building }} {{ room }}
-        <div class="absolute bg-gray-200 bottom-0 h-1 w-full" :style="p" />
-        <div v-for="p in getPeriods(ps)" class="absolute bg-red-400 bottom-0 h-1" :style="p" />
-        <div class="absolute bg-blue-500 -bottom-1 h-3 w-3 rounded-full" :style="currentStyle" />
-      </div>
+    <p class="my-4">
+      <label class="font-bold bg-white py-2 px-4 rounded-full shadow-md">Day 
+        <select v-if="data" v-model="day">
+          <option v-for="(d, i) in days" :value="i">{{ d }}</option>
+        </select>
+      </label>
+      <p class="my-3">Timeline goes from <code>08:00</code> to <code>14:00</code></p>
+    </p>
+    <div v-if="data && building" v-for="(ps, room) in data[building]" class="w-full relative my-2 font-bold">
+      {{ building }} {{ room }}
+      <div class="absolute bg-gray-200 bottom-0 h-1 w-full" :style="p" />
+      <div v-for="p in getPeriods(ps)" class="absolute bg-red-400 bottom-0 h-1" :style="p" />
+      <div class="absolute bg-blue-500 -bottom-1 h-3 w-3 rounded-full" :style="currentStyle" />
     </div>
   </div>
 </template>
