@@ -1,13 +1,15 @@
 <script setup>
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/outline'
 import { getDoc, doc } from 'firebase/firestore'
 import { db, log } from '../firebase.js'
 import * as parse from '../utils/parse.js'
 
 let data = $ref(undefined), quarter = $ref(''), capacity = $ref({})
 let building = $ref(''), day = $ref(3)
-const date = new Date(), W = 9.6, S = 480 // 8:00 - 24:00
-const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+const date = new Date(), days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 day = (date.getDay() + 6) % 7
+const now = date.getHours()*60 + date.getMinutes() + day * 1440
+
 getDoc(doc(db, 'cache', 'classroom')).then(r => {
   const raw = r.data()
   data = JSON.parse(raw.data)
@@ -16,16 +18,8 @@ getDoc(doc(db, 'cache', 'classroom')).then(r => {
 })
 log('classroom')
 
-function getPeriods (ps) {
-  const res = []
-  for (const st in ps) {
-    if (Math.floor(st / 1440) != day) continue
-    res.push(`left: ${(st%1440-S)/W}%; width: ${ps[st]/W}%;`)
-  }
-  return res
-}
-
-const currentStyle = `left: ${(date.getHours()*60 + date.getMinutes() - S) / W}%;`
+// 8:00 - 24:00
+const scale = w => (w - day*1440 - 480) / 9.6 + '%'
 </script>
 
 <template>
@@ -37,20 +31,27 @@ const currentStyle = `left: ${(date.getHours()*60 + date.getMinutes() - S) / W}%
       </select>
     </h1>
     <p class="text-sm text-gray-500 mb-4">{{ quarter || 'Loading...' }}</p>
-    <p class="my-4">
-      <label class="font-bold bg-white py-2 px-4 rounded-full shadow-md">Day 
-        <select v-if="data" v-model="day">
-          <option v-for="(d, i) in days" :value="i">{{ d }}</option>
-        </select>
-      </label>
-      <p class="my-3">Timeline goes from <code>08:00</code> to <code>24:00</code></p>
-    </p>
-    <div v-if="data && building" v-for="(ps, room) in data[building]" class="w-full relative my-2 font-bold">
+    <label v-if="data && building" class="flex items-center w-min font-bold bg-white  rounded-full shadow-md select-none">
+      <chevron-left-icon class="w-5 m-2 cursor-pointer text-gray-500" @click="day = (day+6)%7"/>
+      {{ days[day] }}
+      <chevron-right-icon class="w-5 m-2 cursor-pointer text-gray-500" @click="day = (day+1)%7"/>
+    </label>
+    <p v-if="data && building" class="mt-3">Timeline goes from <code>08:00</code> to <code>23:59</code></p>
+    <div class="w-full h-2 relative mb-4">
+      <div v-for="i in 16" class="absolute bg-gray-100 text-xs" :style="{ left: 6.25*(i-1) + '%', width: '6%' }">{{ i+7 }}</div>
+    </div>
+    <div v-if="data && building" v-for="(ps, room) in data[building]" class="w-full relative my-2 pb-2 font-bold overflow-hidden">
       {{ building }} {{ room }}
       <span class="text-sm text-gray-500 font-normal ml-2" v-if="capacity[building][room]">capacity: {{ capacity[building][room] }}</span>
-      <div class="absolute bg-gray-200 bottom-0 h-1 w-full" :style="p" />
-      <div v-for="p in getPeriods(ps)" class="absolute bg-red-400 bottom-0 h-1" :style="p" />
-      <div class="absolute bg-blue-500 -bottom-1 h-3 w-3 rounded-full" :style="currentStyle" />
+      <div v-for="i in 16" class="absolute bg-gray-200 bottom-1 h-1" :style="{ left: 6.25*(i-1) + '%', width: '6%' }" />
+      <div v-for="(len, st) in ps" class="absolute bg-red-400 bottom-1 h-1 slow-transition" :style="{ left: scale(st), width: len/9.6 + '%' }" />
+      <div class="absolute bg-blue-500 bottom-0 h-3 w-3 rounded-full slow-transition" :style="{ left: scale(now) }" />
     </div>
   </div>
 </template>
+
+<style scoped>
+.slow-transition {
+  transition: all 0.7s ease;
+}
+</style>
