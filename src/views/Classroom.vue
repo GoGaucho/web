@@ -5,7 +5,7 @@ import { db, log } from '../firebase.js'
 import * as parse from '../utils/parse.js'
 
 let data = $ref(undefined), quarter = $ref(''), capacity = $ref({})
-let building = $ref(''), day = $ref(3)
+let building = $ref(''), day = $ref(3), buildings = $ref([])
 const date = new Date(), days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 day = (date.getDay() + 6) % 7
 const now = date.getHours()*60 + date.getMinutes() + day * 1440
@@ -13,6 +13,7 @@ const now = date.getHours()*60 + date.getMinutes() + day * 1440
 getDoc(doc(db, 'cache', 'classroom')).then(r => {
   const raw = r.data()
   data = JSON.parse(raw.data)
+  buildings = Object.keys(data).sort()
   quarter = parse.quarter(raw.quarter)
   capacity = JSON.parse(raw.capacity)
 })
@@ -27,7 +28,7 @@ const scale = w => (w - day*1440 - 480) / 9.6 + '%'
     <h1 class="text-2xl flex items-center">
       Classroom in 
       <select class="m-2 text-xl border bg-white" v-if="data" v-model="building">
-        <option v-for="(v, k) in data">{{ k }}</option>
+        <option v-for="k in buildings">{{ k }}</option>
       </select>
     </h1>
     <p class="text-sm text-gray-500 mb-4">{{ quarter || 'Loading...' }}</p>

@@ -9,28 +9,41 @@ import PanelWrapper from '../components/PanelWrapper.vue'
 
 log('course')
 
-let loading = $ref(true), list = $ref(null), hideList = $ref({}), showDept = $ref({})
+const GEs = {
+  'L&S': ['A1', 'A2', 'B', 'C', 'D', 'E', 'F', 'G', 'EUR', 'ETH', 'NWC', 'QNT', 'WRT'],
+  'ENGR': ['A1', 'A2', 'D', 'E', 'E1', 'F', 'G', 'H', 'EUR', 'ETH', 'NWC', 'WRT'],
+  'CRST': ['B', 'C', 'E1', 'ETH'],
+  'UCSB': ['AMH', 'SUB']
+}
+
+let loading = $ref(true), list = $ref(null), hideList = $ref({}), showDept = $ref({}), departments = $ref([])
 let quarters = $ref([]), quarter = $ref(''), focus = $ref('')
 const query = reactive({
-  search: '', department: ''
+  search: '', department: '', college: '', GE: {}, refresh: 0
 })
+
+function isHide (k, v, key, ges) {
+  for (const g of ges) {
+    if (!v[1].includes(g)) return true
+  }
+  if (!k.includes(key) && !v[0].includes(key)) return true
+}
 
 const computeResult = debounce(() => {
   hideList = {}
+  showDept = {}
   const key = query.search.toUpperCase()
+  const ges = Object.keys(query.GE).filter(x => query.GE[x]).map(x => query.college + '-' + x)
   for (const dept in list) {
-    if (query.department && query.department !== dept) {
-      hideList[dept] = 1
-      continue
-    }
+    if (query.department && query.department !== dept) continue
     let hasOne = false
     for (const k in list[dept]) {
-      if (!k.includes(key) && !list[dept][k][0].includes(key)) hideList[k] = 1
-      else hasOne = true
+      hideList[k] = isHide(k, list[dept][k], key, ges)
+      if (!hideList[k]) hasOne = true
     }
-    if (!hasOne) hideList[dept] = 1
+    if (hasOne) showDept[dept] = 0
   }
-  if (query.department) showDept[query.department] = 1
+  if (Object.keys(showDept).length === 1) showDept[Object.keys(showDept)[0]] = 1
 })
 watch(query, computeResult)
 
@@ -44,7 +57,8 @@ watch($$(quarter), async v => {
   loading = true
   focus = false
   list = await getDoc(doc(db, 'cache', 'course.' + v)).then(r => JSON.parse(r.data().data))
-  hideList = {}
+  departments = Object.keys(list).sort()
+  query.refresh++
   loading = false
 })
 </script>
@@ -68,16 +82,24 @@ watch($$(quarter), async v => {
         Department:
         <select class="py-1 px-2 border rounded bg-white" v-model="query.department">
           <option value="">All</option>
-          <option v-for="(v, dept) in list">{{ dept }}</option>
+          <option v-for="dept in departments">{{ dept }}</option>
         </select>
+      </label>
+      <label class="font-bold mx-4 my-1 flex items-center flex-wrap">
+        GE:
+        <select class="py-1 px-2 mx-2 border rounded bg-white" v-model="query.college" @change="query.GE = {}">
+          <option v-for="(v, k) in GEs">{{ k }}</option>
+        </select>
+        <div>
+          <button v-for="g in GEs[query.college]" class="all-transition border text-sm rounded px-1 m-1" :class="query.GE[g] ? 'border-orange-400 text-orange-400 bg-orange-100' : 'border-blue-400 text-blue-400 bg-blue-100'" @click="query.GE[g] = !query.GE[g]">{{ g }}</button>
+        </div>
       </label>
     </div>
     <div class="flex items-start" v-if="!loading">
       <div class="w-full md:w-80 md:mr-6 shadow-md" style="min-width: 20rem;"><!-- course list -->
-        <template v-for="(courses, dept) in list">
-          <!-- department -->
-          <panel-wrapper v-if="!hideList[dept]" :title="dept" v-model="showDept[dept]">
-            <template v-for="(v, k) in courses">
+        <template v-for="dept in departments"><!-- department -->
+          <panel-wrapper v-if="showDept[dept] > -1" :title="dept" v-model="showDept[dept]">
+            <template v-for="(v, k) in list[dept]">
               <!-- course -->
               <div class="bg-white border p-2 cursor-pointer" v-if="!hideList[k]" @click="focus = k">
                 <h3 class="pl-2">{{ k }}: {{ v[0] }}</h3>
