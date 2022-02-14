@@ -1,0 +1,26 @@
+<script setup>
+import { watch } from 'vue'
+import Wrapper from '../components/Wrapper.vue'
+import { ChevronDownIcon } from '@heroicons/vue/solid'
+
+const props = defineProps(['title', 'modelValue'])
+const emits = defineEmits(['update:modelValue'])
+let show = $ref(false)
+watch(() => props.modelValue, v => {
+  show = v
+}, { immediate: true })
+
+watch($$(show), v => {
+  if (props.modelValue != v) emits('update:modelValue', show)
+})
+</script>
+
+<template>
+  <div class="w-full flex justify-between items-center px-3 py-1 shadow cursor-pointer" @click="show = !show">
+    <h3 class="font-bold">{{ props.title }}</h3>
+    <chevron-down-icon class="all-transition w-6 text-gray-400" :class="{ 'rotate-90': !show }" />
+  </div>
+  <wrapper :show="show">
+    <slot></slot>
+  </wrapper>
+</template>
