@@ -59,14 +59,14 @@ watch($$(quarter), async v => {
       </select>
     </h1>
     <p v-if="loading" class="text-sm text-gray-500 mb-4">Loading...</p>
-    <div class="flex items-center flex-wrap bg-white my-4 rounded shadow-md py-1"><!-- query -->
+    <div class="flex items-center flex-wrap bg-white my-4 rounded shadow-md py-1" v-if="!loading"><!-- query -->
       <label class="font-bold mx-4 my-1">
         Search: 
-        <input class="py-1 px-2 border rounded" type="text" v-model="query.search" placeholder="Search Course ID or Title">
+        <input class="py-1 px-2 border rounded bg-white" type="text" v-model="query.search" placeholder="Course ID or Title">
       </label>
       <label class="font-bold mx-4 my-1">
         Department:
-        <select class="py-1 px-2 border rounded" v-model="query.department">
+        <select class="py-1 px-2 border rounded bg-white" v-model="query.department">
           <option value="">All</option>
           <option v-for="(v, dept) in list">{{ dept }}</option>
         </select>
