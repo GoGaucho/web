@@ -1,3 +1,4 @@
+import { reactive } from 'vue'
 import { initializeApp } from 'firebase/app'
 import { getAnalytics, logEvent } from 'firebase/analytics'
 import { getFirestore } from 'firebase/firestore'
@@ -12,6 +13,8 @@ const firebaseConfig = {
   appId: '1:1083649636208:web:690b97b048d194077241b5',
   measurementId: 'G-N2YCM7TLPH'
 }
+
+export const state = reactive({})
 
 export const app = initializeApp(firebaseConfig)
 
