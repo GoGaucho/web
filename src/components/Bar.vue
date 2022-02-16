@@ -4,14 +4,14 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 import { getAuth, signInWithCredential, GoogleAuthProvider } from 'firebase/auth'
 import { UserCircleIcon } from '@heroicons/vue/solid'
-import { log } from '../firebase.js'
+import { log, state } from '../firebase.js'
 
 const provider = new GoogleAuthProvider(), auth = getAuth()
 let userInfo = $ref(null), showUser = $ref(false)
 
 async function listener (user) {
   const profile = user.getBasicProfile()
-  gapi.token = user.getAuthResponse().id_token
+  state.token = user.getAuthResponse().id_token
   if (!profile || !gapi.token) return userInfo = showUser = null
   await signInWithCredential(auth, GoogleAuthProvider.credential(gapi.token))
   userInfo = {

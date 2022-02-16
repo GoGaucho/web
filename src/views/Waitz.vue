@@ -4,11 +4,13 @@ import { db, log } from '../firebase.js'
 import { MinusSmIcon } from '@heroicons/vue/outline'
 
 let data = $ref(undefined)
-getDoc(doc(db, 'cache', 'waitz')).then(r => { data = JSON.parse(r.data().data) })
+getDoc(doc(db, 'cache', 'waitz')).then(r => { data = JSON.parse(r.data().data); console.log(data) })
 log('waitz')
 
-const classMap = {
-  'Busy': 'busy', 'Not Busy': 'not-busy', 'Very Busy': 'very-busy'
+function getClass (c) {
+  if (c.busyness > 80) return 'very-busy'
+  if (c.busyness > 50) return 'busy'
+  return 'not-busy'
 }
 </script>
 
@@ -21,20 +23,20 @@ const classMap = {
       <div class="flex items-center flex-wrap">
         <div class="flex-grow">
           <h3 class="text-2xl font-bold">{{ name }}</h3>
-          <p class="text-gray-500 text-sm">capacity: {{ l.people }}/{{ l.capacity }}</p>
+          <p class="text-gray-500 text-sm">capacity: {{ l.capacity }}</p>
         </div>
-        <div :class="[l.open ? 'text-2xl' : 'text-gray-800', classMap[l.summary]]">{{ l.summary }}</div>
+        <div :class="[l.close ? 'text-gray-800' : 'text-2xl font-bold', getClass(l)]">{{ l.close || l.busyness + '%' }}</div>
       </div>
-      <hr class="my-2">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        <div class="m-2 pb-2 rounded flex justify-between items-center relative overflow-hidden" v-for="s in l.locations">
+      <hr v-if="Object.keys(l.locations).length" class="my-2">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div class="m-3 pb-2 rounded flex justify-between items-center relative overflow-hidden" v-for="(s, name) in l.locations">
           <div>
-            <h4>{{ s.name }}</h4>
-            <p class="text-gray-500 text-xs">capacity: {{ s.people }}/{{ s.capacity }}</p>
+            <h4>{{ name }}</h4>
+            <p class="text-gray-500 text-xs">capacity: {{ s.capacity }}</p>
           </div>
-          <div :class="s.class">{{ s.summary }}</div>
+          <div :class="s.close ? 'text-gray-800' : getClass(s)">{{ s.close || s.busyness + '%' }}</div>
           <div class="absolute bottom-0 w-full bg-gray-200">
-            <div class="h-1" :class="s.class" :style="{ width: s.busyness + '%' }" />
+            <div class="h-1" :class="getClass(s)" :style="{ width: s.busyness + '%' }" />
           </div>
         </div>
       </div>
