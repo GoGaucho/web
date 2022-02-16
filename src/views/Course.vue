@@ -4,17 +4,11 @@ import { getDoc, doc } from 'firebase/firestore'
 import { db, log } from '../firebase.js'
 import * as parse from '../utils/parse.js'
 import debounce from '../utils/debounce.js'
+import * as lookup from '../utils/lookup.js'
 import Course from '../components/Course.vue'
 import PanelWrapper from '../components/PanelWrapper.vue'
 
 log('course')
-
-const GEs = {
-  'L&S': ['A1', 'A2', 'B', 'C', 'D', 'E', 'F', 'G', 'EUR', 'ETH', 'NWC', 'QNT', 'WRT'],
-  'ENGR': ['A1', 'A2', 'D', 'E', 'E1', 'F', 'G', 'H', 'EUR', 'ETH', 'NWC', 'WRT'],
-  'CRST': ['B', 'C', 'E1', 'ETH'],
-  'UCSB': ['AMH', 'SUB']
-}
 
 let loading = $ref(true), list = $ref(null), hideList = $ref({}), showDept = $ref({}), departments = $ref([])
 let quarters = $ref([]), quarter = $ref(''), focus = $ref('')
@@ -82,23 +76,23 @@ watch($$(quarter), async v => {
         Department:
         <select class="py-1 px-2 border rounded bg-white" v-model="query.department">
           <option value="">All</option>
-          <option v-for="dept in departments">{{ dept }}</option>
+          <option v-for="dept in departments" :value="dept">{{ dept }} - {{ lookup.departments[dept] }}</option>
         </select>
       </label>
       <label class="font-bold mx-4 my-1 flex items-center flex-wrap">
         GE:
         <select class="py-1 px-2 mx-2 border rounded bg-white" v-model="query.college" @change="query.GE = {}">
-          <option v-for="(v, k) in GEs">{{ k }}</option>
+          <option v-for="(v, k) in lookup.GEs">{{ k }}</option>
         </select>
         <div>
-          <button v-for="g in GEs[query.college]" class="all-transition border text-sm rounded px-1 m-1" :class="query.GE[g] ? 'border-orange-400 text-orange-400 bg-orange-100' : 'border-blue-400 text-blue-400 bg-blue-100'" @click="query.GE[g] = !query.GE[g]">{{ g }}</button>
+          <button v-for="g in lookup.GEs[query.college]" class="all-transition border text-sm rounded px-1 m-1" :class="query.GE[g] ? 'border-orange-400 text-orange-400 bg-orange-100' : 'border-blue-400 text-blue-400 bg-blue-100'" @click="query.GE[g] = !query.GE[g]">{{ g }}</button>
         </div>
       </label>
     </div>
     <div class="flex items-start" v-if="!loading">
       <div class="w-full md:w-80 md:mr-6 shadow-md" style="min-width: 20rem;"><!-- course list -->
         <template v-for="dept in departments"><!-- department -->
-          <panel-wrapper v-if="showDept[dept] > -1" :title="dept" v-model="showDept[dept]">
+          <panel-wrapper v-if="showDept[dept] > -1" :title="dept + ' - ' + lookup.departments[dept]" v-model="showDept[dept]">
             <template v-for="(v, k) in list[dept]">
               <!-- course -->
               <div class="bg-white border p-2 cursor-pointer" v-if="!hideList[k]" @click="focus = k">
