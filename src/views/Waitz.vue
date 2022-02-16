@@ -8,6 +8,7 @@ getDoc(doc(db, 'cache', 'waitz')).then(r => { data = JSON.parse(r.data().data); 
 log('waitz')
 
 function getClass (c) {
+  if (c.close) return ''
   if (c.busyness > 80) return 'very-busy'
   if (c.busyness > 50) return 'busy'
   return 'not-busy'

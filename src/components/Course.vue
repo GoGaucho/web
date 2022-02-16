@@ -1,8 +1,9 @@
 <script setup>
+import { CheckIcon } from '@heroicons/vue/outline'
 import { watch } from 'vue'
 import { getDoc, doc } from 'firebase/firestore'
-import { db } from '../firebase.js'
-const props = defineProps(['modelValue', 'quarter'])
+import { db, state } from '../firebase.js'
+const props = defineProps(['modelValue'])
 const emits = defineEmits(['update:modelValue'])
 import Wrapper from './Wrapper.vue'
 
@@ -20,9 +21,8 @@ let title = $computed(() => props.modelValue ? props.modelValue + ': ' + (course
 watch(() => props.modelValue, async v => {
   if (!v) return
   course = {}
-  course = await getDoc(doc(db, 'course', props.quarter + v)).then(r => r.data())
+  course = await getDoc(doc(db, 'course', state.course.quarter + v)).then(r => r.data())
   setTimeout(() => { course.show = 1 })
-  console.log(course.sections)
 })
 </script>
 
@@ -34,9 +34,13 @@ watch(() => props.modelValue, async v => {
     fixed top-0 h-screen w-5/6 sm:w-11/12 z-50 overflow-auto
     md:sticky md:top-20 md:w-auto md:h-auto md:shadow-md md:z-10
   " :style="{ left: isMobile && !props.modelValue ? '-100%' : '0px' }">
-    <h2 class="text-xl sm:text-2xl font-bold">{{ title }}</h2>
+    <h2 class="text-xl sm:text-2xl font-bold mr-6">{{ title }}</h2>
     <wrapper :show="course.show" :key="props.modelValue">
       <p class="text-sm text-gray-600">{{ course.college }} &nbsp; {{ course.department }} &nbsp; {{ levels[course.level] }}</p>
+      <button class="text-white text-sm shadow rounded-full bg-blue-500 px-4 py-1 my-2 flex items-center" :set="focus = state.course.focus" @click="focus[props.modelValue] = !focus[props.modelValue]">
+        <check-icon class="all-transition overflow-x-hidden" :class="focus[props.modelValue] ? 'w-5 mr-1' : 'w-0'" />
+        Focus
+      </button>
       <p class="my-2">{{ course.description }}</p>
       <p><b>Units:</b> {{ course.units }}</p>
       <p><b>Grading:</b> {{ gradings[course.grading] }}</p>

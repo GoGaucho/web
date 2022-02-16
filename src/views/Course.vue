@@ -1,20 +1,23 @@
 <script setup>
 import { watch, reactive } from 'vue'
+import { XIcon } from '@heroicons/vue/outline'
 import { getDoc, doc } from 'firebase/firestore'
-import { db, log } from '../firebase.js'
+import { db, log, state } from '../firebase.js'
 import * as parse from '../utils/parse.js'
 import debounce from '../utils/debounce.js'
 import * as lookup from '../utils/lookup.js'
 import Course from '../components/Course.vue'
+import Wrapper from '../components/Wrapper.vue'
 import PanelWrapper from '../components/PanelWrapper.vue'
 
 log('course')
 
 let loading = $ref(true), list = $ref(null), hideList = $ref({}), showDept = $ref({}), departments = $ref([])
-let quarters = $ref([]), quarter = $ref(''), focus = $ref('')
+let quarters = $ref([]), focus = $ref('')
 const query = reactive({
   search: '', department: '', college: '', GE: {}, refresh: 0
 })
+const showFocus = $computed(() => Object.keys(state.course.focus).filter(x => state.course.focus[x]).length)
 
 function isHide (k, v, key, ges) {
   for (const g of ges) {
@@ -43,11 +46,12 @@ watch(query, computeResult)
 
 getDoc(doc(db, 'cache', 'quarter')).then(r => {
   quarters = r.data().course
-  quarter = quarters[0]
+  state.course.quarter = quarters[0]
+  state.course.focus = {}
   loading = false
 })
 
-watch($$(quarter), async v => {
+watch(() => state.course.quarter, async v => {
   loading = true
   focus = false
   list = await getDoc(doc(db, 'cache', 'course.' + v)).then(r => JSON.parse(r.data().data))
@@ -62,11 +66,19 @@ watch($$(quarter), async v => {
   <div class="p-4 sm:p-10">
     <h1 class="text-2xl flex items-center">
       Course
-      <select class="text-base bg-white border mx-2 px-2 py-1 rounded-full" v-if="quarters.length" v-model="quarter">
+      <select class="text-base bg-white border mx-2 px-2 py-1 rounded-full" v-if="quarters.length" v-model="state.course.quarter">
         <option v-for="q in quarters" :value="q">{{ parse.quarter(q) }}</option>
       </select>
     </h1>
     <p v-if="loading" class="text-sm text-gray-500 mb-4">Loading...</p>
+    <wrapper class="pt-2" v-if="!loading" :show="showFocus"><!-- focus -->
+      <div class="flex items-center flex-wrap bg-white rounded border px-4 h-12">
+        <label class="font-bold">Focus:</label>
+        <template v-for="(v, k) in state.course.focus">
+          <label v-if="state.course.focus[k]" class="all-transition border text-sm rounded px-1 m-1 border-blue-400 text-blue-400 bg-blue-100 flex items-center">{{ k }}<x-icon class="w-4 cursor-pointer" @click="state.course.focus[k] = false" /></label>
+        </template>
+      </div>
+    </wrapper>
     <div class="flex items-center flex-wrap bg-white my-4 rounded shadow-md py-1" v-if="!loading"><!-- query -->
       <label class="font-bold mx-4 my-1">
         Search: 
@@ -102,7 +114,7 @@ watch($$(quarter), async v => {
           </panel-wrapper>
         </template>
       </div>
-      <course v-model="focus" :quarter="quarter" />
+      <course v-model="focus" />
     </div>
   </div>
 </template>
