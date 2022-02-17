@@ -12,8 +12,8 @@ let userInfo = $ref(null), showUser = $ref(false)
 async function listener (user) {
   const profile = user.getBasicProfile()
   state.token = user.getAuthResponse().id_token
-  if (!profile || !gapi.token) return userInfo = showUser = null
-  await signInWithCredential(auth, GoogleAuthProvider.credential(gapi.token))
+  if (!profile || !state.token) return userInfo = showUser = null
+  await signInWithCredential(auth, GoogleAuthProvider.credential(state.token))
   userInfo = {
     name: profile.getName(),
     photoURL: profile.getImageUrl(),

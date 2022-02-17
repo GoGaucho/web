@@ -1,6 +1,6 @@
 <script setup>
 import { watch, reactive } from 'vue'
-import { XIcon } from '@heroicons/vue/outline'
+import { XIcon, ChipIcon } from '@heroicons/vue/outline'
 import { getDoc, doc } from 'firebase/firestore'
 import { db, log, state } from '../firebase.js'
 import * as parse from '../utils/parse.js'
@@ -77,6 +77,7 @@ watch(() => state.course.quarter, async v => {
         <template v-for="(v, k) in state.course.focus">
           <label v-if="state.course.focus[k]" class="all-transition border text-sm rounded px-1 m-1 border-blue-400 text-blue-400 bg-blue-100 flex items-center">{{ k }}<x-icon class="w-4 cursor-pointer" @click="state.course.focus[k] = false" /></label>
         </template>
+        <button class="text-sm m-2 px-4 py-1 rounded-full border font-bold text-blue-500 flex items-center"><chip-icon class="w-4 mr-1" />Planner is coming soon!</button>
       </div>
     </wrapper>
     <div class="flex items-center flex-wrap bg-white my-4 rounded shadow-md py-1" v-if="!loading"><!-- query -->
