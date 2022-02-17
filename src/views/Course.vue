@@ -64,43 +64,43 @@ watch(() => state.course.quarter, async v => {
 <template>
   <div class="bg-yellow-200 text-yellow-700 p-2">This page is still under development. For old version GoGaucho GOLD, <a href="https://web.gogaucho.app/gold/" class="underline">click here</a></div>
   <div class="p-4 sm:p-10">
-    <h1 class="text-2xl flex items-center">
+    <h1 class="text-2xl flex items-center mb-4">
       Course
       <select class="text-base bg-white border mx-2 px-2 py-1 rounded-full" v-if="quarters.length" v-model="state.course.quarter">
         <option v-for="q in quarters" :value="q">{{ parse.quarter(q) }}</option>
       </select>
     </h1>
     <p v-if="loading" class="text-sm text-gray-500 mb-4">Loading...</p>
-    <wrapper class="pt-2" v-if="!loading" :show="showFocus"><!-- focus -->
-      <div class="flex items-center flex-wrap bg-white rounded border px-4 h-12">
+    <div class="bg-white my-4 rounded border" v-if="!loading">
+      <wrapper class="flex items-center flex-wrap px-4 border border-t-0 border-x-0 py-1" :show="showFocus"><!-- focus -->
         <label class="font-bold">Focus:</label>
         <template v-for="(v, k) in state.course.focus">
           <label v-if="state.course.focus[k]" class="all-transition border text-sm rounded px-1 m-1 border-blue-400 text-blue-400 bg-blue-100 flex items-center">{{ k }}<x-icon class="w-4 cursor-pointer" @click="state.course.focus[k] = false" /></label>
         </template>
-        <button class="text-sm m-2 px-4 py-1 rounded-full border font-bold text-blue-500 flex items-center"><chip-icon class="w-4 mr-1" />Planner is coming soon!</button>
+        <button class="text-sm mx-2 my-1 px-4 py-1 rounded-full border font-bold text-blue-500 flex items-center"><chip-icon class="w-4 mr-1" />Planner is coming soon!</button>
+      </wrapper>
+      <div class="flex items-center flex-wrap py-1"><!-- query -->
+        <label class="font-bold mx-4 my-1">
+          Search: 
+          <input class="py-1 px-2 border rounded bg-white" type="text" v-model="query.search" placeholder="Course ID or Title">
+        </label>
+        <label class="font-bold mx-4 my-1">
+          Department:
+          <select class="py-1 px-2 border rounded bg-white" v-model="query.department">
+            <option value="">All</option>
+            <option v-for="dept in departments" :value="dept">{{ dept }} - {{ lookup.departments[dept] }}</option>
+          </select>
+        </label>
+        <label class="font-bold mx-4 my-1 flex items-center flex-wrap">
+          GE:
+          <select class="py-1 px-2 mx-2 border rounded bg-white" v-model="query.college" @change="query.GE = {}">
+            <option v-for="(v, k) in lookup.GEs">{{ k }}</option>
+          </select>
+          <div>
+            <button v-for="g in lookup.GEs[query.college]" class="all-transition border text-sm rounded px-1 m-1" :class="query.GE[g] ? 'border-orange-400 text-orange-400 bg-orange-100' : 'border-blue-400 text-blue-400 bg-blue-100'" @click="query.GE[g] = !query.GE[g]">{{ g }}</button>
+          </div>
+        </label>
       </div>
-    </wrapper>
-    <div class="flex items-center flex-wrap bg-white my-4 rounded shadow-md py-1" v-if="!loading"><!-- query -->
-      <label class="font-bold mx-4 my-1">
-        Search: 
-        <input class="py-1 px-2 border rounded bg-white" type="text" v-model="query.search" placeholder="Course ID or Title">
-      </label>
-      <label class="font-bold mx-4 my-1">
-        Department:
-        <select class="py-1 px-2 border rounded bg-white" v-model="query.department">
-          <option value="">All</option>
-          <option v-for="dept in departments" :value="dept">{{ dept }} - {{ lookup.departments[dept] }}</option>
-        </select>
-      </label>
-      <label class="font-bold mx-4 my-1 flex items-center flex-wrap">
-        GE:
-        <select class="py-1 px-2 mx-2 border rounded bg-white" v-model="query.college" @change="query.GE = {}">
-          <option v-for="(v, k) in lookup.GEs">{{ k }}</option>
-        </select>
-        <div>
-          <button v-for="g in lookup.GEs[query.college]" class="all-transition border text-sm rounded px-1 m-1" :class="query.GE[g] ? 'border-orange-400 text-orange-400 bg-orange-100' : 'border-blue-400 text-blue-400 bg-blue-100'" @click="query.GE[g] = !query.GE[g]">{{ g }}</button>
-        </div>
-      </label>
     </div>
     <div class="flex items-start" v-if="!loading">
       <div class="w-full md:w-80 md:mr-6 shadow-md" style="min-width: 20rem;"><!-- course list -->

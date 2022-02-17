@@ -1,6 +1,6 @@
 <!-- 2021-12-17 -->
 <script setup>
-import { watch } from 'vue'
+import { watch, nextTick } from 'vue'
 const props = defineProps(['show', 'class'])
 let outer = $ref(), inner = $ref(), height = $ref('0px')
 
@@ -8,6 +8,7 @@ const H = el => window.getComputedStyle(el).getPropertyValue('height')
 
 watch(() => props.show, async v => {
   while (!inner || !outer) await new Promise(r => setTimeout(r))
+  await nextTick()
   if (height == 'auto') {
     height = H(outer)
     await new Promise(r => setTimeout(r))
