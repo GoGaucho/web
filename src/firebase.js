@@ -21,4 +21,4 @@ export const app = initializeApp(firebaseConfig)
 export const db = getFirestore()
 
 const analytics = getAnalytics(app)
-export const log = (k, p = {}) => logEvent(analytics, 'web_' + k, p)
+export const log = (k, p = {}) => logEvent(analytics, k, p)

@@ -19,6 +19,7 @@ async function listener (user) {
     photoURL: profile.getImageUrl(),
     email: profile.getEmail()
   }
+  log('web_login')
 }
 
 gapi.load('auth2', async () => {
@@ -29,7 +30,6 @@ gapi.load('auth2', async () => {
 function login () {
   const auth = gapi.auth2.getAuthInstance()
   auth.signIn({ scope: 'profile email' })
-  log('login')
 }
 </script>
 

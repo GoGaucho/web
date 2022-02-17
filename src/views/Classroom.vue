@@ -1,7 +1,7 @@
 <script setup>
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/outline'
 import { getDoc, doc } from 'firebase/firestore'
-import { db, log } from '../firebase.js'
+import { db } from '../firebase.js'
 import * as parse from '../utils/parse.js'
 
 let data = $ref(undefined), quarter = $ref(''), capacity = $ref({})
@@ -17,7 +17,6 @@ getDoc(doc(db, 'cache', 'classroom')).then(r => {
   quarter = parse.quarter(raw.quarter)
   capacity = JSON.parse(raw.capacity)
 })
-log('classroom')
 
 // 8:00 - 24:00
 const scale = w => (w - day*1440 - 480) / 9.6 + '%'

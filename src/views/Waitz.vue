@@ -1,11 +1,10 @@
 <script setup>
 import { getDoc, doc } from 'firebase/firestore'
-import { db, log } from '../firebase.js'
+import { db } from '../firebase.js'
 import { MinusSmIcon } from '@heroicons/vue/outline'
 
 let data = $ref(undefined)
 getDoc(doc(db, 'cache', 'waitz')).then(r => { data = JSON.parse(r.data().data) })
-log('waitz')
 
 function getClass (c) {
   if (c.close) return ''
