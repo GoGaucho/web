@@ -9,11 +9,14 @@ import * as lookup from '../utils/lookup.js'
 import Course from '../components/Course.vue'
 import Wrapper from '../components/Wrapper.vue'
 import PanelWrapper from '../components/PanelWrapper.vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
+state.course.quarter = ''
 let loading = $ref(true), list = $ref(null), hideList = $ref({}), showDept = $ref({}), departments = $ref([])
 let quarters = $ref([]), focus = $ref('')
 const query = reactive({
-  search: '', department: '', college: '', GE: {}, refresh: 0
+  search: '', department: '', college: '', GE: {}
 })
 const showFocus = $computed(() => Object.keys(state.course.focus).filter(x => state.course.focus[x]).length)
 
@@ -54,13 +57,12 @@ watch(() => state.course.quarter, async v => {
   focus = false
   list = await getDoc(doc(db, 'cache', 'course.' + v)).then(r => JSON.parse(r.data().data))
   departments = Object.keys(list).sort()
-  query.refresh++
+  computeResult()
   loading = false
 })
 </script>
 
 <template>
-  <div class="bg-yellow-200 text-yellow-700 p-2">This page is still under development. For old version GoGaucho GOLD, <a href="https://web.gogaucho.app/gold/" class="underline">click here</a></div>
   <div class="p-4 sm:p-10">
     <h1 class="text-2xl flex items-center mb-4">
       Course
@@ -75,7 +77,7 @@ watch(() => state.course.quarter, async v => {
         <template v-for="(v, k) in state.course.focus">
           <label v-if="state.course.focus[k]" class="all-transition border text-sm rounded px-1 m-1 border-blue-400 text-blue-400 bg-blue-100 flex items-center">{{ k }}<x-icon class="w-4 cursor-pointer" @click="state.course.focus[k] = false" /></label>
         </template>
-        <button class="text-sm mx-2 my-1 px-4 py-1 rounded-full border font-bold text-blue-500 flex items-center"><chip-icon class="w-4 mr-1" />Planner is coming soon!</button>
+        <button class="text-sm mx-2 my-1 px-4 py-1 rounded-full border font-bold text-blue-500 flex items-center" @click="router.push('/planner')"><chip-icon class="w-4 mr-1" />Go to Planner!</button>
       </wrapper>
       <div class="flex items-center flex-wrap py-1"><!-- query -->
         <label class="font-bold mx-4 my-1">

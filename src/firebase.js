@@ -1,7 +1,7 @@
 import { reactive } from 'vue'
 import { initializeApp } from 'firebase/app'
 import { getAnalytics, logEvent } from 'firebase/analytics'
-import { getFirestore } from 'firebase/firestore'
+import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyC7WZFIjRUQ01A-SCVs0V_bNdhC8YCPzoI',
@@ -19,6 +19,7 @@ export const state = reactive({ course: {} })
 export const app = initializeApp(firebaseConfig)
 
 export const db = getFirestore()
+enableIndexedDbPersistence(db)
 
 const analytics = getAnalytics(app)
 export const log = (k, p = {}) => logEvent(analytics, k, p)
