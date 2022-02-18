@@ -12,7 +12,6 @@ import PanelWrapper from '../components/PanelWrapper.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
-state.course.quarter = ''
 let loading = $ref(true), list = $ref(null), hideList = $ref({}), showDept = $ref({}), departments = $ref([])
 let quarters = $ref([]), focus = $ref('')
 const query = reactive({
@@ -45,20 +44,24 @@ const computeResult = debounce(() => {
 })
 watch(query, computeResult)
 
-getDoc(doc(db, 'cache', 'quarter')).then(r => {
-  quarters = r.data().course
-  state.course.quarter = quarters[0]
-  state.course.focus = {}
-  loading = false
-})
-
-watch(() => state.course.quarter, async v => {
+async function fetchList () {
   loading = true
-  focus = false
-  list = await getDoc(doc(db, 'cache', 'course.' + v)).then(r => JSON.parse(r.data().data))
+  list = await getDoc(doc(db, 'cache', 'course.' + state.course.quarter)).then(r => JSON.parse(r.data().data))
   departments = Object.keys(list).sort()
   computeResult()
   loading = false
+}
+
+getDoc(doc(db, 'cache', 'quarter')).then(r => {
+  quarters = r.data().course
+  if (quarters.includes(state.course.quarter)) fetchList()
+  else state.course.quarter = quarters[0]
+})
+
+watch(() => state.course.quarter, async v => {
+  focus = false
+  state.course.focus = {}
+  fetchList()
 })
 </script>
 
