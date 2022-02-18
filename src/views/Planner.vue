@@ -7,7 +7,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter(), focus = state.course.focus
 
 let loading = $ref(true), choices = $ref({}), chosenwTime = $ref([])
-const sections = {}, courses = []
+const sections = {}, courses = [], colors = ['bg-blue-500', 'bg-yellow-500', 'bg-purple-500', 'bg-red-500', 'bg-green-500', 'bg-amber-500', 'bg-sky-500', 'bg-orange-500', 'bg-teal-500']
 async function fetchData () {
   if (!focus) return router.push('/course')
   for (const k in focus) if (!focus[k]) delete focus[k]
@@ -16,6 +16,7 @@ async function fetchData () {
     const c = await getDoc(doc(db, 'course', state.course.quarter + k)).then(r => r.data())
     focus[k] = c
     choices[k] = {}
+    c.color = colors[courses.length]
     courses.push(k)
     for (const s in c.sections) {
       sections[s] = c.sections[s]
@@ -70,18 +71,19 @@ function chooseSEC (k, lec, sec) {
   }
 }
 
-const periodStyle = wTime => ({
-  left: 20 * Math.floor(wTime[0] / 1440) + 0.5 + '%',
+const periodStyle = (wTime, k) => ({
+  left: 20 * Math.floor(wTime[0] / 1440) + '%',
   top: 0.10417 * (wTime[0] % 1440 - 480) + '%',
   height: 0.10417 * (wTime[1] - wTime[0]) + '%',
-  width: '19%'
+  width: '19%',
+  color: testConflict([wTime], k) ? 'red' : ''
 })
 let periods = $computed(() => {
   const res = []
   for (const k in choices) {
     const lec = choices[k].lec, sec = choices[k].sec
-    if (lec) for (const wTime of sections[lec].wTime) res.push({ style: periodStyle(wTime), code: lec, course: k })
-    if (sec) for (const wTime of sections[sec].wTime) res.push({ style: periodStyle(wTime), code: sec, course: k })
+    if (lec) for (const wTime of sections[lec].wTime) res.push({ style: periodStyle(wTime, k), code: lec, course: k })
+    if (sec) for (const wTime of sections[sec].wTime) res.push({ style: periodStyle(wTime, k), code: sec, course: k })
   }
   return res
 })
@@ -157,8 +159,12 @@ function auto (i) {
           </table>
         </panel-wrapper>
       </div>
-      <div class="relative flex-grow bg-white shadow-md ml-4" style="min-width: 400px; min-height: 70vh;">
-        <div class="all-transition absolute bg-blue-200 text-xs" v-for="p in periods" :key="p.course" :style="p.style">
+      <div class="relative flex-grow bg-white shadow-md ml-4 grid grid-cols-5 gap-px" style="min-width: 400px; min-height: 70vh;">
+        <template v-for="i in 16">
+          <div class="bg-gray-100 text-xs text-gray-500">{{ i + 7 }}:00</div>
+          <div v-for="j in 4" class="bg-gray-100" />
+        </template>
+        <div class="all-transition absolute text-white font-bold p-1 text-xs border shadow-md text-shadow" :class="focus[p.course].color" v-for="p in periods" :key="p.course" :style="p.style">
           {{ p.course }}
         </div>
       </div>
@@ -175,5 +181,8 @@ function auto (i) {
 }
 .ok {
   @apply bg-green-200;
+}
+.text-shadow {
+  text-shadow: 1px 1px black;
 }
 </style>
