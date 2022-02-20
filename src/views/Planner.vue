@@ -47,7 +47,6 @@ function isConflict (_choices, s, exception = '') {
   }
 }
 
-
 // dfs search for a solution
 function dfsLEC (_choices, i) {
   if (i === courses.length) return true
@@ -61,7 +60,7 @@ function dfsLEC (_choices, i) {
 }
 function dfsSEC (_choices, i) {
   const k = courses[i], c = _choices[k], tree = focus[k].tree
-  if (c.sec) return dfsLEC(_choices, i + 1)
+  if (c.sec || !Object.keys(tree[c.lec]).length) return dfsLEC(_choices, i + 1)
   for (const sec of tree[c.lec]) {
     if (isConflict(_choices, sec)) continue
     c.sec = sec

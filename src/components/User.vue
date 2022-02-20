@@ -1,12 +1,19 @@
 <script setup>
-import { LogoutIcon } from '@heroicons/vue/outline'
+import { LogoutIcon, DownloadIcon } from '@heroicons/vue/outline'
 const props = defineProps(['modelValue', 'user'])
 const emits = defineEmits(['update:modelValue'])
 let style = $computed(() => ({ right: props.modelValue ? 0 : '-18rem' }))
+let installable = $ref(!!window.deferedPrompt)
 
 function signOut () {
   const auth = gapi.auth2.getAuthInstance()
   auth.signOut()
+}
+
+function install () {
+  window.deferedPrompt.prompt()
+  installable = false
+  window.deferedPrompt = null
 }
 </script>
 
@@ -26,6 +33,9 @@ function signOut () {
     <div v-if="props.user" class="mt-3">
       <button class="text-gray-500 flex items-center w-full border border-x-0 group" @click="signOut">
         <logout-icon class="all-transition w-6 m-2 group-hover:mr-3" />Sign out
+      </button>
+      <button class="text-gray-500 flex items-center w-full border border-x-0 group" v-if="installable" @click="install">
+        <download-icon class="all-transition w-6 m-2 group-hover:mr-3" />Install WebAPP
       </button>
     </div>
   </div>
