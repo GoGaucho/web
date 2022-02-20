@@ -1,7 +1,12 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router.js'
+import { registerSW } from 'virtual:pwa-register'
 import './index.css'
+
+const updateSW = registerSW({
+  onOfflineReady() {},
+})
 
 router.afterEach(Swal.close)
 

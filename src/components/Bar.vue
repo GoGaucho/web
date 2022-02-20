@@ -36,7 +36,7 @@ function login () {
 <template>
   <div class="sticky top-0 z-20 w-full px-4 h-14 flex items-center justify-between shadow-xl bg-white">
     <h1 class="text-2xl font-bold flex items-center cursor-pointer group" @click="router.push('/')">
-      <img class="mr-2 w-8 rounded" src="/logo.png">GoGaucho
+      <img class="mr-2 w-8 rounded" src="/icons/logo.png">GoGaucho
     </h1>
     <img v-if="userInfo" class="w-8 rounded-full cursor-pointer" :src="userInfo.photoURL" @click="showUser = true">
     <user-circle-icon v-else @click="login" class="w-8 cursor-pointer text-gray-500" />

@@ -1,7 +1,8 @@
 <script setup>
-import Bar from './components/Bar.vue'
+import { defineAsyncComponent } from 'vue'
 import { useRoute } from 'vue-router'
 const route = useRoute()
+const Bar = defineAsyncComponent(() => import('./components/Bar.vue'))
 </script>
 
 <template>
