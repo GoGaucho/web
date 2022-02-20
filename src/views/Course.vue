@@ -12,10 +12,10 @@ import PanelWrapper from '../components/PanelWrapper.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
-let loading = $ref(true), list = $ref(null), hideList = $ref({}), showDept = $ref({}), departments = $ref([])
+let loading = $ref(true), list = $ref(null), hideList = $ref({}), showDept = $ref({}), subjects = $ref([])
 let quarters = $ref([]), focus = $ref('')
 const query = reactive({
-  search: '', department: '', college: '', GE: {}
+  search: '', subject: '', college: '', GE: {}
 })
 const showFocus = $computed(() => Object.keys(state.course.focus).filter(x => state.course.focus[x]).length)
 
@@ -32,7 +32,7 @@ const computeResult = debounce(() => {
   const key = query.search.toUpperCase()
   const ges = Object.keys(query.GE).filter(x => query.GE[x]).map(x => query.college + '-' + x)
   for (const dept in list) {
-    if (query.department && query.department !== dept) continue
+    if (query.subject && query.subject !== dept) continue
     let hasOne = false
     for (const k in list[dept]) {
       hideList[k] = isHide(k, list[dept][k], key, ges)
@@ -47,7 +47,7 @@ watch(query, computeResult)
 async function fetchList () {
   loading = true
   list = await getDoc(doc(db, 'cache', 'course.' + state.course.quarter)).then(r => JSON.parse(r.data().data))
-  departments = Object.keys(list).sort()
+  subjects = Object.keys(list).sort()
   computeResult()
   loading = false
 }
@@ -87,13 +87,10 @@ watch(() => state.course.quarter, async v => {
           Search: 
           <input class="py-1 px-2 border rounded bg-white" type="text" v-model="query.search" placeholder="Course ID or Title">
         </label>
-        <label class="font-bold mx-4 my-1">
-          Department:
-          <select class="py-1 px-2 border rounded bg-white" v-model="query.department">
-            <option value="">All</option>
-            <option v-for="dept in departments" :value="dept">{{ dept }} - {{ lookup.departments[dept] }}</option>
-          </select>
-        </label>
+        <select class="py-1 px-2 border rounded bg-white mx-4 my-1" v-model="query.subject">
+          <option value="">All</option>
+          <option v-for="dept in subjects" :value="dept">{{ dept }}: {{ lookup.subjects[dept] }}</option>
+        </select>
         <label class="font-bold mx-4 my-1 flex items-center flex-wrap">
           GE:
           <select class="py-1 px-2 mx-2 border rounded bg-white" v-model="query.college" @change="query.GE = {}">
@@ -107,8 +104,8 @@ watch(() => state.course.quarter, async v => {
     </div>
     <div class="flex items-start" v-if="!loading">
       <div class="w-full md:w-80 md:mr-6 shadow-md" style="min-width: 20rem;"><!-- course list -->
-        <template v-for="dept in departments"><!-- department -->
-          <panel-wrapper v-if="showDept[dept] > -1" :title="dept + ' - ' + lookup.departments[dept]" v-model="showDept[dept]">
+        <template v-for="dept in subjects"><!-- subject -->
+          <panel-wrapper v-if="showDept[dept] > -1" :title="dept + ': ' + lookup.subjects[dept]" v-model="showDept[dept]">
             <template v-for="(v, k) in list[dept]">
               <!-- course -->
               <div class="bg-white border p-2 cursor-pointer" v-if="!hideList[k]" @click="focus = k">
