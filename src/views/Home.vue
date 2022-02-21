@@ -4,8 +4,8 @@ import banner from '../assets/banner.svg'
 import Wrapper from '../components/Wrapper.vue'
 import { getDoc, doc } from 'firebase/firestore'
 import { db } from '../firebase.js'
-import { useRouter } from 'vue-router'
-const router = useRouter()
+import { useRouter, useRoute } from 'vue-router'
+const router = useRouter(), embed = useRoute().query.embed
 let show = $ref(false), announcement = $ref('')
 setTimeout(() => { show = true }, 100)
 
@@ -17,7 +17,7 @@ function jump (url) {
 </script>
 
 <template>
-  <div class="relative w-full flex flex-col justify-center pl-10 sm:pl-20 bg-gray-100" style="height: calc(100vh - 3.5rem);">
+  <div class="relative w-full flex flex-col justify-center pl-10 sm:pl-20 bg-gray-100"  :style="{ height: embed ? '100vh' : 'calc(100vh - 3.5rem)' }">
     <img class="absolute z-0 left-0 bottom-0 w-full" style="transition: all 2s ease;" :class="show ? 'opacity-100' : 'opacity-0'" :src="banner">
     <div class="absolute top-0 left-0 w-full">
       <wrapper :show="announcement">
