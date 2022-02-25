@@ -3,7 +3,6 @@ import { log } from './firebase.js'
 
 const index = {
   '/': () => import('./views/Home.vue'),
-  '/map': () => import('./views/Map.vue'),
   '/waitz': () => import('./views/Waitz.vue'),
   '/course': () => import('./views/Course.vue'),
   '/planner': () => import('./views/Planner.vue'),

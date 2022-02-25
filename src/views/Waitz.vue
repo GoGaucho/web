@@ -32,7 +32,6 @@ function getClass (c) {
         <div class="m-3 pb-2 rounded flex justify-between items-center relative overflow-hidden" v-for="(s, name) in l.locations">
           <div>
             <h4>{{ name }}</h4>
-            <p class="text-gray-500 text-xs">capacity: {{ s.capacity }}</p>
           </div>
           <div :class="s.close ? 'text-gray-800' : getClass(s)">{{ s.close || s.busyness + '%' }}</div>
           <div class="absolute bottom-0 w-full bg-gray-200">
