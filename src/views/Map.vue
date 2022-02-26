@@ -2,8 +2,6 @@
 import { watch } from 'vue'
 import debounce from '../utils/debounce.js'
 import locations from '../utils/locations.js'
-import { useRoute } from 'vue-router'
-const embed = useRoute().query.embed
 let q = $ref('UCSB'), query = $ref(''), completion = $ref('')
 
 function search () {
@@ -37,7 +35,7 @@ watch($$(query), v => {
 </script>
 
 <template>
-  <div class="w-full h-screen flex flex-col relative items-center" :style="{ height: embed ? '100vh' : 'calc(100vh - 3.5rem)' }">
+  <div class="w-full h-full flex flex-col relative items-center">
     <iframe
       class="border-0 w-full flex-grow"
       loading="lazy"

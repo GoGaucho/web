@@ -28,7 +28,7 @@ getDoc(doc(db, 'cache', 'dining')).then(r => {
         <option v-for="(v, k) in dcs" :value="k">{{ v }}</option>
       </select>
       <p v-if="!data[dc]">Closed</p>
-      <div v-else v-for="(v, mc) in data[dc]" class="rounded shadow-md p-3 my-4" :key="dc">
+      <div v-else v-for="(v, mc) in data[dc]" class="rounded shadow-md p-3 my-4 bg-white" :key="dc">
         <h3 class="text-xl font-bold">{{ mc[0].toUpperCase() + mc.substring(1) }}</h3>
         <p class="text-sm text-gray-500">{{ v ? v.hour : 'closed' }}</p>
         <hr class="mt-1 mb-2">

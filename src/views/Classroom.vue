@@ -38,12 +38,12 @@ const scale = w => (w - day*1440 - 480) / 9.6 + '%'
     </label>
     <p v-if="data && building" class="mt-3">Timeline goes from <code>08:00</code> to <code>23:59</code></p>
     <div class="w-full h-2 relative mb-4">
-      <div v-for="i in 16" class="absolute bg-gray-100 text-xs" :style="{ left: 6.25*(i-1) + '%', width: '6%' }">{{ i+7 }}</div>
+      <div v-for="i in 16" class="absolute bg-white text-xs" :style="{ left: 6.25*(i-1) + '%', width: '6%' }">{{ i+7 }}</div>
     </div>
     <div v-if="data && building" v-for="(ps, room) in data[building]" class="w-full relative my-2 pb-2 font-bold overflow-hidden">
       {{ building }} {{ room }}
       <span class="text-sm text-gray-500 font-normal ml-2" v-if="capacity[building][room]">capacity: {{ capacity[building][room] }}</span>
-      <div v-for="i in 16" class="absolute bg-gray-200 bottom-1 h-1" :style="{ left: 6.25*(i-1) + '%', width: '6%' }" />
+      <div v-for="i in 16" class="absolute bg-white bottom-1 h-1" :style="{ left: 6.25*(i-1) + '%', width: '6%' }" />
       <div v-for="(len, st) in ps" class="absolute bg-red-400 bottom-1 h-1 slow-transition" :style="{ left: scale(st), width: len/9.6 + '%' }" />
       <div class="absolute bg-blue-500 bottom-0 h-3 w-3 rounded-full slow-transition" :style="{ left: scale(now) }" />
     </div>
