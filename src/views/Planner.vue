@@ -101,7 +101,7 @@ function choose (k, lec, sec) {
   if (!sec) {
     if (choices[k].lec === lec) choices[k] = {}
     else choices[k].lec = lec
-    if (!focus[k].tree[lec]?.length) choices[k].done = 1
+    if (choices[k].lec && !focus[k].tree[lec]?.length) choices[k].done = 1
   } else {
     if (choices[k].sec === sec) choices[k] = { lec: choices[k].lec }
     else choices[k] = { lec, sec, done: 1 }
