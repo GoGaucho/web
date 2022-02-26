@@ -1,39 +1,52 @@
 <script setup>
-import { onMounted } from 'vue'
-import { ClipboardIcon } from '@heroicons/vue/outline'
+import { watch } from 'vue'
+import debounce from '../utils/debounce.js'
+import locations from '../utils/locations.js'
 import { useRoute } from 'vue-router'
 const embed = useRoute().query.embed
-let map = null, self = null, selfPos = null
+let q = $ref('UCSB'), query = $ref(''), completion = $ref('')
 
-function init () {
-  const pos = { lat: 34.415729, lng: -119.845990 }
-  map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 17,
-    fullscreenControl: false,
-    center: pos,
-  })
+function search () {
+  if (!query) {
+    q = 'UCSB'
+    completion = ''
+    return
+  }
+  query = query.toUpperCase()
+  for (const k in locations) { // prefix search
+    if (k.toUpperCase().indexOf(query) === 0) {
+      completion = k
+      q = locations[k]
+      return
+    }
+  }
+  for (const k in locations) { // substring search
+    if (k.toUpperCase().includes(query)) {
+      completion = k
+      q = locations[k]
+      return
+    }
+  }
+  completion = ''
 }
 
-if (!window.google) window.initMap = init
-else onMounted(init)
-
-if (navigator.geolocation) {
-  navigator.geolocation.watchPosition(position => {
-    if (!map) return
-    const pos = { lat: position.coords.latitude, lng: position.coords.longitude, }
-    if (!self) map.panTo(pos)
-    if (!self) self = new google.maps.Marker({ position: pos, map, icon: { path: 'M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z', fillColor: '#337CFF', fillOpacity: 1, strokeColor: '#337CFF' } })
-    self.setPosition(pos)
-    selfPos = pos
-  })
-}
-
-function record () {
-  Swal.fire('Current Location', JSON.stringify(selfPos), 'info')
-}
+watch($$(query), v => {
+  completion = ''
+  debounce(search)()
+})
 </script>
 
 <template>
-  <div class="w-full" :style="{ height: embed ? '100vh' : 'calc(100vh - 3.5rem)' }" id="map"></div>
-  <button class="fixed left-10 bottom-10 p-3 bg-gray-700 shadow rounded-full" @click="record"><clipboard-icon class="w-6 text-white" /></button>
+  <div class="w-full h-screen flex flex-col relative items-center" :style="{ height: embed ? '100vh' : 'calc(100vh - 3.5rem)' }">
+    <iframe
+      class="border-0 w-full flex-grow"
+      loading="lazy"
+      :src="`https://www.google.com/maps/embed/v1/place?key=AIzaSyAouu4HsmxgvwGhq0rFOgdw2jbD9bPgN9Y
+        &q=` + q">
+    </iframe>
+    <div class="all-transition bg-white absolute bottom-5 sm:bottom-8 rounded-full px-5 py-2 shadow-md hover:shadow-xl" style="max-width: 70vw;">
+      <input type="text" class="absolute text-gray-500 sm:w-96" :value="completion">
+      <input type="text" class="relative bg-transparent sm:w-96" placeholder="Search Classroom" v-model="query">
+    </div>
+  </div>
 </template>
