@@ -4,6 +4,9 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  server: {
+    proxy: { 'https://us-central1-firebase-gogaucho.cloudfunctions.net/': 'https://us-central1-firebase-gogaucho.cloudfunctions.net/' }
+  },
   plugins: [
     vue({ script: { refSugar: true } }),
     VitePWA({

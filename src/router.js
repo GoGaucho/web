@@ -8,6 +8,7 @@ const index = {
   '/waitz': () => import('./views/Waitz.vue'),
   '/course': () => import('./views/Course.vue'),
   '/planner': () => import('./views/Planner.vue'),
+  '/schedule': () => import('./views/Schedule.vue'),
   '/classroom': () => import('./views/Classroom.vue')
 }
 

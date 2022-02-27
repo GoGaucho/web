@@ -169,7 +169,7 @@ function help () {
 </script>
 
 <template>
-  <div class="p-4 sm:p-10">
+  <div class="p-4 sm:p-10 min-h-full bg-white">
     <h1 class="text-2xl flex items-center mb-4">
       <button class="cursor-pointer" @click="router.push('/course')"><arrow-left-icon class="all-transition w-12 pl-2 pr-3 hover:pl-0 hover:pr-5" /></button>
       Planner
@@ -187,7 +187,6 @@ function help () {
             <tr>
               <th>Code</th>
               <th>Instructor</th>
-              <th>Days</th>
               <th>Time</th>
               <th>Location</th>
             </tr>
@@ -195,14 +194,12 @@ function help () {
               <tr class="border-white bg-gray-200 border-y-1 all-transition cursor-pointer" :set="s = v.sections[lec]" :class="sections[lec].status" @click="choose(k, lec)"><!-- lecture -->
                 <td>{{ lec }}</td>
                 <td><div v-for="i in s.instructors">{{ i }}</div></td>
-                <td><div v-for="p in s.periods">{{ p.days }}</div></td>
                 <td><div v-for="p in s.periods">{{ p.time }}</div></td>
                 <td><div v-for="p in s.periods">{{ p.location }}</div></td>
               </tr>
               <tr class="opacity-60 bg-gray-200 border-white border border-x-0 all-transition cursor-pointer" v-for="sec in ss" :set="s = v.sections[sec]" :class="sections[sec].status" @click="choose(k, lec, sec)">
                 <td>{{ sec }}</td>
                 <td><div v-for="i in s.instructors">{{ i }}</div></td>
-                <td><div v-for="p in s.periods">{{ p.days }}</div></td>
                 <td><div v-for="p in s.periods">{{ p.time }}</div></td>
                 <td><div v-for="p in s.periods">{{ p.location }}</div></td>
               </tr>

@@ -56,7 +56,6 @@ watch(() => props.modelValue, async v => {
           <tr>
             <th>Code</th>
             <th>Instructor</th>
-            <th>Days</th>
             <th>Time</th>
             <th>Location</th>
           </tr>
@@ -64,14 +63,12 @@ watch(() => props.modelValue, async v => {
             <tr class="bg-blue-100 border-white border-y-1" :set="s = course.sections[lec]"><!-- lecture -->
               <td>{{ lec }}</td>
               <td><div v-for="i in s.instructors">{{ i }}</div></td>
-              <td><div v-for="p in s.periods">{{ p.days }}</div></td>
               <td><div v-for="p in s.periods">{{ p.time }}</div></td>
               <td><div v-for="p in s.periods">{{ p.location }}</div></td>
             </tr>
             <tr class="opacity-60 bg-blue-100 border-white border border-x-0 all-transition" v-for="code in ss" :set="s = course.sections[code]">
               <td>{{ code }}</td>
               <td><div v-for="i in s.instructors">{{ i }}</div></td>
-              <td><div v-for="p in s.periods">{{ p.days }}</div></td>
               <td><div v-for="p in s.periods">{{ p.time }}</div></td>
               <td><div v-for="p in s.periods">{{ p.location }}</div></td>
             </tr>

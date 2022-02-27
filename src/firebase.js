@@ -2,6 +2,7 @@ import { reactive } from 'vue'
 import { initializeApp } from 'firebase/app'
 import { getAnalytics, logEvent } from 'firebase/analytics'
 import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore'
+import { getFunctions, httpsCallable } from 'firebase/functions'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyC7WZFIjRUQ01A-SCVs0V_bNdhC8YCPzoI',
@@ -23,3 +24,6 @@ enableIndexedDbPersistence(db)
 
 const analytics = getAnalytics(app)
 export const log = (k, p = {}) => logEvent(analytics, k, p)
+
+const functions = getFunctions(app)
+export const call = (name, params = {}) => httpsCallable(functions, name)(params).then(r => r.data)
