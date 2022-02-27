@@ -13,11 +13,11 @@
     "vue-router": "^4.0.12"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^2.2.0",
+    "@vitejs/plugin-vue": "^2.2.2",
     "autoprefixer": "^10.4.2",
-    "postcss": "^8.4.6",
+    "postcss": "^8.4.7",
     "tailwindcss": "^3.0.23",
-    "vite": "^2.8.3",
+    "vite": "^2.8.4",
     "vite-plugin-pwa": "^0.11.13"
   }
 }
