@@ -19,7 +19,7 @@ async function fetch () {
   if (!raw) return
   data = raw
 }
-watch(() => state.token, fetch)
+watch(() => state.token, fetch, { immediate: true })
 if (LS.schedule) data = JSON.parse(LS.schedule)
 
 let pieces = $computed(() => {
