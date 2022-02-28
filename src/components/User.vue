@@ -1,11 +1,18 @@
 <script setup>
-import { LogoutIcon } from '@heroicons/vue/outline'
+import { LogoutIcon, CalendarIcon } from '@heroicons/vue/outline'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const props = defineProps(['modelValue', 'user'])
 const emits = defineEmits(['update:modelValue'])
 let style = $computed(() => ({ right: props.modelValue ? 0 : '-18rem' }))
 function signOut () {
   const auth = gapi.auth2.getAuthInstance()
   auth.signOut()
+}
+
+function goto (path) {
+  router.push(path)
+  emits('update:modelValue', false)
 }
 </script>
 
@@ -23,8 +30,11 @@ function signOut () {
     </div>
     <h2 class="text-2xl" v-else>Please login</h2>
     <div v-if="props.user" class="mt-3">
-      <button class="text-gray-500 flex items-center w-full border border-x-0 group" @click="signOut">
+      <button class="text-gray-500 flex items-center w-full border-2 border-x-0 group" @click="signOut">
         <logout-icon class="all-transition w-6 m-2 group-hover:mr-3" />Sign out
+      </button>
+      <button class="text-gray-500 flex items-center w-full border-b-2 group" @click="goto('/schedule')">
+        <calendar-icon class="all-transition w-6 m-2 group-hover:mr-3" />Weekly Schedule
       </button>
     </div>
   </div>

@@ -3,6 +3,7 @@ import { ArrowLeftIcon, ChipIcon, InformationCircleIcon } from '@heroicons/vue/o
 import { getDoc, doc } from 'firebase/firestore'
 import { db, state } from '../firebase.js'
 import PanelWrapper from '../components/PanelWrapper.vue'
+import Schedule from '../components/Schedule.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter(), focus = state.course.focus
 
@@ -109,19 +110,12 @@ function choose (k, lec, sec) {
   computeStatus()
 }
 
-const periodStyle = (wTime, s, k) => ({
-  left: 20 * Math.floor(wTime[0] / 1440) + '%',
-  top: 0.10417 * (wTime[0] % 1440 - 480) + '%',
-  height: 0.10417 * (wTime[1] - wTime[0]) + '%',
-  width: '19%',
-  color: isConflict(choices, s, k) ? 'red' : ''
-})
-let periods = $computed(() => {
+let pieces = $computed(() => {
   const res = []
   for (const k in choices) {
     const lec = choices[k].lec, sec = choices[k].sec
-    if (lec) for (const wTime of sections[lec].wTime) res.push({ style: periodStyle(wTime, lec, k), code: lec, course: k })
-    if (sec) for (const wTime of sections[sec].wTime) res.push({ style: periodStyle(wTime, sec, k), code: sec, course: k })
+    if (lec) for (const wTime of sections[lec].wTime) res.push({ wTime, key: k })
+    if (sec) for (const wTime of sections[sec].wTime) res.push({ wTime, key: k })
   }
   return res
 })
@@ -207,14 +201,8 @@ function help () {
           </table>
         </panel-wrapper>
       </div>
-      <div class="relative flex-grow bg-white shadow-md ml-4 grid grid-cols-5 gap-px" style="min-width: 400px; min-height: 70vh;">
-        <template v-for="i in 16">
-          <div class="bg-gray-100 text-xs text-gray-500">{{ i + 7 }}:00</div>
-          <div v-for="j in 4" class="bg-gray-100" />
-        </template>
-        <div class="all-transition absolute text-white font-bold p-1 text-xs border shadow-md text-shadow" :class="focus[p.course].color" v-for="p in periods" :key="p.course" :style="p.style">
-          {{ p.course }}
-        </div>
+      <div class="flex-grow" style="min-width: 520px;">
+        <schedule :pieces="pieces" />
       </div>
     </div>
   </div>
