@@ -37,9 +37,7 @@ let pieces = $computed(() => {
 </script>
 
 <template>
-  <div class="p-4 sm:p-10 h-full flex flex-col">
-    <h1 class="text-2xl">Weekly Schedule</h1>
-    <p class="text-sm text-gray-500">{{ quarter }}</p>
-    <schedule class="flex-grow my-4 shadow-md" :pieces="pieces" />
+  <div class="h-full flex flex-col bg-white">
+    <schedule class="flex-grow" :pieces="pieces" />
   </div>
 </template>
