@@ -1,5 +1,5 @@
 <script setup>
-import { LogoutIcon, CalendarIcon } from '@heroicons/vue/outline'
+import { LogoutIcon, CalendarIcon, InformationCircleIcon } from '@heroicons/vue/outline'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 const props = defineProps(['modelValue', 'user'])
@@ -20,7 +20,7 @@ function goto (path) {
   <transition name="fade">
     <div v-if="props.modelValue" @click="emits('update:modelValue', false)" class="fixed w-full h-screen bg-black opacity-30 z-50 top-0" />
   </transition>
-  <div class="all-transition bg-white w-72 h-screen overflow-y-auto top-0 z-50 fixed p-3 sm: p-6" style="max-width: 90vw;" :style="style">
+  <div class="all-transition bg-white w-72 h-screen overflow-y-auto top-0 z-50 fixed p-3 sm:p-6" style="max-width: 90vw;" :style="style">
     <div class="flex items-center" v-if="props.user">
       <img :src="props.user.photoURL" class="w-10 mr-4 rounded-full">
       <div>
@@ -37,5 +37,6 @@ function goto (path) {
         <calendar-icon class="all-transition w-6 m-2 group-hover:mr-3" />Weekly Schedule
       </button>
     </div>
+    <p class="absolute bottom-2 right-2 select-none text-center text-xs text-gray-500"><span class="mr-4 cursor-pointer" @click="goto('/about')">About GoGaucho Web</span> &copy;2022 GoGaucho</p>
   </div>
 </template>

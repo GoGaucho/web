@@ -18,7 +18,7 @@ const pStyle = p => ({
   left: 20 * Math.floor(p.wTime[0] / 1440) + '%',
   top: 0.10417 * (p.wTime[0] % 1440 - 480) + '%',
   height: 0.10417 * (p.wTime[1] - p.wTime[0]) + '%',
-  width: '19%'
+  width: '19.5%'
 })
 
 let date = $ref(new Date())
@@ -35,17 +35,17 @@ setInterval(() => { const date = new Date() }, 30e3)
 
 <template>
   <div class="w-full h-full p-2 relative bg-white overflow-y-auto flex items-stretch">
-    <div class="flex flex-col w-10 mr-1 text-right" style="min-height: 1000px;"><!-- left -->
+    <div class="flex flex-col mr-1 text-right" style="min-height: 1000px; min-width: 1rem;"><!-- left -->
       <div class="text-right">&nbsp;</div>
-      <div class="flex-grow grid grid-cols-1 text-right font-mono w-10 mr-1 text-sm text-gray-500"><!-- time axis -->
-        <div v-for="i in 16">{{ i + 7 }}:00</div>
+      <div class="flex-grow grid grid-cols-1 text-right font-mono text-xs text-gray-500"><!-- time axis -->
+        <div v-for="i in 16">{{ i + 7 }}</div>
       </div>
     </div>
-    <div class="flex-grow flex flex-col overflow-x-auto" style="min-height: 1000px; min-width: 440px;"><!-- right -->
-      <div class="grid grid-cols-5 text-center">
+    <div class="flex-grow flex flex-col overflow-x-auto" style="min-height: 1000px;"><!-- right -->
+      <div class="grid grid-cols-5 text-center" style="min-width: 416px;">
         <div v-for="d in isMobile ? ds : days">{{ d }}</div>
       </div>
-      <div class="flex-grow grid grid-cols-5 gap-px relative" style="min-width: 440px;"><!-- body -->
+      <div class="flex-grow grid grid-cols-5 gap-px relative" style="min-width: 416px;"><!-- body -->
         <div v-for="j in 80" class="bg-gray-100" />
         <div v-for="p in props.pieces" :style="pStyle(p)" class="all-transition absolute p-1 sm:px-2 text-xs rounded overflow-hidden">
           <div class="font-bold text-shadow">{{ p.key }}</div>
