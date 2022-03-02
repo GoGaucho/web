@@ -8,7 +8,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter(), focus = state.course.focus
 
 let loading = $ref(true), choices = $ref({}), chosenwTime = $ref([])
-const sections = {}, courses = [], conflicts = {}, colors = ['bg-blue-500', 'bg-yellow-500', 'bg-purple-500', 'bg-red-500', 'bg-green-500', 'bg-amber-500', 'bg-sky-500', 'bg-orange-500', 'bg-teal-500']
+const sections = {}, courses = [], conflicts = {}
 async function fetchData () {
   if (!focus) return router.push('/course')
   for (const k in focus) if (!focus[k]) delete focus[k]
@@ -17,11 +17,10 @@ async function fetchData () {
     const c = focus[k] = await getDoc(doc(db, 'course', state.course.quarter + k)).then(r => r.data())
     focus[k] = c
     choices[k] = {}
-    c.color = colors[courses.length]
     courses.push(k)
     for (const s in c.sections) {
       sections[s] = c.sections[s]
-      sections[s].wTime = JSON.parse(sections[s].wTime)
+      for (const p of sections[s].periods) p.wTime = JSON.parse(p.wTime)
     }
   }
   function isOverlap (a, b) {
@@ -29,11 +28,16 @@ async function fetchData () {
       for (const y of b) if (x[1] >= y[0] && x[0] <= y[1]) return true
     }
   }
+  function isConflict (sx, sy) {
+    for (const px of sx.periods) {
+      for (const py of sy.periods) {
+        if (isOverlap(px.wTime, py.wTime)) return true
+      }
+    }
+  }
   for (const x in sections) {
     conflicts[x] = {}
-    for (const y in sections) {
-      conflicts[x][y] = isOverlap(sections[x].wTime, sections[y].wTime)
-    }
+    for (const y in sections) conflicts[x][y] = isConflict(sections[x], sections[y])
   }
   computeStatus()
   loading = false
@@ -112,10 +116,15 @@ function choose (k, lec, sec) {
 
 let pieces = $computed(() => {
   const res = []
+  function addSection (k, s) {
+    for (const p of s.periods) {
+      for (const wTime of p.wTime) res.push({ wTime, key: k, time: p.time.replace(/^(.*?)\s/, ''), location: p.location })
+    }
+  }
   for (const k in choices) {
     const lec = choices[k].lec, sec = choices[k].sec
-    if (lec) for (const wTime of sections[lec].wTime) res.push({ wTime, key: k })
-    if (sec) for (const wTime of sections[sec].wTime) res.push({ wTime, key: k })
+    if (lec) addSection(k, sections[lec])
+    if (sec) addSection(k, sections[sec])
   }
   return res
 })

@@ -42,14 +42,15 @@ setInterval(() => { const date = new Date() }, 30e3)
       </div>
     </div>
     <div class="flex-grow flex flex-col overflow-x-auto" style="min-height: 1000px;"><!-- right -->
-      <div class="grid grid-cols-5 text-center" style="min-width: 416px;">
+      <div class="grid grid-cols-5 text-center" style="min-width: 440px;">
         <div v-for="d in isMobile ? ds : days">{{ d }}</div>
       </div>
-      <div class="flex-grow grid grid-cols-5 gap-px relative" style="min-width: 416px;"><!-- body -->
+      <div class="flex-grow grid grid-cols-5 gap-px relative" style="min-width: 440px;"><!-- body -->
         <div v-for="j in 80" class="bg-gray-100" />
-        <div v-for="p in props.pieces" :style="pStyle(p)" class="all-transition absolute p-1 sm:px-2 text-xs rounded overflow-hidden">
+        <div v-for="p in props.pieces" :style="pStyle(p)" :key="p.key" class="all-transition absolute p-1 sm:px-2 text-xs rounded overflow-hidden">
           <div class="font-bold text-shadow">{{ p.key }}</div>
-          <div class="text-gray-700" v-html="p.content" />
+          <div class="text-gray-700">{{ p.time }}</div>
+          <div class="text-gray-700">{{ p.location }}</div>
           <div class="all-transition absolute bottom-0 top-0 left-0 w-0.5 sm:w-1" :class="colorMap[p.key]" />
           <div class="absolute bottom-0 top-0 left-0 right-0 opacity-20" :class="colorMap[p.key]" />
         </div>

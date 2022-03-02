@@ -28,7 +28,8 @@ let pieces = $computed(() => {
     for (const p of data[k].periods) {
       for (const w of p.wTime) res.push({
         wTime: w, key: k,
-        content: `${p.time.replace(/^(.*?)\s/, '')}<br>${p.location}`
+        time: p.time.replace(/^(.*?)\s/, ''),
+        location: p.location
       })
     }
   }
