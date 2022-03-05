@@ -1,5 +1,5 @@
 <script setup>
-import { LibraryIcon, BookOpenIcon, CakeIcon } from '@heroicons/vue/outline'
+import { LinkIcon, LibraryIcon, BookOpenIcon, CakeIcon } from '@heroicons/vue/outline'
 import banner from '../assets/banner.svg'
 import Wrapper from '../components/Wrapper.vue'
 import { getDoc, doc } from 'firebase/firestore'
@@ -26,6 +26,7 @@ function jump (url) {
     </div>
     <h1 class="text-6xl font-bold text-gray-800 overflow-hidden all-transition">GoGaucho</h1>
     <wrapper :show="show" class="w-3/4 flex flex-wrap relative py-8">
+      <button @click="router.push('/link')"><link-icon class="w-5 mr-2 text-gray-500" />Links</button>
       <button @click="router.push('/course')"><book-open-icon class="w-6 mr-2 text-gray-500" />Course</button>
       <button @click="router.push('/dining')"><cake-icon class="w-6 mr-2 text-gray-500" />Dining Commons</button>
       <button @click="router.push('/waitz')"><library-icon class="w-6 mr-2 text-gray-500" />Building Busyness</button>
