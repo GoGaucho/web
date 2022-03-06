@@ -15,11 +15,20 @@ const links = [{
   name: 'BRAC',
   url: 'https://mybarc.ucsb.edu/SIWeb/login.jsp'
 }, {
+  name: 'Associated Students',
+  url: 'https://www.as.ucsb.edu/'
+}, {
   name: 'Kronos',
   url: 'https://logon.timekeeping.ucsb.edu/wfc/navigator/logon'
 }, {
   name: 'Box',
   url: 'https://sso.services.box.net/sp/startSSO.ping?PartnerIdpId=urn:mace:incommon:ucsb.edu&TargetResource=https%3A%2F%2Fucsb.account.box.com%2Fsso%2Fping_federate%3Ffrom%3Dbox%26redirect_url%3D%252F'
+}, {
+  name: 'Access Card',
+  url: 'https://ucsb-sp.transactcampus.com/eaccounts/AccountSummary.aspx?menu=0'
+}, {
+  name: 'DSP',
+  url: 'https://dsp.sa.ucsb.edu/services/'
 }]
 </script>
 
