@@ -18,6 +18,12 @@ const links = [{
   name: 'Associated Students',
   url: 'https://www.as.ucsb.edu/'
 }, {
+  name: 'The Daily Nexus',
+  url: 'https://dailynexus.com/'
+}, {
+  name: 'CLAS',
+  url: 'https://myclas.sa.ucsb.edu/login.aspx?ReturnUrl=%2f'
+}, {
   name: 'Kronos',
   url: 'https://logon.timekeeping.ucsb.edu/wfc/navigator/logon'
 }, {
@@ -27,7 +33,7 @@ const links = [{
   name: 'Access Card',
   url: 'https://ucsb-sp.transactcampus.com/eaccounts/AccountSummary.aspx?menu=0'
 }, {
-  name: 'DSP',
+  name: 'Disabled Students',
   url: 'https://dsp.sa.ucsb.edu/services/'
 }]
 </script>
