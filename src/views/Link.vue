@@ -28,7 +28,7 @@ const links = [{
     <h1 class="text-2xl">Links</h1>
     <p class="text-sm text-gray-500">Direct links to portals</p>
     <div class="flex items-center flex-wrap my-4">
-      <a v-for="l in links" class="all-transition cursor-pointer rounded-full bg-white text-center py-2 m-2 w-full sm:w-64 font-bold border hover:shadow hover:bg-blue-50" :href="l.url">{{ l.name }}</a>
+      <a v-for="l in links" class="all-transition cursor-pointer rounded-l-full bg-gradient-to-r from-white to-gray-100 sm:to-white sm:text-center px-5 py-2 sm:px-2 m-2 w-full sm:w-64 font-bold sm:border sm:rounded-full hover:shadow hover:from-blue-50" :href="l.url">{{ l.name }}</a>
     </div>
   </div>
 </template>
