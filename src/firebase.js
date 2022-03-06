@@ -15,7 +15,10 @@ const firebaseConfig = {
   measurementId: 'G-N2YCM7TLPH'
 }
 
-export const state = reactive({ course: {} })
+export const state = reactive({
+  course: {},
+  loading: false
+})
 
 export const app = initializeApp(firebaseConfig)
 

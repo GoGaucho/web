@@ -16,11 +16,13 @@ watch($$(data), v => {
 async function fetch () {
   if (!state.token) return
   const raw = await call('student', { token: state.token })
+  state.loading = false
   if (!raw) return
   data = raw
 }
 watch(() => state.token, fetch, { immediate: true })
 if (LS.schedule) data = JSON.parse(LS.schedule)
+else state.loading = 'Loading your schedule...'
 
 let pieces = $computed(() => {
   const res = []

@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import { log } from './firebase.js'
+import { log, state } from './firebase.js'
 
 const index = {
   '/': () => import('./views/Home.vue'),
@@ -22,6 +22,7 @@ router.beforeEach(() => { NProgress.start() })
 router.afterEach((from, to) => {
   Swal.close()
   NProgress.done()
+  state.loading = false
   log('screen_view', {
     firebase_previous_screen: 'web' + from.fullPath,
     firebase_screen: 'web' + to.fullPath
