@@ -1,49 +1,24 @@
 <script setup>
 import { useRouter } from 'vue-router'
 const router = useRouter()
-
-const links = [{
-  name: 'GauchoSpace',
-  url: 'https://sso.ucsb.edu:8443/cas/login?service=https%3A%2F%2Fgauchospace.ucsb.edu%2Fcourses%2Flogin%2Findex.php%3FauthCAS%3DCAS'
-}, {
-  name: 'GOLD',
-  url: 'https://my.sa.ucsb.edu/gold/'
-}, {
-  name: 'Student Health',
-  url: 'https://sso.ucsb.edu/cas/login?service=https%3a%2f%2fstudenthealthoc.sa.ucsb.edu%2f'
-}, {
-  name: 'BRAC',
-  url: 'https://mybarc.ucsb.edu/SIWeb/login.jsp'
-}, {
-  name: 'Associated Students',
-  url: 'https://www.as.ucsb.edu/'
-}, {
-  name: 'The Daily Nexus',
-  url: 'https://dailynexus.com/'
-}, {
-  name: 'CLAS',
-  url: 'https://myclas.sa.ucsb.edu/login.aspx?ReturnUrl=%2f'
-}, {
-  name: 'Kronos',
-  url: 'https://logon.timekeeping.ucsb.edu/wfc/navigator/logon'
-}, {
-  name: 'Box',
-  url: 'https://sso.services.box.net/sp/startSSO.ping?PartnerIdpId=urn:mace:incommon:ucsb.edu&TargetResource=https%3A%2F%2Fucsb.account.box.com%2Fsso%2Fping_federate%3Ffrom%3Dbox%26redirect_url%3D%252F'
-}, {
-  name: 'Access Card',
-  url: 'https://ucsb-sp.transactcampus.com/eaccounts/AccountSummary.aspx?menu=0'
-}, {
-  name: 'Disabled Students',
-  url: 'https://dsp.sa.ucsb.edu/services/'
-}]
+import links from '../utils/links.js'
 </script>
 
 <template>
   <div class="p-4 sm:p-10">
     <h1 class="text-2xl">Links</h1>
     <p class="text-sm text-gray-500">Direct links to portals</p>
-    <div class="flex items-center flex-wrap my-4">
-      <a v-for="l in links" class="all-transition cursor-pointer rounded-l-full bg-gradient-to-r from-white to-gray-100 sm:to-white sm:text-center px-5 py-2 sm:px-2 m-2 w-full sm:w-64 font-bold sm:border sm:rounded-full hover:shadow hover:from-blue-50" :href="l.url">{{ l.name }}</a>
+    <div class="my-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 sm:gap-3 md:gap-2 xl:gap-3">
+      <a v-for="l in links" class="all-transition cursor-pointer rounded flex items-center bg-gradient-to-r from-white to-gray-100 sm:to-white p-2 w-full sm:border hover:shadow hover:from-blue-50" :href="l.href">
+        <picture>
+          <source :srcset="l.icon">
+          <img class="rounded mr-2" style="max-width: 2.5rem; max-height: 2.5rem;" src="/icons/links/UCSB.jpg">
+        </picture>
+        <div class="flex-grow">
+          <h4 class="font-bold">{{ l.name }}</h4>
+          <p class="text-xs text-gray-500">{{ l.description }}</p>
+        </div>
+      </a>
     </div>
   </div>
 </template>
