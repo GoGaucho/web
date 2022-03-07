@@ -3,12 +3,8 @@
 @tailwind utilities;
 
 body {
-  margin: 0px;
   font-family: sans-serif;
-  @apply bg-gray-50;
-}
-#app {
-  min-height: 100vh;
+  @apply bg-gray-100 m-0;
 }
 * {
   outline: none;

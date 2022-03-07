@@ -10,7 +10,7 @@ import { state } from './firebase.js'
 
 <template>
   <bar v-if="!embed"></bar>
-  <div class="relative h-1 bg-gray-100" :style="{ minHeight: embed ? '100vh' : 'calc(100vh - 3.5rem)' }">
+  <div class="relative overflow-y-auto" :style="{ height: embed ? '100vh' : 'calc(100vh - 3.5rem)' }">
     <transition name="fade">
       <loading v-if="state.loading">
         <h3 class="text-gray-700 text-2xl sm:text-3xl font-bold">{{ typeof state.loading === 'string' ? state.loading : 'Just a moment...' }}</h3>

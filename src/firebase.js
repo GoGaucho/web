@@ -20,6 +20,8 @@ export const state = reactive({
   loading: false
 })
 
+window.loading = () => { state.loading = true }
+
 export const app = initializeApp(firebaseConfig)
 
 export const db = getFirestore()
