@@ -29,7 +29,7 @@ function isHide (k, v, key, ges) {
 const computeResult = debounce(() => {
   hideList = {}
   showDept = {}
-  const key = query.search.toUpperCase()
+  const key = query.search.replaceAll(' ', '').toUpperCase()
   const ges = Object.keys(query.GE).filter(x => query.GE[x]).map(x => query.college + '-' + x)
   for (const dept in list) {
     if (query.subject && query.subject !== dept) continue

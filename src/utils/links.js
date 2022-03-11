@@ -13,7 +13,8 @@ export const websites = [{
   icon: '/icons/links/GradeScope.png'
 }, {
   name: 'Student Health',
-  href: 'https://sso.ucsb.edu/cas/login?service=https%3a%2f%2fstudenthealthoc.sa.ucsb.edu%2f'
+  href: 'https://sso.ucsb.edu/cas/login?service=https%3a%2f%2fstudenthealthoc.sa.ucsb.edu%2f',
+  icon: '/icons/links/SH.png'
 }, {
   name: 'BRAC',
   href: 'https://mybarc.ucsb.edu/SIWeb/login.jsp',
@@ -33,7 +34,9 @@ export const websites = [{
   icon: '/icons/links/CLAS.png'
 }, {
   name: 'Kronos',
-  href: 'https://logon.timekeeping.ucsb.edu/wfc/navigator/logon'
+  href: 'https://logon.timekeeping.ucsb.edu/wfc/navigator/logon',
+  description: 'Electronic Working Timecard',
+  icon: '/icons/links/Kronos.jpg'
 }, {
   name: 'Box',
   href: 'https://sso.services.box.net/sp/startSSO.ping?PartnerIdpId=urn:mace:incommon:ucsb.edu&TargetResource=https%3A%2F%2Fucsb.account.box.com%2Fsso%2Fping_federate%3Ffrom%3Dbox%26redirect_url%3D%252F',
@@ -41,7 +44,8 @@ export const websites = [{
   description: 'Box Cloud Storage'
 }, {
   name: 'Access Card',
-  href: 'https://ucsb-sp.transactcampus.com/eaccounts/AccountSummary.aspx?menu=0'
+  href: 'https://ucsb-sp.transactcampus.com/eaccounts/AccountSummary.aspx?menu=0',
+  description: 'GauchoBuck & Meal Plan'
 }, {
   name: 'Disabled Students',
   href: 'https://dsp.sa.ucsb.edu/services/'

@@ -15,7 +15,7 @@ const catalog = ['websites', 'telephones']
         <a v-for="l in links[c]" class="all-transition cursor-pointer rounded flex items-center bg-gradient-to-r from-white to-gray-100 sm:to-white p-2 w-full sm:border hover:shadow hover:from-blue-50" :href="l.href">
           <picture>
             <source :srcset="l.icon">
-            <img class="rounded mr-2" style="max-width: 2.5rem; max-height: 2.5rem;" src="/icons/links/UCSB.jpg">
+            <img class="rounded mr-2 object-cover object-top" style="width: 2.5rem; max-height: 2.5rem;" src="/icons/links/UCSB.jpg">
           </picture>
           <div class="flex-grow">
             <h4 class="font-bold">{{ l.name }}</h4>
