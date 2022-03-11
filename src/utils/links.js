@@ -24,6 +24,10 @@ export const websites = [{
   href: 'https://www.as.ucsb.edu/',
   icon: '/icons/links/AS.png'
 }, {
+  name: 'Gaucho Print',
+  href: 'https://gauchoprint.ucsb.edu/user',
+  icon: 'https://gauchoprint.ucsb.edu/images/icons3/favicon.ico'
+}, {
   name: 'The Daily Nexus',
   href: 'https://dailynexus.com/',
   icon: 'https://dailynexus.com/wp-content/themes/dailynexus/graphics/nexuslogo.png'
