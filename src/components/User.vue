@@ -1,13 +1,13 @@
 <script setup>
-import { LogoutIcon, CalendarIcon, InformationCircleIcon } from '@heroicons/vue/outline'
+import { CalendarIcon } from '@heroicons/vue/outline'
+import Wrapper from './Wrapper.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 const props = defineProps(['modelValue', 'user'])
 const emits = defineEmits(['update:modelValue'])
-let style = $computed(() => ({ right: props.modelValue ? 0 : '-18rem' }))
+
 function signOut () {
-  const auth = gapi.auth2.getAuthInstance()
-  auth.signOut()
+  gapi.auth2.getAuthInstance().signOut()
 }
 
 function goto (path) {
@@ -18,25 +18,22 @@ function goto (path) {
 
 <template>
   <transition name="fade">
-    <div v-if="props.modelValue" @click="emits('update:modelValue', false)" class="fixed w-full h-screen bg-black opacity-30 z-50 top-0" />
+    <div v-if="props.modelValue" @click="emits('update:modelValue', false)" class="fixed w-full h-screen bg-transparant z-50 top-0" />
   </transition>
-  <div class="all-transition bg-white w-72 h-screen overflow-y-auto top-0 z-50 fixed p-3 sm:p-6" style="max-width: 90vw;" :style="style">
-    <div class="flex items-center" v-if="props.user">
-      <img :src="props.user.photoURL" class="w-10 mr-4 rounded-full">
-      <div>
-        <h3 class="text-xl">{{ props.user.name }}</h3>
-        <p class="text-sm text-gray-500">{{ props.user.email }}</p>
+  <div class="fixed z-50 top-16 right-2 rounded shadow-md bg-white w-72" v-if="props.user">
+    <wrapper :show="props.modelValue" class="pt-4 flex flex-col items-center">
+      <img :src="props.user.photoURL" class="w-16 rounded-full">
+      <h3 class="text-xl">{{ props.user.name }}</h3>
+      <p class="text-sm text-gray-500">{{ props.user.email }}</p>
+      <button class="all-transition text-gray-500 border rounded px-4 py-1 my-2 hover:bg-gray-100" @click="signOut">Sign out</button>
+      <hr class="w-full">
+      <button class="all-transition text-gray-500 flex items-center px-4 py-1 my-2 rounded-full border hover:bg-gray-100" @click="goto('/schedule')">
+        <calendar-icon class="w-6 mr-2" />Weekly Schedule
+      </button>
+      <div class="rounded-b bg-gray-100 text-gray-500 text-sm py-2 flex items-center justify-around w-full">
+        <p class="cursor-pointer" @click="goto('/about')">About</p>
+        <p>&copy; GoGaucho 2022</p>
       </div>
-    </div>
-    <h2 class="text-2xl" v-else>Please login</h2>
-    <div v-if="props.user" class="mt-3">
-      <button class="text-gray-500 flex items-center w-full border-2 border-x-0 group" @click="signOut">
-        <logout-icon class="all-transition w-6 m-2 group-hover:mr-3" />Sign out
-      </button>
-      <button class="text-gray-500 flex items-center w-full border-b-2 group" @click="goto('/schedule')">
-        <calendar-icon class="all-transition w-6 m-2 group-hover:mr-3" />Weekly Schedule
-      </button>
-    </div>
-    <p class="absolute bottom-2 right-2 select-none text-center text-xs text-gray-500"><span class="mr-4 cursor-pointer" @click="goto('/about')">About GoGaucho Web</span> &copy;2022 GoGaucho</p>
+    </wrapper>
   </div>
 </template>

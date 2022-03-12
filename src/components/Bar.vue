@@ -3,7 +3,6 @@ import User from './User.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 import { getAuth, signInWithCredential, GoogleAuthProvider } from 'firebase/auth'
-import { UserCircleIcon } from '@heroicons/vue/solid'
 import { log, state } from '../firebase.js'
 
 const provider = new GoogleAuthProvider(), auth = getAuth()
@@ -39,7 +38,7 @@ function login () {
       <img class="mr-2 w-8 rounded" src="/icons/logo.png">GoGaucho
     </h1>
     <img v-if="userInfo" class="w-8 rounded-full cursor-pointer" :src="userInfo.photoURL" @click="showUser = true">
-    <user-circle-icon v-else @click="login" class="w-8 cursor-pointer text-gray-500" />
+    <button v-else @click="login" class="all-transition rounded px-4 py-1 hover:shadow-md bg-blue-500 text-white">Sign in</button>
   </div>
   <user v-model="showUser" :user="userInfo" />
 </template>
