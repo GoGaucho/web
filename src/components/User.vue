@@ -20,14 +20,14 @@ function goto (path) {
   <transition name="fade">
     <div v-if="props.modelValue" @click="emits('update:modelValue', false)" class="fixed w-full h-screen bg-transparant z-50 top-0" />
   </transition>
-  <div class="fixed z-50 top-16 right-2 rounded shadow-md bg-white w-72" v-if="props.user">
+  <div class="fixed z-50 top-16 w-72 rounded shadow-md bg-white all-transition" :class="props.modelValue ? 'right-2' : '-right-72'" v-if="props.user">
     <wrapper :show="props.modelValue" class="pt-4 flex flex-col items-center">
       <img :src="props.user.photoURL" class="w-16 rounded-full">
       <h3 class="text-xl">{{ props.user.name }}</h3>
       <p class="text-sm text-gray-500">{{ props.user.email }}</p>
       <button class="all-transition text-gray-500 border rounded px-4 py-1 my-2 hover:bg-gray-100" @click="signOut">Sign out</button>
       <hr class="w-full">
-      <button class="all-transition text-gray-500 flex items-center px-4 py-1 my-2 rounded-full border hover:bg-gray-100" @click="goto('/schedule')">
+      <button class="all-transition text-gray-500 flex items-center px-4 py-1 my-3 rounded-full border hover:bg-gray-100" @click="goto('/schedule')">
         <calendar-icon class="w-6 mr-2" />Weekly Schedule
       </button>
       <div class="rounded-b bg-gray-100 text-gray-500 text-sm py-2 flex items-center justify-around w-full">
