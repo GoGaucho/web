@@ -1,8 +1,7 @@
 <script setup>
 import { defineAsyncComponent } from 'vue'
-import { useRoute } from 'vue-router'
-const embed = useRoute().query.embed
 const Bar = defineAsyncComponent(() => import('./components/Bar.vue'))
+const embed = window.location.hash.includes('embed')
 
 import Loading from './components/Loading.vue'
 import { state } from './firebase.js'
