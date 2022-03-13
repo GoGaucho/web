@@ -34,7 +34,7 @@ setInterval(() => { const date = new Date() }, 30e3)
 </script>
 
 <template>
-  <div class="w-full h-full p-2 relative bg-white overflow-y-auto flex items-stretch">
+  <div class="w-full h-full relative bg-white overflow-y-auto flex items-stretch">
     <div class="flex flex-col mr-1 text-right" style="min-height: 1000px; min-width: 1rem;"><!-- left -->
       <div class="text-right">&nbsp;</div>
       <div class="flex-grow grid grid-cols-1 text-right font-mono text-xs text-gray-500"><!-- time axis -->

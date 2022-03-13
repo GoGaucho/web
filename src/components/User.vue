@@ -26,8 +26,7 @@ function goto (path) {
       <h3 class="text-xl">{{ props.user.name }}</h3>
       <p class="text-sm text-gray-500">{{ props.user.email }}</p>
       <button class="all-transition text-gray-500 border rounded px-4 py-1 my-2 hover:bg-gray-100" @click="signOut">Sign out</button>
-      <hr class="w-full">
-      <button class="all-transition text-gray-500 flex items-center px-4 py-1 my-3 rounded-full border hover:bg-gray-100" @click="goto('/schedule')">
+      <button class="all-transition w-full text-gray-500 flex items-center px-6 py-3 border border-x-0 hover:bg-gray-100" @click="goto('/schedule')">
         <calendar-icon class="w-6 mr-2" />Weekly Schedule
       </button>
       <div class="rounded-b bg-gray-100 text-gray-500 text-sm py-2 flex items-center justify-around w-full">

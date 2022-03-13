@@ -32,7 +32,7 @@ function getClass (c) {
           <div>
             <h4>{{ name }}</h4>
           </div>
-          <div :class="s.close ? 'text-gray-800' : getClass(s)">{{ s.close || s.busyness + '%' }}</div>
+          <div :class="s.close ? 'text-gray-800 text-xs' : getClass(s)">{{ s.close || s.busyness + '%' }}</div>
           <div class="absolute bottom-0 w-full bg-gray-200">
             <div class="h-1" :class="getClass(s)" :style="{ width: s.busyness + '%' }" />
           </div>
