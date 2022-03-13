@@ -18,6 +18,7 @@ async function fetchData () {
 }
 
 function getData () {
+  data = {}
   if (LS['schedule' + q]) {
     const res = JSON.parse(LS['schedule' + q])
     if (res.timestamp > Date.now() - 604800e3) return data = res.data

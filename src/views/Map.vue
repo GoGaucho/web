@@ -1,14 +1,17 @@
 <script setup>
+import { XIcon } from '@heroicons/vue/outline'
 import { Loader } from 'google-maps'
+import locations from '../utils/locations.js'
+import debounce from '../utils/debounce.js'
+import Wrapper from '../components/Wrapper.vue'
 
-Swal.fire('Notice', 'The map feature is still under development. Locations and classrooms search is coming soon.', 'info')
+const ll = s => ({ lat: Number(s.split(',')[0]), lng: Number(s.split(',')[1]) })
 
 let map = null, self = null, selfBlur = null, marker = null
 let selfPos = $ref(null)
 
-const ll = s => ({ lat: Number(s.split(',')[0]), lng: Number(s.split(',')[1]) })
-
 function center () {
+  result = []
   if (!selfPos) {
     navigator.geolocation.watchPosition(listener, () => {}, { enableHighAccuracy: true })
     return
@@ -53,15 +56,49 @@ async function init () {
   navigator.geolocation.watchPosition(listener, () => {}, { enableHighAccuracy: true })
 }
 init()
+
+// following for search
+let query = $ref(''), result = $ref([])
+
+const computeResult = debounce(() => {
+  if (marker) marker.setPosition(ll('0,0'))
+  if (!query) return result = []
+  const res = new Set(), qu = query.toUpperCase()
+  for (const k in locations) {
+    if (k.toUpperCase().indexOf(qu) === 0) res.add(k)
+  }
+  if (qu.length > 2) {
+    for (const k in locations) {
+      if (k.toUpperCase().indexOf(qu) > 0) res.add(k)
+    }
+  }
+  result = [...res]
+})
+
+function focus (r) {
+  query = r
+  result = []
+  const pos = ll(locations[r])
+  if (marker) marker.setPosition(pos)
+  if (map) map.panTo(pos)
+}
 </script>
 
 <template>
   <div class="w-full h-full flex flex-col relative items-center">
-    <div class="w-full h-full relative" id="map" />
+    <div class="w-full h-full relative" id="map" @click="result = []" />
     <button class="all-transition fixed right-2.5 bottom-48 rounded-sm bg-white shadow p-2" :class="selfPos ? 'text-blue-500' : 'text-gray-500'" @click="center" @dblclick="debug">
       <svg class="w-6" viewBox="0 0 24 24">
         <path fill="currentColor" d="M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8M3.05,13H1V11H3.05C3.5,6.83 6.83,3.5 11,3.05V1H13V3.05C17.17,3.5 20.5,6.83 20.95,11H23V13H20.95C20.5,17.17 17.17,20.5 13,20.95V23H11V20.95C6.83,20.5 3.5,17.17 3.05,13M12,5A7,7 0 0,0 5,12A7,7 0 0,0 12,19A7,7 0 0,0 19,12A7,7 0 0,0 12,5Z" />
       </svg>
     </button>
+    <div class="fixed left-2 bottom-8 w-3/4 bg-white shadow-md rounded" style="max-width: 24rem">
+      <input v-model="query" @input="computeResult" placeholder="Search locations" class="px-3 py-1 w-full rounded font-bold">
+      <x-icon v-if="query" @click="query = ''; result = []" class="w-5 text-gray-500 absolute cursor-pointer right-2 top-1.5" />
+      <hr v-if="result.length" class="w-full">
+      <wrapper :show="result.length" class="h-96 overflow-y-auto p-2">
+        <div v-for="r in result" @click="focus(r)" class="cursor-pointer">{{ r }}</div>
+      </wrapper>
+    </div>
   </div>
 </template>
