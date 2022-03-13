@@ -6,34 +6,9 @@ import Schedule from '../components/Schedule.vue'
 import * as parse from '../utils/parse.js'
 
 const LS = window.localStorage
-let data = $ref({}), q = $ref(''), qs = $ref([])
+let pieces = $ref([]), q = $ref(''), qs = $ref([])
 
-async function fetchData () {
-  state.loading = 'Loading your schedule...'
-  const raw = await call('student', { _: 'schedule', q, token: state.token })
-  state.loading = false
-  if (!raw) return
-  data = raw
-  LS['schedule' + q] = JSON.stringify({ timestamp: Date.now(), data: raw })
-}
-
-function getData () {
-  data = {}
-  if (LS['schedule' + q]) {
-    const res = JSON.parse(LS['schedule' + q])
-    if (res.timestamp > Date.now() - 604800e3) return data = res.data
-  }
-  fetchData()
-}
-
-async function init () {
-  q = await getDoc(doc(db, 'cache', 'quarter')).then(r => r.data().current)
-  qs = [parse.quarterLast(q), q, parse.quarterNext(q)]
-  getData()
-}
-init()
-
-let pieces = $computed(() => {
+function getPieces (data) {
   const res = []
   for (const k in data) {
     for (const p of data[k].periods) {
@@ -45,7 +20,33 @@ let pieces = $computed(() => {
     }
   }
   return res
-})
+}
+
+async function fetchData () {
+  state.loading = 'Loading your schedule...'
+  const raw = await call('student', { _: 'schedule', q, token: state.token })
+  state.loading = false
+  if (!raw) return
+  pieces = getPieces(raw)
+  LS['schedule' + q] = JSON.stringify({ timestamp: Date.now(), pieces })
+}
+
+function getData () {
+  pieces = []
+  if (LS['schedule' + q]) {
+    const res = JSON.parse(LS['schedule' + q])
+    if (res.timestamp > Date.now() - 604800e3) return pieces = res.pieces
+    else delete LS['schedule' + q]
+  }
+  fetchData()
+}
+
+async function init () {
+  q = await getDoc(doc(db, 'cache', 'quarter')).then(r => r.data().current)
+  qs = [parse.quarterLast(q), q, parse.quarterNext(q)]
+  getData()
+}
+init()
 </script>
 
 <template>

@@ -82,6 +82,12 @@ function focus (r) {
   if (marker) marker.setPosition(pos)
   if (map) map.panTo(pos)
 }
+
+function clear () {
+  query = ''
+  if (selfPos && map) map.panTo(selfPos)
+  computeResult()
+}
 </script>
 
 <template>
@@ -94,9 +100,9 @@ function focus (r) {
     </button>
     <div class="fixed left-2 bottom-8 w-3/4 bg-white shadow-md rounded" style="max-width: 24rem">
       <input v-model="query" @input="computeResult" placeholder="Search locations" class="px-3 py-1 w-full rounded font-bold">
-      <x-icon v-if="query" @click="query = ''; result = []" class="w-5 text-gray-500 absolute cursor-pointer right-2 top-1.5" />
+      <x-icon v-if="query" @click="clear" class="w-5 text-gray-500 absolute cursor-pointer right-2 top-1.5" />
       <hr v-if="result.length" class="w-full">
-      <wrapper :show="result.length" class="h-96 overflow-y-auto p-2">
+      <wrapper :show="result.length" class="h-60 overflow-y-auto p-2">
         <div v-for="r in result" @click="focus(r)" class="cursor-pointer">{{ r }}</div>
       </wrapper>
     </div>
