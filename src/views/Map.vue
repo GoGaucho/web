@@ -45,7 +45,7 @@ function listener (e) {
 async function init () {
   const loader = new Loader('AIzaSyAouu4HsmxgvwGhq0rFOgdw2jbD9bPgN9Y')
   const google = await loader.load()
-  map = new google.maps.Map(document.getElementById('map'), { center: ll('34.413604, -119.848901'), zoom: 16, fullscreenControl: false })
+  map = new google.maps.Map(document.getElementById('map'), { center: ll('34.413604, -119.848901'), zoom: 16, fullscreenControl: false, mapTypeControl: false })
   marker = new google.maps.Marker({ position: ll('0, 0'), map })
   selfBlur = new google.maps.Marker({ position: ll('0, 0'), map, zIndex: 1 })
   self = new google.maps.Marker({ position: ll('0, 0'), map, zIndex: 2, icon: {
@@ -98,12 +98,12 @@ function clear () {
         <path fill="currentColor" d="M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8M3.05,13H1V11H3.05C3.5,6.83 6.83,3.5 11,3.05V1H13V3.05C17.17,3.5 20.5,6.83 20.95,11H23V13H20.95C20.5,17.17 17.17,20.5 13,20.95V23H11V20.95C6.83,20.5 3.5,17.17 3.05,13M12,5A7,7 0 0,0 5,12A7,7 0 0,0 12,19A7,7 0 0,0 19,12A7,7 0 0,0 12,5Z" />
       </svg>
     </button>
-    <div class="fixed left-2 bottom-8 w-3/4 bg-white shadow-md rounded" style="max-width: 24rem">
-      <input v-model="query" @input="computeResult" placeholder="Search locations" class="px-3 py-1 w-full rounded font-bold">
-      <x-icon v-if="query" @click="clear" class="w-5 text-gray-500 absolute cursor-pointer right-2 top-1.5" />
+    <div class="absolute top-3 mx-auto w-96 bg-white shadow-md rounded" style="max-width: 90%;">
+      <input v-model="query" @input="computeResult" placeholder="Search locations" class="px-3 py-1.5 w-full rounded font-bold">
+      <x-icon v-if="query" @click="clear" class="w-5 text-gray-500 absolute cursor-pointer right-2 top-2 bg-white" />
       <hr v-if="result.length" class="w-full">
-      <wrapper :show="result.length" class="h-60 overflow-y-auto p-2">
-        <div v-for="r in result" @click="focus(r)" class="cursor-pointer">{{ r }}</div>
+      <wrapper :show="result.length" class="h-60 overflow-y-auto px-2 text-gray-500 text-sm">
+        <div v-for="r in result" @click="focus(r)" class="cursor-pointer py-1">{{ r }}</div>
       </wrapper>
     </div>
   </div>
