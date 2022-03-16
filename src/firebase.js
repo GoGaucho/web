@@ -1,5 +1,6 @@
 import { reactive } from 'vue'
 import { initializeApp } from 'firebase/app'
+import { getStorage, ref, getDownloadURL } from 'firebase/storage'
 import { getAnalytics, logEvent } from 'firebase/analytics'
 import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore'
 import { getFunctions, httpsCallable } from 'firebase/functions'
@@ -23,6 +24,9 @@ export const state = reactive({
 window.loading = () => { state.loading = true }
 
 export const app = initializeApp(firebaseConfig)
+
+export const storage = getStorage(app)
+export const url = path => getDownloadURL(ref(storage, path))
 
 export const db = getFirestore()
 enableIndexedDbPersistence(db)

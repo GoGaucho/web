@@ -1,5 +1,6 @@
 <script setup>
 import fire from '../assets/fire.svg'
+import { url } from '../firebase.js'
 </script>
 
 <template>

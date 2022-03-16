@@ -23,10 +23,7 @@ router.afterEach((from, to) => {
   Swal.close()
   NProgress.done()
   state.loading = false
-  log('screen_view', {
-    firebase_previous_screen: 'web' + from.fullPath,
-    firebase_screen: 'web' + to.fullPath
-  })
+  log('page_view', { page_path: to.path })
 })
 
 export default router
