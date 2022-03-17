@@ -17,9 +17,8 @@ import { getAuth, signInWithCredential, GoogleAuthProvider } from 'firebase/auth
 import { log } from '../firebase.js'
 
 const provider = new GoogleAuthProvider(), auth = getAuth(), LS = window.localStorage
-async function listener (raw) {
+async function listener (token) {
   showPanel = false
-  const token = raw.credential
   if (!token) return
   const res = await signInWithCredential(auth, GoogleAuthProvider.credential(token)).catch(() => false)
   if (!res?.user) {
@@ -43,10 +42,10 @@ google.accounts.id.initialize({
   hosted_domain: 'ucsb.edu',
   auto_select: true,
   cancel_on_tap_outside: false,
-  callback: listener
+  callback: c => listener(c.credential)
 })
 
-if (LS.token) listener({ credential: LS.token })
+if (LS.token) listener(LS.token)
 else google.accounts.id.prompt()
 onMounted(() => {
   google.accounts.id.renderButton(document.getElementById('signin'), { type: 'icon', size: 'medium', shape: 'circle' })
