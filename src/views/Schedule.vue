@@ -23,8 +23,9 @@ function getPieces (data) {
 }
 
 async function fetchData () {
+  pieces = []
   state.loading = 'Loading your schedule...'
-  const raw = await call('student', { _: 'schedule', q, token: state.token })
+  const raw = await call('student', { _: 'schedule', q, token: window.localStorage.token })
   state.loading = false
   if (!raw) return
   pieces = getPieces(raw)
@@ -61,6 +62,6 @@ init()
       <refresh-icon class="w-6 text-gray-500 cursor-pointer" @click="fetchData" />
     </div>
     <hr class="w-full mt-2">
-    <schedule class="flex-grow" :pieces="pieces" />
+    <schedule class="flex-grow" :pieces="pieces" :key="q" />
   </div>
 </template>

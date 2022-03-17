@@ -14,23 +14,28 @@ function goto (path) {
 
 // following are authentication logic
 import { getAuth, signInWithCredential, GoogleAuthProvider } from 'firebase/auth'
-import { log, state } from '../firebase.js'
+import { log } from '../firebase.js'
 
-const provider = new GoogleAuthProvider(), auth = getAuth()
+const provider = new GoogleAuthProvider(), auth = getAuth(), LS = window.localStorage
 async function listener (raw) {
   showPanel = false
   const token = raw.credential
   if (!token) return
   const res = await signInWithCredential(auth, GoogleAuthProvider.credential(token)).catch(() => false)
-  if (!res?.user) return user = {}
-  state.token = token
+  if (!res?.user) {
+    if (LS.token) google.accounts.id.prompt()
+    delete LS.token
+    user = {}
+    return
+  }
   user = {
     name: res.user.displayName,
     email: res.user.email,
     photoURL: res.user.photoURL
   }
+  if (!LS.token) showPanel = true
+  LS.token = token
   log('web_login')
-  showPanel = true
 }
 
 google.accounts.id.initialize({
@@ -40,7 +45,9 @@ google.accounts.id.initialize({
   cancel_on_tap_outside: false,
   callback: listener
 })
-google.accounts.id.prompt()
+
+if (LS.token) listener({ credential: LS.token })
+else google.accounts.id.prompt()
 onMounted(() => {
   google.accounts.id.renderButton(document.getElementById('signin'), { type: 'icon', size: 'medium', shape: 'circle' })
 })
@@ -48,7 +55,7 @@ onMounted(() => {
 function signOut () {
   showPanel = false
   user = {}
-  state.token = ''
+  delete LS.token
   auth.signOut()
 }
 </script>
