@@ -23,9 +23,10 @@ async function listener (user) {
 }
 
 gapi.load('auth2', async () => {
-  gapi.auth2.init({ client_id: '1083649636208-smr7a1d16cl4bl9ufmn0otn8b1pnk4jc.apps.googleusercontent.com', hosted_domain: 'ucsb.edu' })
-  gAuth =  gapi.auth2.getAuthInstance()
-  gAuth.then(() => { setTimeout(() => { ready = true }, 500) })
+  gAuth = gapi.auth2.init({ client_id: '1083649636208-smr7a1d16cl4bl9ufmn0otn8b1pnk4jc.apps.googleusercontent.com', hosted_domain: 'ucsb.edu' })
+  gAuth.then(() => { setTimeout(() => { ready = true }, 500) }, e => {
+    Swal.fire('Error', e.error, 'error')
+  })
   gAuth.currentUser.listen(listener)
 })
 
