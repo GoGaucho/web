@@ -2,7 +2,6 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import { log, state } from './firebase.js'
 
 const index = {
-  '/': () => import('./views/Home.vue'),
   '/about': () => import('./views/About.vue'),
   '/link': () => import('./views/Link.vue'),
   '/map': () => import('./views/Map.vue'),
@@ -11,7 +10,8 @@ const index = {
   '/course': () => import('./views/Course.vue'),
   '/planner': () => import('./views/Planner.vue'),
   '/schedule': () => import('./views/Schedule.vue'),
-  '/classroom': () => import('./views/Classroom.vue')
+  '/classroom': () => import('./views/Classroom.vue'),
+  '/:any(.*)*': () => import('./views/Home.vue')
 }
 
 const routes = []
