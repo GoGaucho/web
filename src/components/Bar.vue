@@ -6,7 +6,8 @@ import { getAuth, signInWithCredential, GoogleAuthProvider } from 'firebase/auth
 import { log, state } from '../firebase.js'
 
 const provider = new GoogleAuthProvider(), auth = getAuth()
-let userInfo = $ref(null), showUser = $ref(false)
+let gAuth = null
+let userInfo = $ref(null), showUser = $ref(false), ready = $ref(false)
 
 async function listener (user) {
   const profile = user.getBasicProfile()
@@ -23,12 +24,13 @@ async function listener (user) {
 
 gapi.load('auth2', async () => {
   gapi.auth2.init({ client_id: '1083649636208-smr7a1d16cl4bl9ufmn0otn8b1pnk4jc.apps.googleusercontent.com', hosted_domain: 'ucsb.edu' })
-  gapi.auth2.getAuthInstance().currentUser.listen(listener)
+  gAuth =  gapi.auth2.getAuthInstance()
+  gAuth.then(() => { setTimeout(() => { ready = true }, 500) })
+  gAuth.currentUser.listen(listener)
 })
 
 function login () {
-  const auth = gapi.auth2.getAuthInstance()
-  auth.signIn({ scope: 'profile email' })
+  gAuth.signIn({ scope: 'profile email' })
 }
 </script>
 
@@ -37,8 +39,10 @@ function login () {
     <h1 class="text-2xl font-bold flex items-center cursor-pointer group" @click="router.push('/')">
       <img class="mr-2 w-8 rounded" src="/icons/logo.png">GoGaucho
     </h1>
-    <img v-if="userInfo" class="w-8 rounded-full cursor-pointer" :src="userInfo.photoURL" @click="showUser = true">
-    <button v-else @click="login" class="all-transition rounded px-4 py-1 hover:shadow-md bg-blue-500 text-white">Sign in</button>
+    <template v-if="ready">
+      <img v-if="userInfo" class="w-8 rounded-full cursor-pointer" :src="userInfo.photoURL" @click="showUser = true">
+      <button v-else @click="login" class="all-transition rounded px-4 py-1 hover:shadow-md bg-blue-500 text-white">Sign in</button>
+    </template>
   </div>
   <user v-model="showUser" :user="userInfo" />
 </template>
