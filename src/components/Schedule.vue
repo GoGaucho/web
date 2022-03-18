@@ -34,27 +34,29 @@ setInterval(() => { const date = new Date() }, 30e3)
 </script>
 
 <template>
-  <div class="w-full h-full relative bg-white overflow-y-auto flex items-stretch">
-    <div class="flex flex-col mr-1 text-right" style="min-height: 1000px; min-width: 1rem;"><!-- left -->
-      <div class="text-right">&nbsp;</div>
-      <div class="flex-grow grid grid-cols-1 text-right font-mono text-xs text-gray-500"><!-- time axis -->
-        <div v-for="i in 16">{{ i + 7 }}</div>
-      </div>
-    </div>
-    <div class="flex-grow flex flex-col overflow-x-auto" style="min-height: 1000px;"><!-- right -->
-      <div class="grid grid-cols-5 text-center" style="min-width: 440px;">
-        <div v-for="d in isMobile ? ds : days">{{ d }}</div>
-      </div>
-      <div class="flex-grow grid grid-cols-5 gap-px relative" style="min-width: 440px;"><!-- body -->
-        <div v-for="j in 80" class="bg-gray-100" />
-        <div v-for="p in props.pieces" :style="pStyle(p)" :key="p.key" class="all-transition absolute p-1 sm:px-2 text-xs rounded overflow-hidden">
-          <div class="font-bold text-shadow">{{ p.key }}</div>
-          <div class="text-gray-700">{{ p.time }}</div>
-          <div class="text-gray-700">{{ p.location }}</div>
-          <div class="all-transition absolute bottom-0 top-0 left-0 w-0.5 sm:w-1" :class="colorMap[p.key]" />
-          <div class="absolute bottom-0 top-0 left-0 right-0 opacity-20" :class="colorMap[p.key]" />
+  <div class="w-full h-full relative bg-white overflow-y-auto">
+    <div class="flex overflow-y-hidden" style="height: 1000px;">
+      <div class="mr-1 text-right h-full" style="width: 1rem;"><!-- left -->
+        <div style="height: 24px;">&nbsp;</div>
+        <div class="grid grid-cols-1 text-right font-mono text-xs text-gray-500" style="height: 976px;"><!-- time axis -->
+          <div v-for="i in 16">{{ i + 7 }}</div>
         </div>
-        <div class="flex items-center absolute bg-blue-500 h-0.5 w-1/5" :style="cStyle" />
+      </div>
+      <div class="flex-grow overflow-x-auto h-full overflow-y-hidden"><!-- right -->
+        <div class="grid grid-cols-5 text-center w-full" style="min-width: 440px; height: 24px;">
+          <div v-for="d in isMobile ? ds : days">{{ d }}</div>
+        </div>
+        <div class="grid grid-cols-5 gap-px relative w-full" style="min-width: 440px; height: 976px;"><!-- body -->
+          <div v-for="j in 80" class="bg-gray-100" />
+          <div v-for="p in props.pieces" :style="pStyle(p)" :key="p.key" class="all-transition absolute p-1 sm:px-2 text-xs rounded overflow-hidden">
+            <div class="font-bold text-shadow">{{ p.key }}</div>
+            <div class="text-gray-700">{{ p.time }}</div>
+            <div class="text-gray-700">{{ p.location }}</div>
+            <div class="all-transition absolute bottom-0 top-0 left-0 w-0.5 sm:w-1" :class="colorMap[p.key]" />
+            <div class="absolute bottom-0 top-0 left-0 right-0 opacity-20" :class="colorMap[p.key]" />
+          </div>
+          <div class="flex items-center absolute bg-blue-500 h-0.5 w-1/5" :style="cStyle" />
+        </div>
       </div>
     </div>
   </div>

@@ -52,7 +52,7 @@ init()
 
 <template>
   <div class="h-full flex flex-col bg-white">
-    <div class="mt-4 mx-4 flex justify-between">
+    <div class="mt-4 mx-4 flex justify-between items-center">
       <div>
         <h1 class="text-2xl">Weekly Schedule</h1>
         <select class="p-0 m-0 bg-transparent text-sm block" v-model="q" @change="getData">
