@@ -69,7 +69,7 @@ watch(() => state.course.quarter, async v => {
   <div class="p-4 sm:p-10">
     <h1 class="text-2xl flex items-center mb-4">
       Course
-      <select class="text-base bg-white border mx-2 px-2 py-1 rounded-full" v-if="quarters.length" v-model="state.course.quarter">
+      <select class="text-base bg-white border mx-2 px-4 py-1 rounded-full appearance-none cursor-pointer" v-if="quarters.length" v-model="state.course.quarter">
         <option v-for="q in quarters" :value="q">{{ parse.quarter(q) }}</option>
       </select>
     </h1>
@@ -85,15 +85,15 @@ watch(() => state.course.quarter, async v => {
       <div class="flex items-center flex-wrap py-1"><!-- query -->
         <label class="font-bold mx-4 my-1">
           Search: 
-          <input class="py-1 px-2 border rounded bg-white" type="text" v-model="query.search" placeholder="Course ID or Title">
+          <input class="py-1 px-2 border rounded bg-transparent appearance-none" type="text" v-model="query.search" placeholder="Course ID or Title">
         </label>
-        <select class="py-1 px-2 border rounded bg-white mx-4 my-1" v-model="query.subject">
+        <select class="py-1.5 px-2 border rounded bg-transparent mx-4 my-1" v-model="query.subject">
           <option value="">All</option>
           <option v-for="dept in subjects" :value="dept">{{ dept }}: {{ lookup.subjects[dept] }}</option>
         </select>
         <label class="font-bold mx-4 my-1 flex items-center flex-wrap">
           GE:
-          <select class="py-1 px-2 mx-2 border rounded bg-white" v-model="query.college" @change="query.GE = {}">
+          <select class="py-1.5 px-2 mx-2 border rounded bg-trans" v-model="query.college" @change="query.GE = {}">
             <option v-for="(v, k) in lookup.GEs">{{ k }}</option>
           </select>
           <div>

@@ -55,7 +55,7 @@ init()
     <div class="mt-4 mx-4 flex justify-between">
       <div>
         <h1 class="text-2xl">Weekly Schedule</h1>
-        <select class="p-0 m-0 bg-transparent text-sm" v-model="q" @change="getData">
+        <select class="p-0 m-0 bg-transparent text-sm block" v-model="q" @change="getData">
           <option v-for="o in qs" :value="o">{{ parse.quarter(o) }}</option>
         </select>
       </div>
