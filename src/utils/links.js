@@ -20,10 +20,6 @@ export const websites = [{
   href: 'https://mybarc.ucsb.edu/SIWeb/login.jsp',
   description: 'Billing Information'
 }, {
-  name: 'Associated Students',
-  href: 'https://www.as.ucsb.edu/',
-  icon: '/icons/links/AS.png'
-}, {
   name: 'Gaucho Print',
   href: 'https://gauchoprint.ucsb.edu/user',
   icon: 'https://gauchoprint.ucsb.edu/images/icons3/favicon.ico'

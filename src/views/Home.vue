@@ -24,7 +24,7 @@ function jump (url) {
         <div class="bg-blue-200 text-blue-700 p-2 flex items-center justify-center" v-html="announcement" />
       </wrapper>
     </div>
-    <h1 class="text-6xl font-bold text-gray-800 overflow-hidden all-transition">GoGaucho</h1>
+    <h1 class="text-6xl font-bold text-gray-800">GoGaucho</h1>
     <wrapper :show="show" class="w-3/4 flex flex-wrap relative py-8">
       <button @click="router.push('/link')"><link-icon class="w-5 mr-2 text-gray-500" />Links</button>
       <button @click="router.push('/map')"><map-icon class="w-5 mr-2 text-gray-500" />Map</button>
