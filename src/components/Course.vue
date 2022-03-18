@@ -52,7 +52,7 @@ watch(() => props.modelValue, async v => {
       </p>
       <hr class="my-3">
       <div class="w-full overflow-x-auto">
-        <table v-if="course.tree" class="w-full text-center" style="min-width: 450px;">
+        <table v-if="course.tree" class="w-full text-center" style="min-width: 480px;">
           <tr>
             <th>Code</th>
             <th>Instructor</th>

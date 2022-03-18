@@ -164,8 +164,8 @@ function help () {
       <p class="bg-green-200">Everything is OK</p>
       <p class="bg-red-200 line-through">Conflicts with chosen schedule</p>
       <p class="bg-yellow-200 italic">Guarantee conflicts in the future</p>
-      <p class="mt-2"><em>Note: you CAN choose sections with conflicts. Don't forget to double check conflicts (marked with red text) on the schedule!</em></p>
-      <p class="mt-4"><b>Auto Choose</b> will automatically choose one solution for you. It will not touch your chosen ones, but try it best to find a solution for undecided ones.</p>
+      <p class="mt-2"><em>Note: you CAN choose sections with conflicts. Don't forget to double check on the schedule!</em></p>
+      <p class="mt-4"><b>Auto Choose</b> will automatically choose one solution for you. It will not touch your chosen (blue) ones, but try it best to find a solution (green) for undecided ones.</p>
     </div>`
   })
 }
@@ -183,7 +183,7 @@ function help () {
       <button class="text-gray-500 flex items-center ml-2" @click="help"><information-circle-icon class="w-4 mr-1" />Help</button>
     </div>
     <div class="flex items-start overflow-x-auto" style="min-height: 70vh;">
-      <div class="overflow-x-auto shadow-md" style="min-width: 420px;">
+      <div class="overflow-x-auto shadow-md" style="min-width: 480px;">
         <!-- course list -->
         <panel-wrapper v-if="!loading" v-for="(v, k) in focus" :title="k" :class="choices[k]?.done ? 'bg-blue-100' : 'bg-gray-100'">
           <table v-if="v.tree" class="w-full text-center">
