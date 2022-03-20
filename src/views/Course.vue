@@ -5,14 +5,14 @@ import { getDoc, doc } from 'firebase/firestore'
 import { db, state } from '../firebase.js'
 import * as parse from '../utils/parse.js'
 import debounce from '../utils/debounce.js'
-import * as subjects from '../utils/subjects.js'
+import * as lookup from '../utils/lookup.js'
 import Course from '../components/Course.vue'
 import Wrapper from '../components/Wrapper.vue'
 import PanelWrapper from '../components/PanelWrapper.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
-let loading = $ref(true), list = $ref(null), hideList = $ref({}), showDept = $ref({}), subjects = $ref([])
+let loading = $ref(true), list = $ref(null), hideList = $ref({}), showSub = $ref({}), subjects = $ref([])
 let quarters = $ref([]), focus = $ref('')
 const query = reactive({
   search: '', subject: '', college: '', GE: {}
@@ -28,19 +28,19 @@ function isHide (k, v, key, ges) {
 
 const computeResult = debounce(() => {
   hideList = {}
-  showDept = {}
+  showSub = {}
   const key = query.search.replaceAll(' ', '').toUpperCase()
   const ges = Object.keys(query.GE).filter(x => query.GE[x]).map(x => query.college + '-' + x)
-  for (const dept in list) {
-    if (query.subject && query.subject !== dept) continue
+  for (const sub in list) {
+    if (query.subject && query.subject !== sub) continue
     let hasOne = false
-    for (const k in list[dept]) {
-      hideList[k] = isHide(k, list[dept][k], key, ges)
+    for (const k in list[sub]) {
+      hideList[k] = isHide(k, list[sub][k], key, ges)
       if (!hideList[k]) hasOne = true
     }
-    if (hasOne) showDept[dept] = 0
+    if (hasOne) showSub[sub] = 0
   }
-  if (Object.keys(showDept).length === 1) showDept[Object.keys(showDept)[0]] = 1
+  if (Object.keys(showSub).length === 1) showSub[Object.keys(showSub)[0]] = 1
 })
 watch(query, computeResult)
 
@@ -89,24 +89,24 @@ watch(() => state.course.quarter, async v => {
         </label>
         <select class="py-1 px-2 border rounded bg-transparent mx-4 my-1" v-model="query.subject">
           <option value="">All subjects</option>
-          <option v-for="s in subjects" :value="s">{{ s }}: {{ subjects.subjects[s] }}</option>
+          <option v-for="s in subjects" :value="s">{{ s }}: {{ lookup.subjects[s] }}</option>
         </select>
         <label class="font-bold mx-4 my-1 flex items-center flex-wrap">
           GE:
           <select class="py-1 px-2 mx-2 border rounded bg-transparent" v-model="query.college" @change="query.GE = {}">
-            <option v-for="(v, k) in subjects.GEs">{{ k }}</option>
+            <option v-for="(v, k) in lookup.GEs">{{ k }}</option>
           </select>
           <div>
-            <button v-for="g in subjects.GEs[query.college]" class="all-transition border text-sm rounded px-1 m-1" :class="query.GE[g] ? 'border-orange-400 text-orange-400 bg-orange-100' : 'border-blue-400 text-blue-400 bg-blue-100'" @click="query.GE[g] = !query.GE[g]">{{ g }}</button>
+            <button v-for="g in lookup.GEs[query.college]" class="all-transition border text-sm rounded px-1 m-1" :class="query.GE[g] ? 'border-orange-400 text-orange-400 bg-orange-100' : 'border-blue-400 text-blue-400 bg-blue-100'" @click="query.GE[g] = !query.GE[g]">{{ g }}</button>
           </div>
         </label>
       </div>
     </div>
     <div class="flex items-start" v-if="!loading">
       <div class="w-full md:w-80 md:mr-6 shadow-md" style="min-width: 20rem;"><!-- course list -->
-        <template v-for="dept in subjects"><!-- subject -->
-          <panel-wrapper v-if="showDept[dept] > -1" :title="dept + ': ' + subjects.subjects[dept]" v-model="showDept[dept]">
-            <template v-for="(v, k) in list[dept]">
+        <template v-for="sub in subjects"><!-- subject -->
+          <panel-wrapper v-if="showSub[sub] > -1" :title="sub + ': ' + lookup.subjects[sub]" v-model="showSub[sub]">
+            <template v-for="(v, k) in list[sub]">
               <!-- course -->
               <div class="bg-white border p-2 cursor-pointer" v-if="!hideList[k]" @click="focus = k">
                 <h3 class="pl-2">{{ k }}: {{ v[0] }}</h3>
