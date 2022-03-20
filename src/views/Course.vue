@@ -5,7 +5,7 @@ import { getDoc, doc } from 'firebase/firestore'
 import { db, state } from '../firebase.js'
 import * as parse from '../utils/parse.js'
 import debounce from '../utils/debounce.js'
-import * as lookup from '../utils/lookup.js'
+import * as subjects from '../utils/subjects.js'
 import Course from '../components/Course.vue'
 import Wrapper from '../components/Wrapper.vue'
 import PanelWrapper from '../components/PanelWrapper.vue'
@@ -89,15 +89,15 @@ watch(() => state.course.quarter, async v => {
         </label>
         <select class="py-1 px-2 border rounded bg-transparent mx-4 my-1" v-model="query.subject">
           <option value="">All subjects</option>
-          <option v-for="s in subjects" :value="s">{{ s }}: {{ lookup.subjects[s] }}</option>
+          <option v-for="s in subjects" :value="s">{{ s }}: {{ subjects.subjects[s] }}</option>
         </select>
         <label class="font-bold mx-4 my-1 flex items-center flex-wrap">
           GE:
           <select class="py-1 px-2 mx-2 border rounded bg-transparent" v-model="query.college" @change="query.GE = {}">
-            <option v-for="(v, k) in lookup.GEs">{{ k }}</option>
+            <option v-for="(v, k) in subjects.GEs">{{ k }}</option>
           </select>
           <div>
-            <button v-for="g in lookup.GEs[query.college]" class="all-transition border text-sm rounded px-1 m-1" :class="query.GE[g] ? 'border-orange-400 text-orange-400 bg-orange-100' : 'border-blue-400 text-blue-400 bg-blue-100'" @click="query.GE[g] = !query.GE[g]">{{ g }}</button>
+            <button v-for="g in subjects.GEs[query.college]" class="all-transition border text-sm rounded px-1 m-1" :class="query.GE[g] ? 'border-orange-400 text-orange-400 bg-orange-100' : 'border-blue-400 text-blue-400 bg-blue-100'" @click="query.GE[g] = !query.GE[g]">{{ g }}</button>
           </div>
         </label>
       </div>
@@ -105,7 +105,7 @@ watch(() => state.course.quarter, async v => {
     <div class="flex items-start" v-if="!loading">
       <div class="w-full md:w-80 md:mr-6 shadow-md" style="min-width: 20rem;"><!-- course list -->
         <template v-for="dept in subjects"><!-- subject -->
-          <panel-wrapper v-if="showDept[dept] > -1" :title="dept + ': ' + lookup.subjects[dept]" v-model="showDept[dept]">
+          <panel-wrapper v-if="showDept[dept] > -1" :title="dept + ': ' + subjects.subjects[dept]" v-model="showDept[dept]">
             <template v-for="(v, k) in list[dept]">
               <!-- course -->
               <div class="bg-white border p-2 cursor-pointer" v-if="!hideList[k]" @click="focus = k">

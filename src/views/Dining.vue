@@ -24,7 +24,7 @@ getDoc(doc(db, 'cache', 'dining')).then(r => {
     <p v-if="!data" class="text-sm text-gray-500">Loading...</p>
     <p v-else class="text-sm text-gray-500">{{ date }}</p>
     <div class="my-4" v-if="data">
-      <div class="my-2">
+      <div class="my-2" v-if="Object.keys(data).length">
         <select class="py-1 px-4 border rounded-full bg-white appearance-none cursor-pointer" v-model="dc">
           <option v-for="(v, k) in dcs" :value="k">{{ v }}</option>
         </select>

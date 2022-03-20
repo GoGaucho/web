@@ -20,13 +20,13 @@ init()
     <div class="w-full relative overflow-hidden" style="max-height: 24rem;">
       <img class="w-full h-full" src="https://my.sa.ucsb.edu/catalog/Current/Images/photo_catalognoborder.jpg">
       <div class="absolute top-0 h-full w-full bg-white opacity-60" />
-      <div class="absolute top-0 h-full w-full flex flex-col justify-center">
-        <h1 class="text-3xl sm:text-5xl font-bold mt-2" style="color: #0b254e;">We are here for <br> your success.</h1>
+      <div class="absolute top-0 h-full w-full flex flex-col justify-center" style="color: #0b254e;">
+        <h1 class="text-3xl sm:text-5xl font-bold mt-2">We are here for <br> your success.</h1>
       </div>
     </div>
     <div class="p-4 sm:p-10 w-full" style="max-width: 800px;">
       <h2 class="text-xl mt-20 mb-4 font-bold">What's GoGaucho?</h2>
-      <p>GoGaucho is the best campus app for UCSB students. <br class="hidden sm:block"> GoGaucho Web is the next generation WebApp, which is designed to serve UCSB students anywhere, anytime, and on any platforms.</p>
+      <p>GoGaucho is the best campus app for UCSB students. <br class="hidden sm:block"> GoGaucho Web is the next generation WebApp, which is designed to serve UCSB students anywhere, anytime, and on any platforms simply by visiting <a class="underline">ucsb.app</a></p>
       <h2 class="text-xl mt-20 mb-4 font-bold">How to install?</h2>
       <p>Install for better experiences.</p>
       <panel-wrapper title="Desktop (Chrome)" class="bg-white mt-4">
