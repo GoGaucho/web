@@ -25,7 +25,7 @@ function getPieces (data) {
 async function fetchData () {
   pieces = []
   state.loading = 'Loading your schedule...'
-  const raw = await call('student', { _: 'schedule', q, token: window.localStorage.token })
+  const raw = await call('student', { _: 'schedule', q, token: LS.token })
   state.loading = false
   if (!raw) return
   pieces = getPieces(raw)
