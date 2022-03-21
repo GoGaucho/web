@@ -25,15 +25,17 @@ async function fetchData () {
       for (const p of sections[s].periods) p.wTime = JSON.parse(p.wTime)
     }
   }
-  function isOverlap (a, b) {
-    for (const x of a) {
-      for (const y of b) if (x[1] >= y[0] && x[0] <= y[1]) return true
-    }
-  }
+  const isOverlap = (x, y) => x[1] >= y[0] && x[0] <= y[1]
   function isConflict (sx, sy) {
+    if (sx.session && sy.session && sx.session != sy.session) {
+      const mx = sx.session.match(/\((.*?)\s\-\s(.*?)\)/), my = sy.session.match(/\((.*?)\s\-\s(.*?)\)/)
+      if (!isOverlap([mx[1], mx[2]], [my[1], my[2]])) return false
+    }
     for (const px of sx.periods) {
       for (const py of sy.periods) {
-        if (isOverlap(px.wTime, py.wTime)) return true
+        for (const x of px.wTime) {
+          for (const y of py.wTime) if (isOverlap(x, y)) return true
+        }
       }
     }
   }

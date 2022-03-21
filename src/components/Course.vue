@@ -28,7 +28,6 @@ watch(() => props.modelValue, async v => {
   }
   sessions = [...ses].sort()
   if (sessions.length) session = sessions[0]
-  console.log(course.sections)
   setTimeout(() => { course.show = 1 })
 })
 </script>
