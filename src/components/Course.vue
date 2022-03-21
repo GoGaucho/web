@@ -42,6 +42,7 @@ watch(() => props.modelValue, async v => {
         Focus
       </button>
       <p class="my-2">{{ course.description }}</p>
+      <p v-if="course.session"><b>Session:</b> {{ course.session }}</p>
       <p><b>Units:</b> {{ course.units }}</p>
       <p><b>Grading:</b> {{ gradings[course.grading] }}</p>
       <p><b>Contact Hours:</b> {{ course.hours }}</p>

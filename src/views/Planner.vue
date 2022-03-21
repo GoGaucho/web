@@ -185,7 +185,7 @@ function help () {
     <div class="flex items-start overflow-x-auto" style="min-height: 70vh;">
       <div class="overflow-x-auto shadow-md" style="min-width: 480px;">
         <!-- course list -->
-        <panel-wrapper v-if="!loading" v-for="(v, k) in focus" :title="k" :class="choices[k]?.done ? 'bg-blue-100' : 'bg-gray-100'">
+        <panel-wrapper v-if="!loading" v-for="(v, k) in focus" :title="k + (v.session ? ` (Session: ${v.session})` : '')" :class="choices[k]?.done ? 'bg-blue-100' : 'bg-gray-100'">
           <table v-if="v.tree" class="w-full text-center">
             <tr>
               <th>Code</th>

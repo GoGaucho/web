@@ -53,7 +53,7 @@ async function fetchList () {
 }
 
 getDoc(doc(db, 'cache', 'quarter')).then(r => {
-  quarters = r.data().course
+  quarters = r.data().course.split(',')
   if (quarters.includes(state.course.quarter)) fetchList()
   else state.course.quarter = quarters[0]
 })
