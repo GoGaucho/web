@@ -183,11 +183,12 @@ function help () {
       <button class="text-gray-500 flex items-center ml-2" @click="help"><information-circle-icon class="w-4 mr-1" />Help</button>
     </div>
     <div class="flex items-start overflow-x-auto" style="min-height: 70vh;">
-      <div class="overflow-x-auto shadow-md" style="min-width: 480px;">
+      <div class="overflow-x-auto shadow-md" :style="{ minWidth: state.course.quarter[4] === '3' ? '560px' : '480px' }">
         <!-- course list -->
-        <panel-wrapper v-if="!loading" v-for="(v, k) in focus" :title="k + (v.session ? ' | session ' + v.session : '')" :class="choices[k]?.done ? 'bg-blue-100' : 'bg-gray-100'">
+        <panel-wrapper v-if="!loading" v-for="(v, k) in focus" :title="k" :class="choices[k]?.done ? 'bg-blue-100' : 'bg-gray-100'">
           <table v-if="v.tree" class="w-full text-center">
             <tr>
+              <th v-if="state.course.quarter[4] === '3'">Session</th>
               <th>Code</th>
               <th>Instructor</th>
               <th>Time</th>
@@ -195,12 +196,14 @@ function help () {
             </tr>
             <template v-for="(ss, lec) in v.tree">
               <tr class="border-white bg-gray-200 border-y-1 all-transition cursor-pointer" :set="s = v.sections[lec]" :class="sections[lec].status" @click="choose(k, lec)"><!-- lecture -->
+                <td class="text-sm" v-if="s.session">{{ s.session }}</td>
                 <td>{{ lec }}</td>
                 <td><div v-for="i in s.instructors">{{ i }}</div></td>
                 <td><div v-for="p in s.periods">{{ p.time }}</div></td>
                 <td><div v-for="p in s.periods">{{ p.location }}</div></td>
               </tr>
               <tr class="opacity-60 bg-gray-200 border-white border border-x-0 all-transition cursor-pointer" v-for="sec in ss" :set="s = v.sections[sec]" :class="sections[sec].status" @click="choose(k, lec, sec)">
+                <td class="text-sm" v-if="s.session">{{ s.session }}</td>
                 <td>{{ sec }}</td>
                 <td><div v-for="i in s.instructors">{{ i }}</div></td>
                 <td><div v-for="p in s.periods">{{ p.time }}</div></td>
