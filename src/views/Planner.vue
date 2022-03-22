@@ -8,7 +8,8 @@ import { useRouter } from 'vue-router'
 const router = useRouter(), focus = state.course.focus
 
 let loading = $ref(true), choices = $ref({}), chosenwTime = $ref([])
-let isSummer = $computed(() => state.course.quarter[4] === '3')
+let session = $ref(null), sessions = $ref(new Set())
+let isSummer = $computed(() => state.course?.quarter && state.course.quarter[4] === '3')
 
 const sections = {}, courses = [], conflicts = {}
 async function fetchData () {
@@ -22,9 +23,12 @@ async function fetchData () {
     courses.push(k)
     for (const s in c.sections) {
       sections[s] = c.sections[s]
+      if (sections[s].session) sessions.add(sections[s].session)
       for (const p of sections[s].periods) p.wTime = JSON.parse(p.wTime)
     }
   }
+  sessions = [...sessions].sort()
+  if (sessions.length) session = sessions[0]
   const isOverlap = (x, y) => x[1] >= y[0] && x[0] <= y[1]
   function isConflict (sx, sy) {
     if (sx.session && sy.session && sx.session != sy.session) {
@@ -127,6 +131,7 @@ let pieces = $computed(() => {
   }
   for (const k in choices) {
     const lec = choices[k].lec, sec = choices[k].sec
+    if (!sections[lec] || sections[lec].session != session) continue
     if (lec) addSection(k, sections[lec])
     if (sec) addSection(k, sections[sec])
   }
@@ -218,7 +223,13 @@ function help () {
         </panel-wrapper>
       </div>
       <div class="flex-grow" style="min-width: 520px;">
-        <schedule :pieces="pieces" />
+        <p class="m-3" v-if="isSummer">
+          <b>Session:</b>
+          <select class="text-base bg-white border mx-2 px-4 py-1 rounded-full appearance-none cursor-pointer" v-model="session">
+            <option v-for="s in sessions">{{ s }}</option>
+          </select>
+        </p>
+        <schedule :pieces="pieces" :key="session" />
       </div>
     </div>
   </div>
