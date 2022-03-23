@@ -1,8 +1,9 @@
 <script setup>
-import { CheckIcon } from '@heroicons/vue/outline'
 import { watch } from 'vue'
+import { CheckIcon } from '@heroicons/vue/outline'
 import { getDoc, doc } from 'firebase/firestore'
-import { db, state } from '../firebase.js'
+import { db } from '../firebase.js'
+import state from '../model.js'
 const props = defineProps(['modelValue'])
 const emits = defineEmits(['update:modelValue'])
 import Wrapper from './Wrapper.vue'
@@ -74,13 +75,13 @@ watch(() => props.modelValue, async v => {
           <template v-for="(ss, lec) in course.tree">
             <tr class="bg-blue-100 border-white border-y-1" :set="s = course.sections[lec]" v-if="session == course.sections[lec].session"><!-- lecture -->
               <td>{{ lec }}</td>
-              <td><div v-for="i in s.instructors">{{ i }}</div></td>
+              <td><div v-for="i in s.instructors" @mouseenter="state.course.instructor = i" @mouseleave="state.course.instructor = ''">{{ i }}</div></td>
               <td><div v-for="p in s.periods">{{ p.time }}</div></td>
               <td><div v-for="p in s.periods">{{ p.location }}</div></td>
             </tr>
             <tr class="opacity-60 bg-blue-100 border-white border border-x-0 all-transition" v-for="code in ss" :set="s = course.sections[code]" v-if="session == course.sections[lec].session">
               <td>{{ code }}</td>
-              <td><div v-for="i in s.instructors">{{ i }}</div></td>
+              <td><div v-for="i in s.instructors" @mouseenter="state.course.instructor = i" @mouseleave="state.course.instructor = ''">{{ i }}</div></td>
               <td><div v-for="p in s.periods">{{ p.time }}</div></td>
               <td><div v-for="p in s.periods">{{ p.location }}</div></td>
             </tr>

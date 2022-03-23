@@ -1,9 +1,11 @@
 <script setup>
 import { ArrowLeftIcon, ChipIcon, InformationCircleIcon } from '@heroicons/vue/outline'
 import { getDoc, doc } from 'firebase/firestore'
-import { db, state } from '../firebase.js'
+import { db } from '../firebase.js'
+import state from '../model.js'
 import PanelWrapper from '../components/PanelWrapper.vue'
 import Schedule from '../components/Schedule.vue'
+import Instructor from '../components/Instructor.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter(), focus = state.course.focus
 
@@ -207,14 +209,14 @@ function help () {
               <tr class="border-white bg-gray-200 border-y-1 all-transition cursor-pointer" :set="s = v.sections[lec]" :class="sections[lec].status" @click="choose(k, lec)"><!-- lecture -->
                 <td class="text-sm" v-if="isSummer">{{ s.session }}</td>
                 <td>{{ lec }}</td>
-                <td><div v-for="i in s.instructors">{{ i }}</div></td>
+                <td><div v-for="i in s.instructors" @mouseenter="state.course.instructor = i" @mouseleave="state.course.instructor = ''">{{ i }}</div></td>
                 <td><div v-for="p in s.periods">{{ p.time }}</div></td>
                 <td><div v-for="p in s.periods">{{ p.location }}</div></td>
               </tr>
               <tr class="opacity-60 bg-gray-200 border-white border border-x-0 all-transition cursor-pointer" v-for="sec in ss" :set="s = v.sections[sec]" :class="sections[sec].status" @click="choose(k, lec, sec)">
                 <td class="text-sm" v-if="isSummer">{{ s.session }}</td>
                 <td>{{ sec }}</td>
-                <td><div v-for="i in s.instructors">{{ i }}</div></td>
+                <td><div v-for="i in s.instructors" @mouseenter="state.course.instructor = i" @mouseleave="state.course.instructor = ''">{{ i }}</div></td>
                 <td><div v-for="p in s.periods">{{ p.time }}</div></td>
                 <td><div v-for="p in s.periods">{{ p.location }}</div></td>
               </tr>
@@ -232,6 +234,7 @@ function help () {
         <schedule :pieces="pieces" :key="session" />
       </div>
     </div>
+    <instructor></instructor>
   </div>
 </template>
 

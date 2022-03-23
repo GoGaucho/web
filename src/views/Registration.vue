@@ -1,12 +1,12 @@
 <script setup>
 import { RefreshIcon } from '@heroicons/vue/outline'
-import { call, state, db } from '../firebase.js'
+import { call, db } from '../firebase.js'
+import { state, cache, LS } from '../model.js'
 import { getDoc, doc } from 'firebase/firestore'
 import * as parse from '../utils/parse.js'
 import * as lookup from '../utils/lookup.js'
 import Wrapper from '../components/Wrapper.vue'
 
-const LS = window.localStorage
 let q = $ref(''), qs = $ref([]), data = $ref({})
 
 async function fetchData () {
@@ -14,18 +14,14 @@ async function fetchData () {
   state.loading = 'Loading...'
   const raw = await call('student', { _: 'registration', q, token: LS.token })
   state.loading = false
+  if (!raw) return
   data = raw
-  LS['registration' + q] = JSON.stringify({ timestamp: Date.now(), data })
+  cache.set('registration' + q, raw)
 }
 
 function getData () {
-  data = {}
-  if (LS['registration' + q]) {
-    const res = JSON.parse(LS['registration' + q])
-    if (res.timestamp > Date.now() - 604800e3) return data = res.data
-    else delete LS['registration' + q]
-  }
-  fetchData()
+  data = cache.get('registration' + q)
+  if (!data) fetchData()
 }
 
 async function init () {
@@ -48,7 +44,7 @@ init()
       <refresh-icon class="w-6 text-gray-500 cursor-pointer" @click="fetchData" />
     </div>
     <hr class="my-4">
-    <div class="w-full">
+    <div class="w-full" v-if="data && data.perm" :key="q">
       <wrapper :show="1" class="p-2">
         <div class="rounded shadow-md overflow-hidden bg-white">
           <div class="text-white font-bold p-2" style="background: #0b254e;">Personal Information</div>

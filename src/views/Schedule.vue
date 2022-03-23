@@ -1,11 +1,11 @@
 <script setup>
 import { RefreshIcon } from '@heroicons/vue/outline'
-import { call, state, db } from '../firebase.js'
+import { call, db } from '../firebase.js'
+import { state, cache, LS } from '../model.js'
 import { getDoc, doc } from 'firebase/firestore'
 import Schedule from '../components/Schedule.vue'
 import * as parse from '../utils/parse.js'
 
-const LS = window.localStorage
 let pieces = $ref([]), q = $ref(''), qs = $ref([])
 
 function getPieces (data) {
@@ -29,17 +29,12 @@ async function fetchData () {
   state.loading = false
   if (!raw) return
   pieces = getPieces(raw)
-  LS['schedule' + q] = JSON.stringify({ timestamp: Date.now(), pieces })
+  cache.set('schedule' + q, pieces)
 }
 
 function getData () {
-  pieces = []
-  if (LS['schedule' + q]) {
-    const res = JSON.parse(LS['schedule' + q])
-    if (res.timestamp > Date.now() - 604800e3) return pieces = res.pieces
-    else delete LS['schedule' + q]
-  }
-  fetchData()
+  pieces = cache.get('schedule' + q)
+  if (!pieces) fetchData()
 }
 
 async function init () {

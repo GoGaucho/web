@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import { log, state } from './firebase.js'
+import state from './model.js'
 
 const index = {
   '/about': () => import('./views/About.vue'),
@@ -11,7 +11,6 @@ const index = {
   '/planner': () => import('./views/Planner.vue'),
   '/schedule': () => import('./views/Schedule.vue'),
   '/registration': () => import('./views/Registration.vue'),
-  '/classroom': () => import('./views/Classroom.vue'),
   '/:any(.*)*': () => import('./views/Home.vue')
 }
 
@@ -20,11 +19,10 @@ for (const r in index) routes.push({ path: r, component: index[r] })
 const router = createRouter({ history: createWebHashHistory(), routes }) 
 
 router.beforeEach(() => { NProgress.start() })
-router.afterEach((from, to) => {
+router.afterEach(() => {
   Swal.close()
   NProgress.done()
   state.loading = false
-  log('page_view', { page_path: to.path })
 })
 
 export default router

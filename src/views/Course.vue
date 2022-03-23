@@ -2,13 +2,15 @@
 import { watch, reactive } from 'vue'
 import { XIcon, ChipIcon } from '@heroicons/vue/outline'
 import { getDoc, doc } from 'firebase/firestore'
-import { db, state } from '../firebase.js'
+import { db } from '../firebase.js'
+import { state, cache } from '../model.js'
 import * as parse from '../utils/parse.js'
 import debounce from '../utils/debounce.js'
 import * as lookup from '../utils/lookup.js'
 import Course from '../components/Course.vue'
 import Wrapper from '../components/Wrapper.vue'
 import PanelWrapper from '../components/PanelWrapper.vue'
+import Instructor from '../components/Instructor.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
@@ -56,6 +58,14 @@ getDoc(doc(db, 'cache', 'quarter')).then(r => {
   quarters = r.data().course.split(',')
   if (quarters.includes(state.course.quarter)) fetchList()
   else state.course.quarter = quarters[0]
+})
+
+// load instructors
+state.course.instructor = ''
+state.course.instructors = cache.get('instructors')
+if (!state.course.instructors) getDoc(doc(db, 'cache', 'instructor')).then(r => {
+  state.course.instructors = JSON.parse(r.data()?.data || '{}')
+  cache.set('instructors', state.course.instructors)
 })
 
 watch(() => state.course.quarter, async v => {
@@ -117,5 +127,6 @@ watch(() => state.course.quarter, async v => {
       </div>
       <course v-model="focus" />
     </div>
+    <instructor></instructor>
   </div>
 </template>

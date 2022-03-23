@@ -1,7 +1,7 @@
-import { reactive } from 'vue'
 import { initializeApp } from 'firebase/app'
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
 import { getAnalytics, logEvent } from 'firebase/analytics'
+import { getPerformance } from "firebase/performance";
 import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore'
 import { getFunctions, httpsCallable } from 'firebase/functions'
 
@@ -16,13 +16,6 @@ const firebaseConfig = {
   measurementId: 'G-N2YCM7TLPH'
 }
 
-export const state = reactive({
-  course: {},
-  loading: false
-})
-
-window.loading = () => { state.loading = true }
-
 export const app = initializeApp(firebaseConfig)
 
 export const storage = getStorage(app)
@@ -33,6 +26,8 @@ enableIndexedDbPersistence(db)
 
 const analytics = getAnalytics(app)
 export const log = (k, p = {}) => logEvent(analytics, k, p)
+
+const perf = getPerformance(app)
 
 const functions = getFunctions(app)
 export const call = (name, params = {}) => httpsCallable(functions, name)(params).then(r => r.data)

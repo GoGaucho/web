@@ -4,7 +4,7 @@ const Bar = defineAsyncComponent(() => import('./components/Bar.vue'))
 const embed = window.location.hash.includes('embed')
 
 import Loading from './components/Loading.vue'
-import { state } from './firebase.js'
+import state from './model.js'
 </script>
 
 <template>
