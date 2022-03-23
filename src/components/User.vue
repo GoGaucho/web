@@ -31,6 +31,7 @@ async function listener (token) {
   showPanel = state.showLogin = false
   if (!token) return
   cache.set('token', token, 3000e3)
+  if (window.onlogin) window.onlogin()
   await signInWithCredential(auth, GoogleAuthProvider.credential(token))
   log('web_login')
 }
@@ -42,6 +43,8 @@ google.accounts.id.initialize({
   cancel_on_tap_outside: false,
   callback: c => listener(c.credential)
 })
+
+if (!cache.get('token')) google.accounts.id.prompt()
 
 watch(() => state.showLogin, v => {
   if (v) google.accounts.id.prompt()
