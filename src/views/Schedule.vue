@@ -1,12 +1,13 @@
 <script setup>
 import { RefreshIcon } from '@heroicons/vue/outline'
-import { call, db } from '../firebase.js'
+import { call, db, log } from '../firebase.js'
 import { state, cache } from '../model.js'
 import { getDoc, doc } from 'firebase/firestore'
 import Schedule from '../components/Schedule.vue'
 import * as parse from '../utils/parse.js'
 
 let pieces = $ref([]), q = $ref(''), qs = $ref([])
+log('web/schedule')
 
 function getPieces (data) {
   const res = []

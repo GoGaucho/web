@@ -1,6 +1,6 @@
 <script setup>
 import { RefreshIcon } from '@heroicons/vue/outline'
-import { call, db } from '../firebase.js'
+import { call, db, log } from '../firebase.js'
 import { state, cache } from '../model.js'
 import { getDoc, doc } from 'firebase/firestore'
 import * as parse from '../utils/parse.js'
@@ -8,6 +8,7 @@ import * as lookup from '../utils/lookup.js'
 import Wrapper from '../components/Wrapper.vue'
 
 let q = $ref(''), qs = $ref([]), data = $ref({})
+log('web/registration')
 
 async function fetchData () {
   const token = cache.get('token')

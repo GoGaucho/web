@@ -1,8 +1,9 @@
 <script setup>
 import fire from '../assets/fire.svg'
-import { url } from '../firebase.js'
+import { url, log } from '../firebase.js'
 import PanelWrapper from '../components/PanelWrapper.vue'
 
+log('web/about')
 let guide = $ref({})
 
 async function init () {

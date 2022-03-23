@@ -1,9 +1,11 @@
 <script setup>
+import { log } from '../firebase.js'
 import { XIcon } from '@heroicons/vue/outline'
 import { Loader } from 'google-maps'
 import locations from '../utils/locations.js'
 import debounce from '../utils/debounce.js'
 import Wrapper from '../components/Wrapper.vue'
+log('web/map')
 
 const ll = s => ({ lat: Number(s.split(',')[0]), lng: Number(s.split(',')[1]) })
 

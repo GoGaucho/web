@@ -1,7 +1,8 @@
 <script setup>
 import { getDoc, doc } from 'firebase/firestore'
-import { db } from '../firebase.js'
+import { db, log } from '../firebase.js'
 import Wrapper from '../components/Wrapper.vue'
+log('web/dining')
 
 const dcs = {
   'de-la-guerra': 'De La Guerra',

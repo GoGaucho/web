@@ -1,8 +1,10 @@
 <script setup>
+import { log } from '../firebase.js'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 import * as links from '../utils/links.js'
 const catalog = ['websites', 'telephones']
+log('web/link')
 </script>
 
 <template>

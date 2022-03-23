@@ -44,6 +44,10 @@ google.accounts.id.initialize({
   callback: c => listener(c.credential)
 })
 
+setTimeout(() => {
+  if (!user.name) google.accounts.id.prompt()
+}, 2e3)
+
 watch(() => state.showLogin, v => {
   if (v) google.accounts.id.prompt()
 })

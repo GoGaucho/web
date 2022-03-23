@@ -2,7 +2,7 @@
 import { watch, reactive } from 'vue'
 import { XIcon, ChipIcon } from '@heroicons/vue/outline'
 import { getDoc, doc } from 'firebase/firestore'
-import { db } from '../firebase.js'
+import { db, log } from '../firebase.js'
 import { state } from '../model.js'
 import * as parse from '../utils/parse.js'
 import debounce from '../utils/debounce.js'
@@ -13,6 +13,7 @@ import PanelWrapper from '../components/PanelWrapper.vue'
 import Instructor from '../components/Instructor.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
+log('web/course')
 
 let loading = $ref(true), list = $ref(null), hideList = $ref({}), showSub = $ref({}), subjects = $ref([])
 let quarters = $ref([]), focus = $ref('')

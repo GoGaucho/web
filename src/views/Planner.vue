@@ -1,13 +1,14 @@
 <script setup>
 import { ArrowLeftIcon, ChipIcon, InformationCircleIcon } from '@heroicons/vue/outline'
 import { getDoc, doc } from 'firebase/firestore'
-import { db } from '../firebase.js'
+import { db, log } from '../firebase.js'
 import state from '../model.js'
 import PanelWrapper from '../components/PanelWrapper.vue'
 import Schedule from '../components/Schedule.vue'
 import Instructor from '../components/Instructor.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter(), focus = state.course.focus
+log('web/planner')
 
 let loading = $ref(true), choices = $ref({}), chosenwTime = $ref([])
 let session = $ref(null), sessions = $ref(new Set())
