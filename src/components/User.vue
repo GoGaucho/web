@@ -1,7 +1,8 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
 import { CalendarIcon, InformationCircleIcon } from '@heroicons/vue/outline'
 import Wrapper from './Wrapper.vue'
+import { state, cache } from '../model.js'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
@@ -16,24 +17,21 @@ function goto (path) {
 import { getAuth, signInWithCredential, GoogleAuthProvider } from 'firebase/auth'
 import { log } from '../firebase.js'
 
-const provider = new GoogleAuthProvider(), auth = getAuth(), LS = window.localStorage
+const provider = new GoogleAuthProvider(), auth = getAuth()
+auth.onAuthStateChanged(u => {
+  user = {}
+  if (u) user = {
+    name: u.displayName,
+    email: u.email,
+    photoURL: u.photoURL
+  }
+})
+
 async function listener (token) {
-  showPanel = false
+  showPanel = state.showLogin = false
   if (!token) return
-  const res = await signInWithCredential(auth, GoogleAuthProvider.credential(token)).catch(() => false)
-  if (!res?.user) {
-    if (LS.token) google.accounts.id.prompt()
-    delete LS.token
-    user = {}
-    return
-  }
-  user = {
-    name: res.user.displayName,
-    email: res.user.email,
-    photoURL: res.user.photoURL
-  }
-  if (!LS.token) showPanel = true
-  LS.token = token
+  cache.set('token', token, 3000e3)
+  await signInWithCredential(auth, GoogleAuthProvider.credential(token))
   log('web_login')
 }
 
@@ -45,25 +43,28 @@ google.accounts.id.initialize({
   callback: c => listener(c.credential)
 })
 
-if (LS.token) listener(LS.token)
-else google.accounts.id.prompt()
+watch(() => state.showLogin, v => {
+  if (v) google.accounts.id.prompt()
+})
+
 onMounted(() => {
-  google.accounts.id.renderButton(document.getElementById('signin'), { type: 'icon', size: 'medium', shape: 'circle' })
+  google.accounts.id.renderButton(document.getElementById('signin-icon'), { type: 'icon', size: 'medium', shape: 'circle' })
+  google.accounts.id.renderButton(document.getElementById('signin-btn'), { theme: 'outline' })
 })
 
 function signOut () {
   showPanel = false
   user = {}
-  delete LS.token
+  cache.set('token', false, 0)
   auth.signOut()
 }
 </script>
 
 <template>
-  <div id="signin" :class="user.name ? 'hidden' : ''" />
+  <div id="signin-icon" :class="user.name ? 'invisible absolute' : ''" />
   <img v-if="user.photoURL" class="w-8 rounded-full cursor-pointer" :src="user.photoURL" @click="showPanel = true">
   <transition name="fade">
-    <div v-if="showPanel" @click="showPanel = false" class="fixed w-full h-screen bg-transparant z-50 top-0" />
+    <div v-if="showPanel || state.showLogin" @click="showPanel = state.showLogin = false" class="fixed w-full h-screen bg-transparant z-50 top-0" />
   </transition>
   <div class="fixed z-50 top-16 w-72 rounded shadow-lg bg-white all-transition" :class="showPanel ? 'right-2' : '-right-72'">
     <wrapper :show="showPanel" class="pt-4 flex flex-col items-center">
@@ -81,6 +82,12 @@ function signOut () {
         <p class="cursor-pointer" @click="goto('/about')">About</p>
         <p>&copy; GoGaucho 2022</p>
       </div>
+    </wrapper>
+  </div>
+  <div class="fixed z-50 top-16 w-72 rounded shadow-lg bg-white all-transition" :class="state.showLogin ? 'right-2' : '-right-72'">
+    <wrapper :show="state.showLogin" class="p-4 pt-2 flex flex-col items-center">
+      <p class="w-full text-left text-gray-500 mb-2">Please verify your identity</p>
+      <div id="signin-btn" />
     </wrapper>
   </div>
 </template>

@@ -1,7 +1,7 @@
 <script setup>
 import { RefreshIcon } from '@heroicons/vue/outline'
 import { call, db } from '../firebase.js'
-import { state, cache, LS } from '../model.js'
+import { state, cache } from '../model.js'
 import { getDoc, doc } from 'firebase/firestore'
 import Schedule from '../components/Schedule.vue'
 import * as parse from '../utils/parse.js'
@@ -23,9 +23,11 @@ function getPieces (data) {
 }
 
 async function fetchData () {
+  const token = cache.get('token')
+  if (!token) return state.showLogin = true
   pieces = []
   state.loading = 'Loading your schedule...'
-  const raw = await call('student', { _: 'schedule', q, token: LS.token })
+  const raw = await call('student', { _: 'schedule', q, token })
   state.loading = false
   if (!raw) return
   pieces = getPieces(raw)

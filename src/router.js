@@ -22,7 +22,7 @@ router.beforeEach(() => { NProgress.start() })
 router.afterEach(() => {
   Swal.close()
   NProgress.done()
-  state.loading = false
+  state.loading = state.showLogin = false
 })
 
 export default router

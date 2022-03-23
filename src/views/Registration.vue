@@ -1,7 +1,7 @@
 <script setup>
 import { RefreshIcon } from '@heroicons/vue/outline'
 import { call, db } from '../firebase.js'
-import { state, cache, LS } from '../model.js'
+import { state, cache } from '../model.js'
 import { getDoc, doc } from 'firebase/firestore'
 import * as parse from '../utils/parse.js'
 import * as lookup from '../utils/lookup.js'
@@ -10,9 +10,11 @@ import Wrapper from '../components/Wrapper.vue'
 let q = $ref(''), qs = $ref([]), data = $ref({})
 
 async function fetchData () {
+  const token = cache.get('token')
+  if (!token) return state.showLogin = true
   data = {}
-  state.loading = 'Loading...'
-  const raw = await call('student', { _: 'registration', q, token: LS.token })
+  state.loading = true
+  const raw = await call('student', { _: 'registration', q, token })
   state.loading = false
   if (!raw) return
   data = raw

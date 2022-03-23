@@ -1,9 +1,9 @@
 <script setup>
 import { defineAsyncComponent } from 'vue'
+import fire from './assets/fire.svg'
 const Bar = defineAsyncComponent(() => import('./components/Bar.vue'))
 const embed = window.location.hash.includes('embed')
 
-import Loading from './components/Loading.vue'
 import state from './model.js'
 </script>
 
@@ -11,9 +11,11 @@ import state from './model.js'
   <bar v-if="!embed"></bar>
   <div class="relative overflow-y-auto" :style="{ height: embed ? '100vh' : 'calc(100vh - 3.5rem)' }">
     <transition name="fade">
-      <loading v-if="state.loading">
+      <div v-if="state.loading" class="absolute z-20 top-0 left-0 right-0 bottom-0 flex flex-col items-center justify-between bg-gray-50">
+        <div></div>
         <h3 class="text-gray-700 text-2xl sm:text-3xl font-bold">{{ typeof state.loading === 'string' ? state.loading : 'Just a moment...' }}</h3>
-      </loading>
+        <img class="w-40 sm:w-60" :src="fire">
+      </div>
     </transition>
     <router-view v-slot="{ Component }">
       <transition name="fade" mode="out-in">

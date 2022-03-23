@@ -2,7 +2,8 @@ import { reactive } from 'vue'
 
 export const state = reactive({
   course: {},
-  loading: false
+  loading: false,
+  showLogin: false
 })
 
 export default state
