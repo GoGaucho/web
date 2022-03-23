@@ -44,8 +44,6 @@ google.accounts.id.initialize({
   callback: c => listener(c.credential)
 })
 
-if (!cache.get('token')) google.accounts.id.prompt()
-
 watch(() => state.showLogin, v => {
   if (v) google.accounts.id.prompt()
 })
