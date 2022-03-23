@@ -3,7 +3,7 @@ import { watch, reactive } from 'vue'
 import { XIcon, ChipIcon } from '@heroicons/vue/outline'
 import { getDoc, doc } from 'firebase/firestore'
 import { db } from '../firebase.js'
-import { state, cache } from '../model.js'
+import { state } from '../model.js'
 import * as parse from '../utils/parse.js'
 import debounce from '../utils/debounce.js'
 import * as lookup from '../utils/lookup.js'
@@ -62,11 +62,7 @@ getDoc(doc(db, 'cache', 'quarter')).then(r => {
 
 // load instructors
 state.course.instructor = ''
-state.course.instructors = cache.get('instructors')
-if (!state.course.instructors) getDoc(doc(db, 'cache', 'instructor')).then(r => {
-  state.course.instructors = JSON.parse(r.data()?.data || '{}')
-  cache.set('instructors', state.course.instructors)
-})
+if (!state.course.instructors) getDoc(doc(db, 'cache', 'instructor')).then(r => { state.course.instructors = JSON.parse(r.data()?.data || '{}') })
 
 watch(() => state.course.quarter, async v => {
   focus = false
