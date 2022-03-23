@@ -10,7 +10,6 @@ import * as lookup from '../utils/lookup.js'
 import Course from '../components/Course.vue'
 import Wrapper from '../components/Wrapper.vue'
 import PanelWrapper from '../components/PanelWrapper.vue'
-import Instructor from '../components/Instructor.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 log('web/course')
@@ -60,10 +59,6 @@ getDoc(doc(db, 'cache', 'quarter')).then(r => {
   if (quarters.includes(state.course.quarter)) fetchList()
   else state.course.quarter = quarters[0]
 })
-
-// load instructors
-state.course.instructor = ''
-if (!state.course.instructors) getDoc(doc(db, 'cache', 'instructor')).then(r => { state.course.instructors = JSON.parse(r.data()?.data || '{}') })
 
 watch(() => state.course.quarter, async v => {
   focus = false
@@ -124,6 +119,5 @@ watch(() => state.course.quarter, async v => {
       </div>
       <course v-model="focus" />
     </div>
-    <instructor></instructor>
   </div>
 </template>

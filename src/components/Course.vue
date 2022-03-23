@@ -7,6 +7,7 @@ import state from '../model.js'
 const props = defineProps(['modelValue'])
 const emits = defineEmits(['update:modelValue'])
 import Wrapper from './Wrapper.vue'
+import Instructor from './Instructor.vue'
 
 // control UI
 let isMobile = $ref(false)
@@ -18,6 +19,7 @@ const gradings = { null: 'optional', L: 'Letter', P: 'P/NP' }
 
 let course = $ref({}), session = $ref(null), sessions = $ref([])
 let title = $computed(() => props.modelValue ? props.modelValue + ': ' + (course.title || '') : 'Please select a course')
+let instructorName = $ref('')
 
 watch(() => props.modelValue, async v => {
   if (!v) return
@@ -75,13 +77,13 @@ watch(() => props.modelValue, async v => {
           <template v-for="(ss, lec) in course.tree">
             <tr class="bg-blue-100 border-white border-y-1" :set="s = course.sections[lec]" v-if="session == course.sections[lec].session"><!-- lecture -->
               <td>{{ lec }}</td>
-              <td><div v-for="i in s.instructors" @mouseenter="state.course.instructor = i" @mouseleave="state.course.instructor = ''">{{ i }}</div></td>
+              <td><div v-for="i in s.instructors" @mouseenter="instructorName = i" @mouseleave="instructorName = ''">{{ i }}</div></td>
               <td><div v-for="p in s.periods">{{ p.time }}</div></td>
               <td><div v-for="p in s.periods">{{ p.location }}</div></td>
             </tr>
             <tr class="opacity-60 bg-blue-100 border-white border border-x-0 all-transition" v-for="code in ss" :set="s = course.sections[code]" v-if="session == course.sections[lec].session">
               <td>{{ code }}</td>
-              <td><div v-for="i in s.instructors" @mouseenter="state.course.instructor = i" @mouseleave="state.course.instructor = ''">{{ i }}</div></td>
+              <td><div v-for="i in s.instructors" @mouseenter="instructorName = i" @mouseleave="instructorName = ''">{{ i }}</div></td>
               <td><div v-for="p in s.periods">{{ p.time }}</div></td>
               <td><div v-for="p in s.periods">{{ p.location }}</div></td>
             </tr>
@@ -90,6 +92,7 @@ watch(() => props.modelValue, async v => {
       </div>
     </wrapper>
   </div>
+  <instructor :name="instructorName" />
 </template>
 
 <style scoped>

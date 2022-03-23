@@ -13,6 +13,7 @@ log('web/planner')
 let loading = $ref(true), choices = $ref({}), chosenwTime = $ref([])
 let session = $ref(null), sessions = $ref(new Set())
 let isSummer = $computed(() => state.course?.quarter && state.course.quarter[4] === '3')
+let instructorName = $ref('')
 
 const sections = {}, courses = [], conflicts = {}
 async function fetchData () {
@@ -210,14 +211,14 @@ function help () {
               <tr class="border-white bg-gray-200 border-y-1 all-transition cursor-pointer" :set="s = v.sections[lec]" :class="sections[lec].status" @click="choose(k, lec)"><!-- lecture -->
                 <td class="text-sm" v-if="isSummer">{{ s.session }}</td>
                 <td>{{ lec }}</td>
-                <td><div v-for="i in s.instructors" @mouseenter="state.course.instructor = i" @mouseleave="state.course.instructor = ''">{{ i }}</div></td>
+                <td><div v-for="i in s.instructors" @mouseenter="instructorName = i" @mouseleave="instructorName = ''">{{ i }}</div></td>
                 <td><div v-for="p in s.periods">{{ p.time }}</div></td>
                 <td><div v-for="p in s.periods">{{ p.location }}</div></td>
               </tr>
               <tr class="opacity-60 bg-gray-200 border-white border border-x-0 all-transition cursor-pointer" v-for="sec in ss" :set="s = v.sections[sec]" :class="sections[sec].status" @click="choose(k, lec, sec)">
                 <td class="text-sm" v-if="isSummer">{{ s.session }}</td>
                 <td>{{ sec }}</td>
-                <td><div v-for="i in s.instructors" @mouseenter="state.course.instructor = i" @mouseleave="state.course.instructor = ''">{{ i }}</div></td>
+                <td><div v-for="i in s.instructors" @mouseenter="instructorName = i" @mouseleave="instructorName = ''">{{ i }}</div></td>
                 <td><div v-for="p in s.periods">{{ p.time }}</div></td>
                 <td><div v-for="p in s.periods">{{ p.location }}</div></td>
               </tr>
@@ -235,7 +236,7 @@ function help () {
         <schedule :pieces="pieces" :key="session" />
       </div>
     </div>
-    <instructor></instructor>
+    <instructor :name="instructorName" />
   </div>
 </template>
 
