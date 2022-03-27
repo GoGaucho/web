@@ -26,7 +26,7 @@ function getData () {
   data = cache.get('registration' + q)
   if (!data) fetchData()
 }
-window.onlogin = getData
+window.onlogin = fetchData
 
 async function init () {
   q = await getDoc(doc(db, 'cache', 'quarter')).then(r => r.data().current)

@@ -39,7 +39,7 @@ function getData () {
   pieces = cache.get('schedule' + q)
   if (!pieces) fetchData()
 }
-window.onlogin = getData
+window.onlogin = fetchData
 
 async function init () {
   q = await getDoc(doc(db, 'cache', 'quarter')).then(r => r.data().current)
