@@ -50,7 +50,7 @@ setInterval(() => { const date = new Date() }, 30e3)
           <div v-for="j in 80" class="bg-gray-100" />
           <div v-for="p in props.pieces" :style="pStyle(p)" :key="p.key" class="all-transition absolute p-1 sm:px-2 text-xs rounded overflow-hidden">
             <div class="font-bold text-shadow text-[0.7rem] sm:text-xs">{{ p.key }}</div>
-            <div class="text-gray-700 hidden sm:block">{{ p.time }}</div>
+            <div class="text-gray-700 text-[0.6rem] sm:text-xs">{{ p.time }}</div>
             <div class="text-gray-700 text-[0.625rem] sm:text-xs">{{ p.location }}</div>
             <div class="all-transition absolute bottom-0 top-0 left-0 w-0.5 sm:w-1" :class="colorMap[p.key]" />
             <div class="absolute bottom-0 top-0 left-0 right-0 opacity-20" :class="colorMap[p.key]" />
