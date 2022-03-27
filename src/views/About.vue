@@ -29,7 +29,7 @@ init()
       <h2 class="text-xl mt-20 mb-4 font-bold">What's GoGaucho?</h2>
       <p>GoGaucho is the best campus app for UCSB students. <br class="hidden sm:block"> GoGaucho Web is the next generation WebApp, which is designed to serve UCSB students anywhere, anytime, and on any platforms simply by visiting <a class="underline">ucsb.app</a></p>
       <h2 class="text-xl mt-20 mb-4 font-bold">How to install?</h2>
-      <p>Install for better experiences.</p>
+      <p>Follow the instructions for better experiences.</p>
       <panel-wrapper title="Desktop (Chrome)" class="bg-white mt-4">
         <img class="w-full" :src="guide.desktop">
       </panel-wrapper>

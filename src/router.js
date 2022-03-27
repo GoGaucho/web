@@ -9,8 +9,7 @@ const index = {
   '/waitz': () => import('./views/Waitz.vue'),
   '/course': () => import('./views/Course.vue'),
   '/planner': () => import('./views/Planner.vue'),
-  '/schedule': () => import('./views/Schedule.vue'),
-  '/registration': () => import('./views/Registration.vue'),
+  '/class': () => import('./views/Class.vue'),
   '/poll': () => import('./views/Poll.vue'),
   '/:any(.*)*': () => import('./views/Home.vue')
 }
