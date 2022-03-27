@@ -11,6 +11,7 @@ const index = {
   '/planner': () => import('./views/Planner.vue'),
   '/schedule': () => import('./views/Schedule.vue'),
   '/registration': () => import('./views/Registration.vue'),
+  '/poll': () => import('./views/Poll.vue'),
   '/:any(.*)*': () => import('./views/Home.vue')
 }
 
