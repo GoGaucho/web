@@ -10,10 +10,6 @@ import Wrapper from './Wrapper.vue'
 import Instructor from './Instructor.vue'
 
 // control UI
-let isMobile = $ref(false)
-window.onresize = () => { isMobile = window.innerWidth < 768 }
-window.onresize()
-
 const levels = { U: 'Undergraduate', G: 'Graduate', L: 'Lower Division', S: 'Upper Division' }
 const gradings = { null: 'optional', L: 'Letter', P: 'P/NP' }
 
@@ -37,12 +33,12 @@ watch(() => props.modelValue, async v => {
 
 <template>
   <transition name="fade">
-    <div v-if="isMobile && props.modelValue" @click="emits('update:modelValue', false)" class="fixed w-full h-screen bg-black opacity-30 z-50 top-0" />
+    <div v-if="state.isMobile && props.modelValue" @click="emits('update:modelValue', false)" class="fixed w-full h-screen bg-black opacity-30 z-50 top-0" />
   </transition>
   <div class="course bg-white p-4 sm:p-6 flex-grow all-transition
     fixed top-0 h-screen w-5/6 sm:w-11/12 z-50 overflow-auto
     md:sticky md:top-20 md:w-auto md:h-auto md:shadow-md md:z-10
-  " :style="{ left: isMobile && !props.modelValue ? '-100%' : '0px' }">
+  " :style="{ left: state.isMobile && !props.modelValue ? '-100%' : '0px' }">
     <h2 class="text-xl sm:text-2xl font-bold mr-6">{{ title }}</h2>
     <wrapper :show="course.show" :key="props.modelValue">
       <p class="text-sm text-gray-600">{{ course.college }} &nbsp; {{ course.department }} &nbsp; {{ levels[course.level] }}</p>

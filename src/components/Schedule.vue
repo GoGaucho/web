@@ -1,8 +1,6 @@
 <script setup>
+import state from '../model.js'
 const props = defineProps(['pieces'])
-let isMobile = $ref(false)
-window.onresize = () => { isMobile = window.innerWidth < 768 }
-window.onresize()
 const ds = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 const colors = ['bg-yellow-500', 'bg-purple-500', 'bg-red-500', 'bg-green-500', 'bg-sky-500', 'bg-lime-500', 'bg-orange-500', 'bg-teal-500', 'bg-pink-500']
@@ -44,7 +42,7 @@ setInterval(() => { const date = new Date() }, 30e3)
       </div>
       <div class="flex-grow overflow-x-auto h-full overflow-y-hidden"><!-- right -->
         <div class="grid grid-cols-5 text-center w-full" style=" height: 24px;">
-          <div v-for="d in isMobile ? ds : days">{{ d }}</div>
+          <div v-for="d in state.isMobile ? ds : days">{{ d }}</div>
         </div>
         <div class="grid grid-cols-5 gap-px relative w-full" style="height: 976px;"><!-- body -->
           <div v-for="j in 80" class="bg-gray-100" />

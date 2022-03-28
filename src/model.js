@@ -1,10 +1,17 @@
 import { reactive } from 'vue'
 
 export const state = reactive({
-  course: {},
   loading: false,
-  showLogin: false
+  course: {},
+  user: {},
+  showLogin: false,
+  isMobile: false,
+  isStandalone: window.matchMedia('(display-mode: standalone)').matches
 })
+
+window.onresize = () => { state.isMobile = window.innerWidth < 768 }
+window.onresize()
+
 
 export default state
 
