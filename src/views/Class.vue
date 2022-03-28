@@ -66,7 +66,7 @@ init()
     </div>
     <hr>
     <div class="w-full flex flex-wrap justify-center items-start" v-if="data.schedule && data.registration" :key="q">
-      <div class="flex-grow bg-white p-2 lg:px-6 rounded shadow m-0 sm:m-4"><!-- schedule -->
+      <div class="flex-grow bg-white pb-2 sm:p-2 lg:px-6 rounded shadow m-0 sm:m-4"><!-- schedule -->
         <schedule :pieces="pieces" />
       </div>
       <div class="m-2 w-full lg:w-auto"><!-- registration -->
