@@ -16,7 +16,7 @@ function getClass (c) {
 
 <template>
   <div class="p-4 sm:p-10">
-    <h1 class="text-2xl">Building Busyness</h1>
+    <h1 class="text-2xl">Building Capacity</h1>
     <p v-if="!data" class="text-sm text-gray-500">Loading...</p>
     <p v-else class="text-sm text-gray-500">Data from waitz.io</p>
     <div class="my-2 sm:my-4 p-4 sm:p-6 bg-white shadow rounded" v-for="(l, name) in data">

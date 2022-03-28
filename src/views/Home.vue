@@ -33,7 +33,7 @@ function jump (url) {
       <button @click="router.push('/map')"><map-icon class="w-5 mr-2 text-gray-500" />Map</button>
       <button @click="router.push('/course')"><book-open-icon class="w-6 mr-2 text-gray-500" />Course</button>
       <button @click="router.push('/dining')"><cake-icon class="w-6 mr-2 text-gray-500" />Dining Commons</button>
-      <button @click="router.push('/waitz')"><library-icon class="w-6 mr-2 text-gray-500" />Building Busyness</button>
+      <button @click="router.push('/waitz')"><library-icon class="w-6 mr-2 text-gray-500" />Building Capacity</button>
     </wrapper>
   </div>
 </template>
