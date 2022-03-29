@@ -1,9 +1,10 @@
 <script setup>
-import { LinkIcon, MapIcon, LibraryIcon, BookOpenIcon, CakeIcon } from '@heroicons/vue/outline'
+import { LinkIcon, MapIcon, LibraryIcon, BookOpenIcon, CakeIcon, CalendarIcon } from '@heroicons/vue/outline'
 import banner from '../assets/banner.svg'
 import Wrapper from '../components/Wrapper.vue'
 import { getDoc, doc } from 'firebase/firestore'
 import { db } from '../firebase.js'
+import state from '../model.js'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 let show = $ref(false), home = $ref({})
@@ -24,16 +25,19 @@ function jump (url) {
         <div class="bg-blue-200 text-blue-700 p-2 flex items-center justify-center" v-html="home.top" />
       </wrapper>
     </div>
-    <h1 class="text-6xl font-bold text-gray-800">GoGaucho</h1>
+    <h1 class="relative text-6xl font-bold text-gray-800">GoGaucho</h1>
     <wrapper class="p-2 pb-0 relative" :show="home.poll">
       <p class="cursor-pointer" @click="router.push('/poll')">🎀 Daily poll: <span class="underline">{{ home.poll }}</span></p>
     </wrapper>
-    <wrapper :show="show" class="w-3/4 flex flex-wrap relative py-4">
+    <wrapper :show="show" class="w-4/5 flex flex-wrap relative py-4">
       <button @click="router.push('/link')"><link-icon class="w-5 mr-2 text-gray-500" />Links</button>
       <button @click="router.push('/map')"><map-icon class="w-5 mr-2 text-gray-500" />Map</button>
-      <button @click="router.push('/course')"><book-open-icon class="w-6 mr-2 text-gray-500" />Course</button>
       <button @click="router.push('/dining')"><cake-icon class="w-6 mr-2 text-gray-500" />Dining Commons</button>
       <button @click="router.push('/waitz')"><library-icon class="w-6 mr-2 text-gray-500" />Building Capacity</button>
+      <button @click="router.push('/course')"><book-open-icon class="w-6 mr-2 text-gray-500" />Course</button>
+      <wrapper :show="state.user.uid">
+        <button @click="router.push('/class')"><calendar-icon class="w-6 mr-2 text-gray-500" />My Classes</button>
+      </wrapper>
     </wrapper>
   </div>
 </template>

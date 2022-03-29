@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, watch } from 'vue'
-import { CalendarIcon, InformationCircleIcon } from '@heroicons/vue/outline'
+import { CalendarIcon } from '@heroicons/vue/outline'
 import Wrapper from './Wrapper.vue'
 import { state, cache } from '../model.js'
 import { getAuth, signInWithCredential, GoogleAuthProvider } from 'firebase/auth'
