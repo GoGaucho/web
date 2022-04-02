@@ -1,5 +1,5 @@
 <script setup>
-import { LinkIcon, MapIcon, LibraryIcon, BookOpenIcon, CakeIcon, CalendarIcon } from '@heroicons/vue/outline'
+import { LinkIcon, MapIcon, LibraryIcon, BookOpenIcon, ColorSwatchIcon, CalendarIcon } from '@heroicons/vue/outline'
 import banner from '../assets/banner.svg'
 import Wrapper from '../components/Wrapper.vue'
 import { getDoc, doc } from 'firebase/firestore'
@@ -32,7 +32,7 @@ function jump (url) {
     <wrapper :show="show" class="w-4/5 flex flex-wrap relative py-4">
       <button @click="router.push('/link')"><link-icon class="w-5 mr-2 text-gray-500" />Links</button>
       <button @click="router.push('/map')"><map-icon class="w-5 mr-2 text-gray-500" />Map</button>
-      <button @click="router.push('/dining')"><cake-icon class="w-6 mr-2 text-gray-500" />Dining Commons</button>
+      <button @click="router.push('/dining')"><color-swatch-icon class="w-6 mr-2 text-gray-500" />Dining Commons</button>
       <button @click="router.push('/waitz')"><library-icon class="w-6 mr-2 text-gray-500" />Building Capacity</button>
       <button @click="router.push('/course')"><book-open-icon class="w-6 mr-2 text-gray-500" />Course</button>
       <wrapper :show="state.user.uid && show" class="p-2">
