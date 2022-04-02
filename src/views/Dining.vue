@@ -37,8 +37,8 @@ function getClass (n) {
     <h1 class="text-2xl">Dining Commons</h1>
     <p class="text-sm text-gray-500">{{ date || 'Loading' }}</p>
     <div class="flex items-center my-4">
-      <a class="cursor-pointer my-1 px-3 py-1 sm:px-4 sm:py-2 rounded-full border font-bold text-red-400 bg-white flex items-center all-transition hover:shadow" href="https://sso.ucsb.edu/cas/login?service=https%3a%2f%2fstudenthealthoc.sa.ucsb.edu%2f" target="_blank"><heart-icon class="w-5 mr-1" />Student Health</a>
-      <a class="cursor-pointer ml-2 my-1 px-3 py-1 sm:px-4 sm:py-2 rounded-full border font-bold text-blue-500 bg-white flex items-center all-transition hover:shadow" href="https://ucsb-sp.transactcampus.com/eaccounts/AccountSummary.aspx?menu=0" target="_blank"><credit-card-icon class="w-5 mr-1" />Access Card</a>
+      <a class="cursor-pointer my-1 px-3 py-1 text-sm sm:text-base sm:px-4 sm:py-2 rounded-full border font-bold text-red-400 bg-white flex items-center all-transition hover:shadow" href="https://sso.ucsb.edu/cas/login?service=https%3a%2f%2fstudenthealthoc.sa.ucsb.edu%2f" target="_blank"><heart-icon class="w-5 mr-1" />Student Health</a>
+      <a class="cursor-pointer ml-2 my-1 px-3 py-1 text-sm sm:text-base sm:px-4 sm:py-2 rounded-full border font-bold text-blue-500 bg-white flex items-center all-transition hover:shadow" href="https://ucsb-sp.transactcampus.com/eaccounts/AccountSummary.aspx?menu=0" target="_blank"><credit-card-icon class="w-5 mr-1" />Access Card</a>
     </div>
     <div class="rounded shadow-md p-3 my-4 bg-white flex flex-col items-start" v-if="Object.keys(data).length">
       <h1 class="font-bold text-2xl">Meals</h1>
