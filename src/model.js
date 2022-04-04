@@ -12,7 +12,6 @@ export const state = reactive({
 window.onresize = () => { state.isMobile = window.innerWidth < 768 }
 window.onresize()
 
-
 export default state
 
 export const LS = window.localStorage
@@ -29,3 +28,13 @@ export const cache = {
     LS['_' + k] = JSON.stringify({ _: Date.now() + expire, ':': v })
   }
 }
+
+// automatically clear cache
+setTimeout(() => {
+  for (const _k in LS) {
+    if (_k[0] !== '_') continue
+    const raw = JSON.parse(LS[_k])
+    if (raw._ > Date.now()) continue
+    LS.removeItem(_k)
+  }
+}, 5e3)

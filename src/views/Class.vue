@@ -35,13 +35,15 @@ async function fetchData () {
   state.loading = false
   if (!raw) return
   data = raw
-  console.log(raw)
   cache.set('class' + q, raw)
 }
 
 function getData () {
   data = cache.get('class' + q)
-  if (!data) fetchData()
+  if (!data) {
+    data = {}
+    fetchData()
+  }
 }
 window.onlogin = fetchData
 
@@ -65,11 +67,11 @@ init()
       <refresh-icon class="w-6 text-gray-500 cursor-pointer" @click="fetchData" />
     </div>
     <hr>
-    <div class="w-full flex flex-wrap justify-center items-start" v-if="data.schedule && data.registration" :key="q">
-      <div class="flex-grow bg-white pb-2 sm:p-2 lg:px-6 rounded shadow m-0 sm:m-4"><!-- schedule -->
+    <div class="w-full flex flex-wrap justify-center items-start" v-if="data" :key="q">
+      <div class="flex-grow bg-white pb-2 sm:p-2 lg:px-6 rounded shadow m-0 sm:m-4" v-if="data.schedule"><!-- schedule -->
         <schedule :pieces="pieces" />
       </div>
-      <div class="m-2 w-full lg:w-auto"><!-- registration -->
+      <div class="m-2 w-full lg:w-auto" v-if="data.registration"><!-- registration -->
         <wrapper :show="1" class="p-2">
           <div class="rounded shadow-md overflow-hidden bg-white">
             <div class="text-white font-bold p-2" style="background: #0b254e;">Personal Information</div>
@@ -96,7 +98,7 @@ init()
         </wrapper>
       </div>
     </div>
-    <p class="m-4" v-else>Currently no data</p>
+    <p class="m-4" v-else>No data</p>
   </div>
 </template>
 
