@@ -60,7 +60,7 @@ init()
     <div class="flex justify-between items-center w-full p-4 sm:px-10">
       <div>
         <h1 class="text-2xl">My Classes</h1>
-        <select class="p-0 m-0 bg-transparent text-sm block" v-model="q" @change="getData">
+        <select class="px-2 border rounded m-0 bg-white appearance-none text-sm block" v-model="q" @change="getData">
           <option v-for="o in qs" :value="o">{{ parse.quarter(o) }}</option>
         </select>
       </div>

@@ -45,12 +45,12 @@ function getClass (n) {
     <div class="rounded shadow-md p-3 my-4 bg-white" v-if="Object.keys(data).length">
       <h2 class="text-2xl flex items-center">
         Meals
-        <select class="text-base bg-white border mx-2 px-4 py-1 rounded-full appearance-none cursor-pointer" v-model="dc">
+        <select class="text-base bg-white border font-bold mx-2 px-4 py-1 rounded-full appearance-none cursor-pointer" v-model="dc">
           <option v-for="(v, k) in dcs" :value="k">{{ v }}</option>
         </select>
       </h2>
       <p class="flex items-center text-gray-700 my-2" :set="v = data[dc] && data[dc][mc]">
-        <select class="p-0 mr-2 bg-transparent block cursor-pointer" v-model="mc" v-if="v">
+        <select class="px-2 mr-2 appearance-none font-bold block cursor-pointer border" v-model="mc" v-if="v">
           <option v-for="(v, m) in data[dc]" :value="m">{{ m[0].toUpperCase() + m.substring(1) }}</option>
         </select>
         {{ v ? v.hour : 'closed' }}
