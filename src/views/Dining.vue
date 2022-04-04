@@ -50,7 +50,7 @@ function getClass (n) {
         </select>
       </h2>
       <p class="flex items-center text-gray-700 my-2" :set="v = data[dc] && data[dc][mc]">
-        <select class="px-2 mr-2 appearance-none bg-white font-bold block cursor-pointer border" v-model="mc" v-if="v">
+        <select class="px-2 mr-2 appearance-none bg-white font-bold block rounded cursor-pointer border" v-model="mc" v-if="v">
           <option v-for="(v, m) in data[dc]" :value="m">{{ m[0].toUpperCase() + m.substring(1) }}</option>
         </select>
         {{ v ? v.hour : 'closed' }}
