@@ -21,10 +21,22 @@ getDoc(doc(db, 'cache', 'dining')).then(r => {
   dc = cache.get('dining') || Object.keys(data)[0]
 })
 
+function isPast (period) {
+  const m = period.match(/\s\-\s(\d*?):(\d*?)\s(\w)M$/)
+  if (!m) return false
+  const d = new Date()
+  const dTime = (Number(m[1]) + (m[3] === 'P' ? 12 : 0)) * 60 + Number(m[2])
+  return dTime < d.getHours() * 60 + d.getMinutes()
+}
+
 watch($$(dc), () => {
   cache.set('dining', dc)
   if (!data[dc] || data[dc][mc]) return
-  mc = Object.keys(data[dc])[0] // Todo: calculate next mc
+  mc = ''
+  for (const m in data[dc]) {
+    mc = m
+    if (!isPast(data[dc][m].hour)) break
+  }
 })
 
 function getClass (n) {
