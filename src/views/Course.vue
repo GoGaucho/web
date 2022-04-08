@@ -22,8 +22,9 @@ const query = reactive({
 const showFocus = $computed(() => Object.keys(state.course.focus).filter(x => state.course.focus[x]).length)
 
 function isHide (k, v, key, ges) {
+  const genames = v[1].split(',')
   for (const g of ges) {
-    if (!v[1].includes(g)) return true
+    if (!genames.includes(g)) return true
   }
   if (!k.includes(key) && !v[0].includes(key)) return true
 }
