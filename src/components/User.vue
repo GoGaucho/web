@@ -18,6 +18,7 @@ function goto (path) {
 
 // following are authentication logic
 const provider = new GoogleAuthProvider(), auth = getAuth()
+let init = true
 auth.onAuthStateChanged(u => {
   state.user = {}
   if (u) state.user = {
@@ -26,6 +27,8 @@ auth.onAuthStateChanged(u => {
     email: u.email,
     photoURL: u.photoURL
   }
+  if (!u && init) google.accounts.id.prompt()
+  init = false
 })
 
 async function listener (token) {
@@ -44,10 +47,6 @@ google.accounts.id.initialize({
   cancel_on_tap_outside: false,
   callback: c => listener(c.credential)
 })
-
-setTimeout(() => {
-  if (!state.user.name) google.accounts.id.prompt()
-}, 2e3)
 
 watch(() => state.showLogin, v => {
   if (v) google.accounts.id.prompt()
@@ -87,7 +86,7 @@ function signOut () {
       </div>
     </wrapper>
   </div>
-  <div class="fixed z-50 top-16 w-72 rounded shadow-lg bg-white all-transition" :class="state.showLogin ? 'right-2' : '-right-72'">
+  <div class="fixed z-50 top-16 w-min rounded shadow-lg bg-white all-transition" :class="state.showLogin ? 'right-4 sm:right-10' : '-right-72'">
     <wrapper :show="state.showLogin" class="p-4 pt-2 flex flex-col items-center">
       <p class="w-full text-left text-gray-500 mb-2">Please verify your identity</p>
       <div id="signin-btn" />

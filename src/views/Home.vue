@@ -10,10 +10,7 @@ const router = useRouter()
 let show = $ref(false), home = $ref({})
 setTimeout(() => { show = true }, 100)
 
-onSnapshot(doc(db, 'cache', 'home'), doc => {
-  home = doc.data() || {}
-  console.log(home)
-})
+onSnapshot(doc(db, 'cache', 'home'), doc => home = doc.data() || {})
 </script>
 
 <template>
@@ -26,7 +23,7 @@ onSnapshot(doc(db, 'cache', 'home'), doc => {
     </div>
     <transition name="fade" mode="out-in"><!-- title -->
       <h1 v-if="home.weather" class="relative text-5xl font-bold text-gray-800 flex items-center">
-        <img style="height: 3.75rem;" :src="`http://openweathermap.org/img/wn/${home.weather.icon}@2x.png`">
+        <img style="height: 3.75rem; min-width: 3.75rem;" :src="`http://openweathermap.org/img/wn/${home.weather.icon}@2x.png`">
         {{ home.weather.temp.toFixed(0) }}&nbsp;&#8451;
       </h1>
       <h1 v-else class="relative text-6xl font-bold text-gray-800">GoGaucho</h1>
