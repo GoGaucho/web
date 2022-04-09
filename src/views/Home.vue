@@ -2,7 +2,7 @@
 import { LinkIcon, MapIcon, LibraryIcon, BookOpenIcon, ColorSwatchIcon, CalendarIcon } from '@heroicons/vue/outline'
 import banner from '../assets/banner.svg'
 import Wrapper from '../components/Wrapper.vue'
-import { getDoc, doc } from 'firebase/firestore'
+import { onSnapshot, doc } from 'firebase/firestore'
 import { db } from '../firebase.js'
 import state from '../model.js'
 import { useRouter } from 'vue-router'
@@ -10,11 +10,10 @@ const router = useRouter()
 let show = $ref(false), home = $ref({})
 setTimeout(() => { show = true }, 100)
 
-getDoc(doc(db, 'cache', 'home')).then(r => { home = r.data() || {} })
-
-function jump (url) {
-  window.location.href = url
-}
+onSnapshot(doc(db, 'cache', 'home'), doc => {
+  home = doc.data() || {}
+  console.log(home)
+})
 </script>
 
 <template>
@@ -25,11 +24,14 @@ function jump (url) {
         <div class="bg-blue-200 text-blue-700 p-2 flex items-center justify-center" v-html="home.top" />
       </wrapper>
     </div>
-    <h1 class="relative text-6xl font-bold text-gray-800">GoGaucho</h1>
-    <wrapper class="p-2 pb-0 relative" :show="home.poll">
-      <p class="cursor-pointer" @click="router.push('/poll')">🎀 Daily poll: <span class="underline">{{ home.poll }}</span></p>
-    </wrapper>
-    <wrapper :show="show" class="w-4/5 flex flex-wrap relative py-4">
+    <transition name="fade" mode="out-in"><!-- title -->
+      <h1 v-if="home.weather" class="relative text-5xl font-bold text-gray-800 flex items-center">
+        <img style="height: 3.75rem;" :src="`http://openweathermap.org/img/wn/${home.weather.icon}@2x.png`">
+        {{ home.weather.temp.toFixed(0) }}&nbsp;&#8451;
+      </h1>
+      <h1 v-else class="relative text-6xl font-bold text-gray-800">GoGaucho</h1>
+    </transition>
+    <div class="w-4/5 flex flex-wrap relative py-4">
       <button @click="router.push('/link')"><link-icon class="w-5 mr-2 text-gray-500" />Links</button>
       <button @click="router.push('/map')"><map-icon class="w-5 mr-2 text-gray-500" />Map</button>
       <button @click="router.push('/dining')"><color-swatch-icon class="w-6 mr-2 text-gray-500" />Dining Commons</button>
@@ -38,7 +40,7 @@ function jump (url) {
       <wrapper :show="state.user.uid && show" class="p-2">
         <button @click="router.push('/class')" style="margin: 0px;"><calendar-icon class="w-6 mr-2 text-gray-500" />My Classes</button>
       </wrapper>
-    </wrapper>
+    </div>
   </div>
 </template>
 

@@ -28,7 +28,8 @@ let cStyle = $computed(() => {
     top: 0.10417 * (hour * 60 + minute - 480) + '%'
   }
 })
-setInterval(() => { const date = new Date() }, 30e3)
+setInterval(() => { date = new Date() }, 60e3)
+window.onvisibilitychange = () => { date = new Date() }
 </script>
 
 <template>
