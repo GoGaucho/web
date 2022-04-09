@@ -7,18 +7,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@heroicons/vue": "^1.0.5",
-    "firebase": "^9.6.7",
+    "@heroicons/vue": "^1.0.6",
+    "firebase": "^9.6.10",
     "google-maps": "^4.3.3",
     "vue": "^3.2.31",
-    "vue-router": "^4.0.12"
+    "vue-router": "^4.0.14"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^2.2.2",
-    "autoprefixer": "^10.4.2",
-    "postcss": "^8.4.7",
+    "@vitejs/plugin-vue": "^2.3.1",
+    "autoprefixer": "^10.4.4",
+    "postcss": "^8.4.12",
     "tailwindcss": "^3.0.23",
-    "vite": "^2.8.4",
+    "vite": "^2.9.1",
     "vite-plugin-pwa": "^0.11.13"
   }
 }
