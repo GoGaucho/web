@@ -2,7 +2,7 @@
 import { CalendarIcon } from '@heroicons/vue/outline'
 import Wrapper from './Wrapper.vue'
 import { state, cache } from '../model.js'
-import { getAuth, signInWithCredential, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
 import { log } from '../firebase.js'
 import { useRouter } from 'vue-router'
 const router = useRouter()
@@ -19,29 +19,7 @@ function goto (path) {
 const provider = new GoogleAuthProvider(), auth = getAuth()
 provider.setCustomParameters({ hd: 'ucsb.edu' })
 
-google.accounts.id.initialize({
-  client_id: '1083649636208-smr7a1d16cl4bl9ufmn0otn8b1pnk4jc.apps.googleusercontent.com',
-  hosted_domain: 'ucsb.edu',
-  auto_select: true,
-  cancel_on_tap_outside: false,
-  callback: listener
-})
-
 // listeners
-function success (t) {
-  cache.set('token', t, 3500e3)
-  if (window.onsignin) window.onsignin()
-  log('web_login')
-}
-
-async function listener (c) {
-  showPanel = false
-  if (!c.credential) return
-  await signInWithCredential(auth, GoogleAuthProvider.credential(c.credential))
-  success(c.credential)
-}
-
-let init = true
 auth.onAuthStateChanged(u => {
   state.user = {}
   if (u) state.user = {
@@ -50,16 +28,21 @@ auth.onAuthStateChanged(u => {
     email: u.email,
     photoURL: u.photoURL
   }
-  if (!u && init) google.accounts.id.prompt()
-  init = false
 })
 
 // manual signin
-async function signin () {
+async function signin (prompt) {
+  if (prompt) {
+    state.loading = prompt
+    await new Promise(r => setTimeout(r, 800))
+  }
   const res = await signInWithPopup(auth, provider).catch(() => false)
+  if (prompt) state.loading = false
   if (!res) return
   const credential = GoogleAuthProvider.credentialFromResult(res)
-  success(credential.idToken)
+  cache.set('token', credential.idToken, 3500e3)
+  if (window.onsignin) window.onsignin()
+  log('web_login')
 }
 window.signin = signin
 
@@ -74,7 +57,7 @@ function signout () {
 <template>
   <transition name="fade" mode="out-in">
     <img v-if="state.user.photoURL" class="w-8 rounded-full cursor-pointer" :src="state.user.photoURL" @click="showPanel = true">
-    <button v-else class="all-transition shadow hover:shadow-md rounded bg-blue-500 text-white font-bold px-3 py-1" @click="signin">Sign in</button>
+    <button v-else class="all-transition shadow hover:shadow-md rounded bg-blue-500 text-white font-bold px-3 py-1" @click="signin()">Sign in</button>
   </transition>
   <transition name="fade">
     <div v-if="showPanel" @click="showPanel = false" class="fixed w-full h-screen bg-transparant z-50 top-0" />

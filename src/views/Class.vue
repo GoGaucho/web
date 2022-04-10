@@ -28,7 +28,7 @@ const pieces = $computed(() => {
 
 async function fetchData () {
   const token = cache.get('token')
-  if (!token) return window.signin()
+  if (!token) return window.signin('Please verify your identity')
   data = {}
   state.loading = true
   const raw = await call('student', { q, token })
