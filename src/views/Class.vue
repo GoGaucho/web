@@ -28,7 +28,7 @@ const pieces = $computed(() => {
 
 async function fetchData () {
   const token = cache.get('token')
-  if (!token) return state.showLogin = true
+  if (!token) return window.signin()
   data = {}
   state.loading = true
   const raw = await call('student', { q, token })
@@ -45,7 +45,7 @@ function getData () {
     fetchData()
   }
 }
-window.onlogin = fetchData
+window.onsignin = fetchData
 
 async function init () {
   q = await getDoc(doc(db, 'cache', 'quarter')).then(r => r.data().current)

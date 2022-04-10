@@ -4,7 +4,6 @@ export const state = reactive({
   loading: false,
   course: {},
   user: {},
-  showLogin: false,
   isMobile: false,
   isStandalone: window.matchMedia('(display-mode: standalone)').matches
 })
