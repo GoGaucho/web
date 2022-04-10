@@ -1,15 +1,16 @@
 <script setup>
 import { watch, reactive } from 'vue'
-import { XIcon, ChipIcon } from '@heroicons/vue/outline'
+import { ChipIcon } from '@heroicons/vue/outline'
 import { getDoc, doc } from 'firebase/firestore'
 import { db, log } from '../firebase.js'
-import { state } from '../model.js'
+import { state, cache } from '../model.js'
 import * as parse from '../utils/parse.js'
 import debounce from '../utils/debounce.js'
 import * as lookup from '../utils/lookup.js'
 import Course from '../components/Course.vue'
 import Wrapper from '../components/Wrapper.vue'
 import PanelWrapper from '../components/PanelWrapper.vue'
+import LabelSwitch from '../components/LabelSwitch.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 log('web/course')
@@ -61,11 +62,19 @@ getDoc(doc(db, 'cache', 'quarter')).then(r => {
   else state.course.quarter = quarters[0]
 })
 
-watch(() => state.course.quarter, async v => {
+watch(() => state.course.quarter, v => {
   focus = false
-  state.course.focus = {}
+  state.course.focus = cache.get('course' + v) || {}
   fetchList()
 })
+
+watch(() => state.course.focus, v => {
+  const res = {}
+  for (const k in v) {
+    if (v[k]) res[k] = 1
+  }
+  cache.set('course' + state.course.quarter, res)
+}, { deep: true })
 </script>
 
 <template>
@@ -80,9 +89,7 @@ watch(() => state.course.quarter, async v => {
     <div class="bg-white my-4 rounded border" v-if="!loading">
       <wrapper class="flex items-center flex-wrap px-4 border border-t-0 border-x-0 py-1" :show="showFocus"><!-- focus -->
         <label class="font-bold">Focus:</label>
-        <template v-for="(v, k) in state.course.focus">
-          <label v-if="state.course.focus[k]" class="all-transition border text-sm rounded px-1 m-1 border-blue-400 text-blue-400 bg-blue-100 flex items-center">{{ k }}<x-icon class="w-4 cursor-pointer" @click="state.course.focus[k] = false" /></label>
-        </template>
+        <label-switch closable="1" v-for="(v, k) in state.course.focus" @close="delete state.course.focus[k]">{{ k }}</label-switch>
         <button class="text-sm mx-2 my-1 px-4 py-1 rounded-full border font-bold text-blue-500 flex items-center" @click="router.push('/planner')"><chip-icon class="w-4 mr-1" />Go to Planner!</button>
       </wrapper>
       <div class="flex items-center flex-wrap py-1"><!-- query -->
@@ -99,8 +106,8 @@ watch(() => state.course.quarter, async v => {
           <select class="py-1 px-2 mx-2 border rounded bg-transparent" v-model="query.college" @change="query.GE = {}">
             <option v-for="(v, k) in lookup.GEs">{{ k }}</option>
           </select>
-          <div>
-            <button v-for="g in lookup.GEs[query.college]" class="all-transition border text-sm rounded px-1 m-1" :class="query.GE[g] ? 'border-orange-400 text-orange-400 bg-orange-100' : 'border-blue-400 text-blue-400 bg-blue-100'" @click="query.GE[g] = !query.GE[g]">{{ g }}</button>
+          <div class="flex items-center flex-wrap font-normal">
+            <label-switch v-for="g in lookup.GEs[query.college]" v-model="query.GE[g]">{{ g }}</label-switch>
           </div>
         </label>
       </div>

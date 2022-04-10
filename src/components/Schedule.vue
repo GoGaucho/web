@@ -1,17 +1,45 @@
 <script setup>
+import { watch } from 'vue'
+import LabelSwitch from './LabelSwitch.vue'
 import state from '../model.js'
 const props = defineProps(['pieces'])
 const ds = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
 const colors = ['bg-yellow-500', 'bg-purple-500', 'bg-red-500', 'bg-green-500', 'bg-sky-500', 'bg-lime-500', 'bg-orange-500', 'bg-teal-500', 'bg-pink-500']
-let colorMap = $computed(() => {
-  let cot = 0
-  const res = {}
-  for (const p of props.pieces) {
-    if (!res[p.key]) res[p.key] = colors[cot++] || 'bg-gray-500'
+
+let colorMap = $ref({}), labels = $ref({})
+
+watch(() => props.pieces, v => {
+  const keys = new Set(), ls = new Set()
+  for (const p of v) {
+    keys.add(p.key)
+    if (p.label?.length) ls.add(...p.label)
   }
-  return res
-})
+  // remove old
+  colorMap = {}
+  for (const l in labels) {
+    if (!ls.has(l)) delete labels[l]
+  }
+  // add new
+  let cot = 0
+  for (const k of keys) {
+    colorMap[k] = colors[cot++] || 'bg-gray-500'
+  }
+  const lss = [...ls].sort()
+  for (const l of lss) {
+    if (typeof labels[l] === 'undefined') labels[l] = 1
+  }
+}, { immediate: true })
+
+const isHide = p => {
+  if (!p) return true
+  if (!p.label) return false
+  for (const l of p.label) {
+    if (!labels[l]) return true
+  }
+  return false
+}
+
 const pStyle = p => ({
   left: 20 * Math.floor(p.wTime[0] / 1440) + '%',
   top: 0.10417 * (p.wTime[0] % 1440 - 480) + '%',
@@ -29,11 +57,14 @@ let cStyle = $computed(() => {
   }
 })
 setInterval(() => { date = new Date() }, 60e3)
-window.onvisibilitychange = () => { date = new Date() }
+document.onvisibilitychange = () => { date = new Date() }
 </script>
 
 <template>
   <div class="w-full h-full relative bg-white overflow-y-auto">
+    <div class="flex items-center px-4">
+      <label-switch v-for="(v, l) in labels" v-model="labels[l]">{{ l }}</label-switch>
+    </div>
     <div class="flex overflow-y-hidden" style="height: 1000px;">
       <div class="mr-1 text-right h-full" style="width: 1rem;"><!-- left -->
         <div style="height: 24px;">&nbsp;</div>
@@ -47,13 +78,15 @@ window.onvisibilitychange = () => { date = new Date() }
         </div>
         <div class="grid grid-cols-5 gap-px relative w-full" style="height: 976px;"><!-- body -->
           <div v-for="j in 80" class="bg-gray-100" />
-          <div v-for="p in props.pieces" :style="pStyle(p)" :key="p.key" class="all-transition absolute p-1 sm:px-2 text-xs rounded overflow-hidden">
-            <div class="font-bold text-shadow text-[0.7rem] sm:text-xs">{{ p.key }}</div>
-            <div class="text-gray-700 text-[0.6rem] sm:text-xs">{{ p.time }}</div>
-            <div class="text-gray-700 text-[0.625rem] sm:text-xs">{{ p.location }}</div>
-            <div class="all-transition absolute bottom-0 top-0 left-0 w-0.5 sm:w-1" :class="colorMap[p.key]" />
-            <div class="absolute bottom-0 top-0 left-0 right-0 opacity-20" :class="colorMap[p.key]" />
-          </div>
+          <template v-for="p in props.pieces" :key="p.key">
+            <div v-if="!isHide(p)" :style="pStyle(p)" class="all-transition absolute p-1 text-xs rounded overflow-hidden">
+              <div class="font-bold text-shadow text-[0.7rem] sm:text-xs">{{ p.key }}</div>
+              <div class="text-gray-700 text-[0.6rem] sm:text-xs">{{ p.time }}</div>
+              <div class="text-gray-700 text-[0.625rem] sm:text-xs">{{ p.location }}</div>
+              <div class="all-transition absolute bottom-0 top-0 left-0 w-0.5" :class="colorMap[p.key]" />
+              <div class="absolute bottom-0 top-0 left-0 right-0 opacity-20" :class="colorMap[p.key]" />
+            </div>
+          </template>
           <div class="flex items-center absolute bg-blue-500 h-0.5 w-1/5" :style="cStyle" />
         </div>
       </div>
