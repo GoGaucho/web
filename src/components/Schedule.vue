@@ -17,16 +17,13 @@ watch(() => props.pieces, v => {
   }
   // remove old
   colorMap = {}
-  for (const l in labels) {
-    if (!ls.has(l)) delete labels[l]
-  }
+  labels = {}
   // add new
   let cot = 0
   for (const k of keys) {
     colorMap[k] = colors[cot++] || 'bg-gray-500'
   }
-  const lss = [...ls].sort()
-  for (const l of lss) {
+  for (const l of ls) {
     if (typeof labels[l] === 'undefined') labels[l] = 1
   }
 }, { immediate: true })

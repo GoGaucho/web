@@ -113,7 +113,7 @@ function computeStatus () {
 function choose (k, lec, sec) {
   if (!sec) {
     if (choices[k].lec === lec) choices[k] = {}
-    else choices[k].lec = lec
+    else choices[k] = { lec }
     if (choices[k].lec && !focus[k].tree[lec]?.length) choices[k].done = 1
   } else {
     if (choices[k].sec === sec) choices[k] = { lec: choices[k].lec }

@@ -15,11 +15,13 @@ const pieces = $computed(() => {
   const res = []
   if (!data.schedule) return res
   for (const k in data.schedule) {
+    const ss = data.schedule[k].session?.substring(5).trim()
     for (const p of data.schedule[k].periods) {
       for (const w of p.wTime) res.push({
         wTime: w, key: k,
         time: p.time.replace(/^(.*?)\s/, ''),
-        location: p.location
+        location: p.location,
+        label: ss ? ['Session ' + ss] : []
       })
     }
   }
