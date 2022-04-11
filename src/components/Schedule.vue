@@ -10,7 +10,8 @@ const colors = ['bg-yellow-500', 'bg-purple-500', 'bg-red-500', 'bg-green-500', 
 let colorMap = $ref({}), labels = $ref({})
 
 watch(() => props.pieces, v => {
-  const keys = new Set(), ls = new Set()
+  const keys = new Set()
+  let ls = new Set()
   for (const p of v) {
     keys.add(p.key)
     if (p.label?.length) ls.add(...p.label)
@@ -23,6 +24,7 @@ watch(() => props.pieces, v => {
   for (const k of keys) {
     colorMap[k] = colors[cot++] || 'bg-gray-500'
   }
+  ls = [...ls].sort()
   for (const l of ls) {
     if (typeof labels[l] === 'undefined') labels[l] = 1
   }
