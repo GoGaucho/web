@@ -2,13 +2,13 @@
 import { RefreshIcon } from '@heroicons/vue/outline'
 import { call, db, log } from '../firebase.js'
 import { state, cache } from '../model.js'
-import { getDoc, doc } from 'firebase/firestore'
+import { getDoc, onSnapshot, setDoc, doc } from 'firebase/firestore'
 import * as parse from '../utils/parse.js'
-import * as lookup from '../utils/lookup.js'
 import Wrapper from '../components/Wrapper.vue'
 import Schedule from '../components/Schedule.vue'
+import Registration from '../components/Registration.vue'
 
-let q = $ref(''), qs = $ref([]), data = $ref({})
+let q = $ref(''), qs = $ref([]), data = $ref({}), custom = $ref([])
 log('web/class')
 
 const pieces = $computed(() => {
@@ -25,6 +25,15 @@ const pieces = $computed(() => {
       })
     }
   }
+  for (const c of custom) {
+    for (const w of c.wTime) res.push({
+      wTime: w, key: 'custom',
+      time: c.time,
+      title: c.title,
+      location: c.location,
+      label: ['Custom']
+    })
+  }
   return res
 })
 
@@ -40,7 +49,15 @@ async function fetchData () {
   cache.set('class' + q, raw)
 }
 
+let unsub = null
 function getData () {
+  if (unsub) unsub()
+  // fetch customize
+  unsub = onSnapshot(doc(db, `user/${state.user.uid}/schedule/${q}`), doc => {
+    const c = doc.data()
+    if (!c) return
+    custom = JSON.parse(c['+'])
+  })
   data = cache.get('class' + q)
   if (!data) {
     data = {}
@@ -55,6 +72,36 @@ async function init () {
   getData()
 }
 init()
+
+// following are about customize schedule
+const wTime = (d, hr, min) => d * 1440 + hr * 60 + Number(min)
+const days = 'MTWRF'
+let edit = $ref({})
+let ready = $computed(() => {
+  if (!edit.title || !edit.time) return false
+  const m = edit.time.toUpperCase().match(/^([MTWRF ]+)\s*(\d{2}):(\d{2})\s*-\s*(\d{2}):(\d{2})$/)
+  if (!m || m[2] > 23 || m[4] > 23 || m[3] > 59 || m[5] > 59 || wTime(0, m[2], m[3]) >= wTime(0, m[4], m[5])) return false
+  const ws = []
+  for (let d = 0; d < 7; d++) {
+    if (!m[1].includes(days[d])) continue
+    ws.push([wTime(d, m[2], m[3]), wTime(d, m[4], m[5])])
+  }
+  if (!ws.length) return false
+  return [ws, `${m[2]}:${m[3]} - ${m[4]}:${m[5]}`]
+})
+function addCustom () {
+  if (!ready) return
+  custom.push({
+    title: edit.title,
+    location: edit.location,
+    wTime: ready[0],
+    time: ready[1]
+  })
+  setDoc(doc(db, `user/${state.user.uid}/schedule/${q}`), {
+    '+': JSON.stringify(custom)
+  }, { merge: true })
+  edit = {}
+}
 </script>
 
 <template>
@@ -73,31 +120,20 @@ init()
       <div class="flex-grow bg-white pb-2 sm:p-2 lg:px-6 rounded shadow m-0 sm:m-4" v-if="data.schedule"><!-- schedule -->
         <schedule :pieces="pieces" />
       </div>
-      <div class="m-2 w-full lg:w-auto" v-if="data.registration"><!-- registration -->
-        <wrapper :show="1" class="p-2">
-          <div class="rounded shadow-md overflow-hidden bg-white">
-            <div class="text-white font-bold p-2" style="background: #0b254e;">Personal Information</div>
-            <div class="mx-4 my-2"><b>Perm Number: </b><code>{{ data.registration.perm }}</code></div>
-            <div class="mx-4 my-2"><b>Class Level: </b><code>{{ lookup.classLevel[data.registration.classLevel] }}</code></div>
-            <div class="mx-4 my-2"><b>Classification: </b><code>{{ lookup.classification[data.registration.classification] }}</code></div>
+      <div class="m-2 w-full lg:w-72"><!-- side -->
+        <wrapper :show="1" v-if="data.schedule" class="p-2">
+          <div class="rounded shadow-md bg-white">
+            <div class="text-white font-bold p-2 bg-green-800">Customize Schedule</div>
+            <p class="m-3 text-xs text-gray-500">This feature is still in beta test. Your data might be cleared due to development. Currently deleting is not supported, please use carefully.</p>
+            <div class="flex flex-wrap items-center m-2">
+              <input class="rounded border m-1 px-1" placeholder="Title" v-model="edit.title">
+              <input class="rounded border m-1 px-1" placeholder="Location" v-model="edit.location">
+              <input class="rounded border m-1 px-1" placeholder="MTWRF 00:00 - 23:59" v-model="edit.time">
+            </div>
+            <button class="all-transition rounded shadow text-white font-bold m-4 mt-0 px-2 py-1" :class="ready ? 'bg-blue-500 hover:shadow-md' : 'bg-gray-300'" @click="addCustom">Add Event</button>
           </div>
         </wrapper>
-        <wrapper :show="1" class="p-2">
-          <div class="rounded shadow-md overflow-hidden bg-white">
-            <div class="text-white font-bold p-2" style="background: #0b254e;">Registration</div>
-            <div class="mx-4 my-2"><b>Status: </b><code>{{ lookup.regStatus[data.registration.regStatus] }}</code></div>
-            <div class="mx-4 my-2"><b>Fee Status: </b><code>{{ lookup.feeStatus[data.registration.feeStatus] }}</code></div>
-            <div class="mx-4 my-2"><b>Units: </b><code>{{ data.registration.units }}</code></div>
-          </div>
-        </wrapper>
-        <wrapper :show="1" class="p-2">
-          <div class="rounded shadow-md overflow-hidden bg-white">
-            <div class="text-white font-bold p-2" style="background: #0b254e;">Pass Time</div>
-            <div class="mx-4 my-2"><b>Pass 1: </b><code>{{ data.registration.pass1.replace('T', ' ') }}</code></div>
-            <div class="mx-4 my-2"><b>Pass 2: </b><code>{{ data.registration.pass2.replace('T', ' ') }}</code></div>
-            <div class="mx-4 my-2"><b>Pass 3: </b><code>{{ data.registration.pass3.replace('T', ' ') }}</code></div>
-          </div>
-        </wrapper>
+        <registration v-if="data.registration" :data="data.registration"/>
       </div>
     </div>
     <p class="m-4" v-else>No data</p>
