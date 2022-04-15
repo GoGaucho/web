@@ -1,6 +1,7 @@
 <script setup>
 import { watch } from 'vue'
 import LabelSwitch from './LabelSwitch.vue'
+import Wrapper from './Wrapper.vue'
 import state from '../model.js'
 const props = defineProps(['pieces'])
 const ds = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
@@ -61,9 +62,9 @@ document.onvisibilitychange = () => { date = new Date() }
 
 <template>
   <div class="w-full h-full relative bg-white overflow-y-auto">
-    <div class="flex items-center px-4">
+    <wrapper class="flex items-center px-4" :show="labels && Object.keys(labels).length">
       <label-switch v-for="(v, l) in labels" v-model="labels[l]">{{ l }}</label-switch>
-    </div>
+    </wrapper>
     <div class="flex overflow-y-hidden" style="height: 1000px;">
       <div class="mr-1 text-right h-full" style="width: 1rem;"><!-- left -->
         <div style="height: 24px;">&nbsp;</div>

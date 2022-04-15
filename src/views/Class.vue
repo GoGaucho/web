@@ -1,5 +1,5 @@
 <script setup>
-import { RefreshIcon } from '@heroicons/vue/outline'
+import { RefreshIcon, XCircleIcon } from '@heroicons/vue/outline'
 import { call, db, log } from '../firebase.js'
 import { state, cache } from '../model.js'
 import { getDoc, onSnapshot, setDoc, doc } from 'firebase/firestore'
@@ -28,7 +28,7 @@ const pieces = $computed(() => {
   for (const c of custom) {
     for (const w of c.wTime) res.push({
       wTime: w, key: 'custom',
-      time: c.time,
+      time: c.time.replace(/^(.*?)\s/, ''),
       title: c.title,
       location: c.location,
       label: ['Custom']
@@ -82,13 +82,20 @@ let ready = $computed(() => {
   const m = edit.time.toUpperCase().match(/^([MTWRF ]+)\s*(\d{2}):(\d{2})\s*-\s*(\d{2}):(\d{2})$/)
   if (!m || m[2] > 23 || m[4] > 23 || m[3] > 59 || m[5] > 59 || wTime(0, m[2], m[3]) >= wTime(0, m[4], m[5])) return false
   const ws = []
+  let ds = ''
   for (let d = 0; d < 7; d++) {
     if (!m[1].includes(days[d])) continue
+    ds += days[d]
     ws.push([wTime(d, m[2], m[3]), wTime(d, m[4], m[5])])
   }
   if (!ws.length) return false
-  return [ws, `${m[2]}:${m[3]} - ${m[4]}:${m[5]}`]
+  return [ws, `${ds} ${m[2]}:${m[3]} - ${m[4]}:${m[5]}`]
 })
+function submitCustom () {
+  setDoc(doc(db, `user/${state.user.uid}/schedule/${q}`), {
+    '+': JSON.stringify(custom)
+  }, { merge: true })
+}
 function addCustom () {
   if (!ready) return
   custom.push({
@@ -97,10 +104,12 @@ function addCustom () {
     wTime: ready[0],
     time: ready[1]
   })
-  setDoc(doc(db, `user/${state.user.uid}/schedule/${q}`), {
-    '+': JSON.stringify(custom)
-  }, { merge: true })
+  submitCustom()
   edit = {}
+}
+function removeCustom (i) {
+  custom.splice(i, 1)
+  submitCustom()
 }
 </script>
 
@@ -124,7 +133,14 @@ function addCustom () {
         <wrapper :show="1" v-if="data.schedule" class="p-2">
           <div class="rounded shadow-md bg-white">
             <div class="text-white font-bold p-2 bg-green-800">Customize Schedule</div>
-            <p class="m-3 text-xs text-gray-500">This feature is still in beta test. Your data might be cleared due to development. Currently deleting is not supported, please use carefully.</p>
+            <p class="m-3 text-xs text-gray-500">This feature is still in beta test. Your data might be cleared due to development.</p>
+            <div class="px-2">
+              <div class="m-2 flex items-center flex-wrap" v-for="(c, i) in custom">
+                <b>{{ c.title }}</b>
+                <span class="text-xs text-gray-500 mx-2">{{ c.time }}</span>
+                <x-circle-icon class="w-5 text-red-500 cursor-pointer" @click="removeCustom(i)"/>
+              </div>
+            </div>
             <div class="flex flex-wrap items-center m-2">
               <input class="rounded border m-1 px-1" placeholder="Title" v-model="edit.title">
               <input class="rounded border m-1 px-1" placeholder="Location" v-model="edit.location">
