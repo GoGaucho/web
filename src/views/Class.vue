@@ -130,10 +130,9 @@ function removeCustom (i) {
         <schedule :pieces="pieces" />
       </div>
       <div class="m-2 w-full lg:w-72"><!-- side -->
-        <wrapper :show="1" v-if="data.schedule" class="p-2">
-          <div class="rounded shadow-md bg-white">
+        <wrapper :show="1" v-if="data.schedule" class="p-2" :key="custom.length">
+          <div class="rounded shadow-md bg-white overflow-hidden">
             <div class="text-white font-bold p-2 bg-green-800">Customize Schedule</div>
-            <p class="m-3 text-xs text-gray-500">This feature is still in beta test. Your data might be cleared due to development.</p>
             <div class="px-2">
               <div class="m-2 flex items-center flex-wrap" v-for="(c, i) in custom">
                 <b>{{ c.title }}</b>
