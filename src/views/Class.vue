@@ -141,12 +141,13 @@ function removeCustom (i) {
                 <x-circle-icon class="w-5 text-red-500 cursor-pointer" @click="removeCustom(i)"/>
               </div>
             </div>
-            <div class="flex flex-wrap items-center m-2">
-              <input class="rounded border m-1 px-1" placeholder="Title" v-model="edit.title">
-              <input class="rounded border m-1 px-1" placeholder="Location" v-model="edit.location">
-              <input class="rounded border m-1 px-1" placeholder="MTWRF 00:00 - 23:59" v-model="edit.time">
+            <div class="flex flex-wrap items-center m-2 mb-0">
+              <input class="rounded border bg-transparent appearance-none m-1 px-1" placeholder="Title" v-model="edit.title">
+              <input class="rounded border bg-transparent appearance-none m-1 px-1" placeholder="Location" v-model="edit.location">
+              <input class="rounded border bg-transparent appearance-none m-1 px-1" placeholder="MTWRF 00:00 - 23:59" v-model="edit.time">
             </div>
-            <button class="all-transition rounded shadow text-white font-bold m-4 mt-0 px-2 py-1" :class="ready ? 'bg-blue-500 hover:shadow-md' : 'bg-gray-300'" @click="addCustom">Add Event</button>
+            <p class="text-xs text-gray-500 mx-4">Time format: 24-hour hh:mm</p>
+            <button class="all-transition rounded shadow text-white font-bold m-4 mt-2 px-2 py-1" :class="ready ? 'bg-blue-500 hover:shadow-md' : 'bg-gray-300'" @click="addCustom">Add Event</button>
           </div>
         </wrapper>
         <registration v-if="data.registration" :data="data.registration"/>

@@ -62,7 +62,7 @@ document.onvisibilitychange = () => { date = new Date() }
 
 <template>
   <div class="w-full h-full relative bg-white overflow-y-auto">
-    <wrapper class="flex items-center px-4" :show="labels && Object.keys(labels).length">
+    <wrapper class="flex items-center px-4 py-1" :show="labels && Object.keys(labels).length">
       <label-switch v-for="(v, l) in labels" v-model="labels[l]">{{ l }}</label-switch>
     </wrapper>
     <div class="flex overflow-y-hidden" style="height: 1000px;">
