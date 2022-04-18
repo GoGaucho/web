@@ -52,6 +52,7 @@ async function fetchData () {
 let unsub = null
 function getData () {
   if (unsub) unsub()
+  custom = []
   // fetch customize
   unsub = onSnapshot(doc(db, `user/${state.user.uid}/schedule/${q}`), doc => {
     const c = doc.data()
