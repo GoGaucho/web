@@ -130,7 +130,7 @@ function removeCustom (i) {
       <div class="flex-grow bg-white pb-2 sm:p-2 lg:px-6 rounded shadow m-0 sm:m-4" v-if="data.schedule"><!-- schedule -->
         <schedule :pieces="pieces" />
       </div>
-      <div class="m-2 w-full lg:w-72"><!-- side -->
+      <div class="m-2 w-full lg:w-80"><!-- side -->
         <wrapper :show="1" v-if="data.schedule" class="p-2" :key="custom.length">
           <div class="rounded shadow-md bg-white overflow-hidden">
             <div class="text-white font-bold p-2 bg-green-800">Customize Schedule</div>
