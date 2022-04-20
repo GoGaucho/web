@@ -22,6 +22,7 @@ router.beforeEach(() => { NProgress.start() })
 router.afterEach(() => {
   Swal.close()
   NProgress.done()
+  window.onsignin = () => {}
   state.loading = false
 })
 

@@ -30,12 +30,16 @@ auth.onAuthStateChanged(u => {
   }
 })
 
+function signout () {
+  showPanel = false
+  cache.set('token', false, 0)
+  auth.signOut()
+}
+
 // manual signin
 async function signin (prompt) {
-  if (prompt) {
-    state.loading = prompt
-    await new Promise(r => setTimeout(r, 800))
-  }
+  signout()
+  if (prompt) state.loading = prompt
   const res = await signInWithPopup(auth, provider).catch(() => false)
   if (prompt) state.loading = false
   if (!res) return
@@ -45,13 +49,6 @@ async function signin (prompt) {
   log('web_login')
 }
 window.signin = signin
-
-function signout () {
-  showPanel = false
-  state.user = {}
-  cache.set('token', false, 0)
-  auth.signOut()
-}
 </script>
 
 <template>

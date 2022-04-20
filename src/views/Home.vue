@@ -27,9 +27,7 @@ onSnapshot(doc(db, 'cache', 'home'), doc => home = doc.data() || {})
       <button @click="router.push('/dining')"><color-swatch-icon class="w-6 mr-2 text-gray-500" />Dining Commons</button>
       <button @click="router.push('/waitz')"><library-icon class="w-6 mr-2 text-gray-500" />Building Capacity</button>
       <button @click="router.push('/course')"><book-open-icon class="w-6 mr-2 text-gray-500" />Course</button>
-      <wrapper :show="state.user.uid" class="p-2">
-        <button @click="router.push('/class')" style="margin: 0px;"><calendar-icon class="w-6 mr-2 text-gray-500" />My Classes</button>
-      </wrapper>
+      <button @click="router.push('/class')"><calendar-icon class="w-6 mr-2 text-gray-500" />My Classes</button>
     </div>
   </div>
 </template>

@@ -38,6 +38,7 @@ const pieces = $computed(() => {
 })
 
 async function fetchData () {
+  cache.set('class' + q, false)
   const token = cache.get('token')
   if (!token) return window.signin('Please verify your identity')
   data = {}
@@ -65,12 +66,13 @@ function getData () {
     fetchData()
   }
 }
-window.onsignin = fetchData
+window.onsignin = getData
 
 async function init () {
   q = await getDoc(doc(db, 'cache', 'quarter')).then(r => r.data().current)
   qs = [parse.quarterLast(q), q, parse.quarterNext(q)]
-  getData()
+  if (state.user.uid) getData()
+  else window.signin('Please verify your identity')
 }
 init()
 
