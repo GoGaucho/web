@@ -46,7 +46,7 @@ function getClass (n) {
 }
 
 function showCam () {
-  Swal.fire({ title: dcs[dc], showConfirmButton: false, html: `<img src="https://api.ucsb.edu/dining/cams/v2/still/${dc}?ucsb-api-key=%20s5MpI868GtPpozL8Q6bfnmMMIUXDeznl">` })
+  Swal.fire({ title: dcs[dc], showConfirmButton: false, html: `<img src="https://api.ucsb.edu/dining/cams/v2/stream/${dc}?ucsb-api-key=%20s5MpI868GtPpozL8Q6bfnmMMIUXDeznl">` })
 }
 </script>
 
