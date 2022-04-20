@@ -3,7 +3,7 @@ import { watch } from 'vue'
 import { getDoc, doc } from 'firebase/firestore'
 import { db, log } from '../firebase.js'
 import { cache } from '../model.js'
-import { CreditCardIcon, HeartIcon } from '@heroicons/vue/outline'
+import { CreditCardIcon, HeartIcon, VideoCameraIcon } from '@heroicons/vue/outline'
 import Wrapper from '../components/Wrapper.vue'
 log('web/dining')
 
@@ -44,6 +44,10 @@ function getClass (n) {
   if (n.includes('(v)') || n.includes('(vgn)')) return 'vgn'
   return 'meat'
 }
+
+function showCam () {
+  Swal.fire({ title: dcs[dc], showConfirmButton: false, html: `<img src="https://api.ucsb.edu/dining/cams/v2/still/${dc}?ucsb-api-key=%20s5MpI868GtPpozL8Q6bfnmMMIUXDeznl">` })
+}
 </script>
 
 <template>
@@ -60,6 +64,7 @@ function getClass (n) {
         <select class="text-base bg-white border font-bold mx-2 px-4 py-1 rounded-full appearance-none cursor-pointer" v-model="dc">
           <option v-for="(v, k) in dcs" :value="k">{{ v }}</option>
         </select>
+        <video-camera-icon class="w-6 ml-2 cursor-pointer text-gray-500" @click="showCam" />
       </h2>
       <p class="flex items-center text-gray-700 my-2" :set="v = data[dc] && data[dc][mc]">
         <select class="px-2 mr-2 appearance-none bg-white font-bold block rounded cursor-pointer border" v-model="mc" v-if="v">
