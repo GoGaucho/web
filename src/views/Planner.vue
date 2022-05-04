@@ -12,7 +12,11 @@ log('web/planner')
 
 let loading = $ref(true), choices = $ref({}), chosenwTime = $ref([])
 let isSummer = $computed(() => state.course?.quarter && state.course.quarter[4] === '3')
+
 let instructorName = $ref('')
+function leaveInstructor () {
+  if (!state.isMobile) instructorName = ''
+}
 
 const sections = {}, courses = [], conflicts = {}
 async function fetchData () {
@@ -206,7 +210,7 @@ function help () {
               <tr class="border-white bg-gray-200 border-y-1 all-transition cursor-pointer" :set="s = v.sections[lec]" :class="sections[lec].status" @click="choose(k, lec)"><!-- lecture -->
                 <td class="text-sm" v-if="isSummer">{{ s.session }}</td>
                 <td>{{ lec }}</td>
-                <td><div v-for="i in s.instructors" @mouseenter="instructorName = i" @mouseleave="instructorName = ''">{{ i }}</div></td>
+                <td><div v-for="i in s.instructors" @click="instructorName = i" @mouseenter="instructorName = i" @mouseleave="leaveInstructor">{{ i }}</div></td>
                 <td><div v-for="p in s.periods">{{ p.time }}</div></td>
                 <td><div v-for="p in s.periods">{{ p.location }}</div></td>
               </tr>
@@ -225,7 +229,7 @@ function help () {
         <schedule :pieces="pieces" />
       </div>
     </div>
-    <instructor :name="instructorName" />
+    <instructor :name="instructorName" @close="instructorName = ''" />
   </div>
 </template>
 

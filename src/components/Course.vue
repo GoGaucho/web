@@ -16,7 +16,11 @@ const gradings = { null: 'optional', L: 'Letter', P: 'P/NP' }
 
 let course = $ref({}), isSummer = $ref(false)
 let title = $computed(() => props.modelValue ? props.modelValue + ': ' + (course.title || '') : 'Please select a course')
+
 let instructorName = $ref('')
+function leaveInstructor () {
+  if (!state.isMobile) instructorName = ''
+}
 
 watch(() => props.modelValue, async v => {
   if (!v) return
@@ -76,7 +80,7 @@ function toggleFocus () {
             <tr class="bg-blue-100 border-white border-y-1" :set="s = course.sections[lec]"><!-- lecture -->
               <td class="text-sm" v-if="isSummer">{{ s.session }}</td>
               <td>{{ lec }}</td>
-              <td><div v-for="i in s.instructors" @mouseenter="instructorName = i" @mouseleave="instructorName = ''">{{ i }}</div></td>
+              <td><div v-for="i in s.instructors" @click="instructorName = i" @mouseenter="instructorName = i" @mouseleave="leaveInstructor">{{ i }}</div></td>
               <td><div v-for="p in s.periods">{{ p.time }}</div></td>
               <td><div v-for="p in s.periods">{{ p.location }}</div></td>
             </tr>
@@ -92,7 +96,7 @@ function toggleFocus () {
       </div>
     </wrapper>
   </div>
-  <instructor :name="instructorName" />
+  <instructor :name="instructorName" @close="instructorName = ''" />
 </template>
 
 <style scoped>
