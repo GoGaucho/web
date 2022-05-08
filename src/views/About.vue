@@ -59,7 +59,7 @@ init()
           </div>
         </a>
         <a class="w-full sm:w-72 m-2 all-transition cursor-pointer rounded flex items-center bg-gradient-to-r from-white to-gray-100 sm:to-white p-2 w-full sm:border hover:shadow hover:from-blue-50" style="min-width: 18rem;" href="https://discord.gg/64jqp8Z3xH" target="_blank">
-          <img class="rounded mr-2 object-cover object-top" style="width: 2.5rem; max-height: 2.5rem;" src="/icons/links/Discord.png">
+          <img class="rounded mr-2 object-cover object-top" style="width: 2.5rem; max-height: 2.5rem;" src="/icons/links/discord.png">
           <div class="flex-grow">
             <h4 class="font-bold">Discord</h4>
             <p class="text-xs text-gray-500">Join GoGaucho Server</p>
