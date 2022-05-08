@@ -50,18 +50,33 @@ init()
       <h2 class="text-xl mt-20 mb-4 font-bold">How to contact us?</h2>
       <p>You are welcomed to contact us for bug reports, feature suggestions, and joining applications. We appreciate your precious ideas and valuable experiences.</p>
       <div class="flex justify-center flex-wrap text-left">
-        <a class="w-full sm:w-72 m-2 all-transition cursor-pointer rounded flex items-center bg-gradient-to-r from-white to-gray-100 sm:to-white p-2 w-full sm:border hover:shadow hover:from-blue-50" style="min-width: 18rem;" href="https://discord.gg/64jqp8Z3xH" target="_blank">
-          <img class="rounded mr-2 object-cover object-top" style="width: 2.5rem; max-height: 2.5rem;" src="/icons/links/discord.png">
-          <div class="flex-grow">
-            <h4 class="font-bold">Discord</h4>
-            <p class="text-xs text-gray-500">Join GoGaucho Server</p>
-          </div>
-        </a>
+
         <a class="w-full sm:w-72 m-2 all-transition rounded flex items-center bg-gradient-to-r from-white to-gray-100 sm:to-white p-2 w-full sm:border hover:shadow hover:from-blue-50" href="mailto:gogauchoapp@ucsb.edu" target="_blank" style="min-width: 18rem;">
           <img class="rounded mr-2 object-cover object-top" style="width: 2.5rem; max-height: 2.5rem;" src="/icons/logo.png">
           <div class="flex-grow">
             <h4 class="font-bold">Email</h4>
             <p @click.prevent="" class="text-xs text-gray-500 cursor-text select-all">gogauchoapp@ucsb.edu</p>
+          </div>
+        </a>
+        <a class="w-full sm:w-72 m-2 all-transition cursor-pointer rounded flex items-center bg-gradient-to-r from-white to-gray-100 sm:to-white p-2 w-full sm:border hover:shadow hover:from-blue-50" style="min-width: 18rem;" href="https://discord.gg/64jqp8Z3xH" target="_blank">
+          <img class="rounded mr-2 object-cover object-top" style="width: 2.5rem; max-height: 2.5rem;" src="/icons/links/Discord.png">
+          <div class="flex-grow">
+            <h4 class="font-bold">Discord</h4>
+            <p class="text-xs text-gray-500">Join GoGaucho Server</p>
+          </div>
+        </a>
+        <a class="w-full sm:w-72 m-2 all-transition cursor-pointer rounded flex items-center bg-gradient-to-r from-white to-gray-100 sm:to-white p-2 w-full sm:border hover:shadow hover:from-blue-50" style="min-width: 18rem;" href="https://twitter.com/GoGauchoApp" target="_blank">
+          <img class="rounded mr-2 object-cover object-top" style="width: 2.5rem; max-height: 2.5rem;" src="/icons/links/Twitter.png">
+          <div class="flex-grow">
+            <h4 class="font-bold">Twitter</h4>
+            <p class="text-xs text-gray-500">Follow @GoGauchoApp</p>
+          </div>
+        </a>
+        <a class="w-full sm:w-72 m-2 all-transition cursor-pointer rounded flex items-center bg-gradient-to-r from-white to-gray-100 sm:to-white p-2 w-full sm:border hover:shadow hover:from-blue-50" style="min-width: 18rem;" href="https://www.instagram.com/GoGauchoApp/" target="_blank">
+          <img class="rounded mr-2 object-cover object-top" style="width: 2.5rem; max-height: 2.5rem;" src="/icons/links/Instagram.png">
+          <div class="flex-grow">
+            <h4 class="font-bold">Instagram</h4>
+            <p class="text-xs text-gray-500">Follow @GoGauchoApp</p>
           </div>
         </a>
       </div>
