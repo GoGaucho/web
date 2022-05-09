@@ -3,6 +3,7 @@ import fire from '../assets/fire.svg'
 import { url, log } from '../firebase.js'
 import { DotsVerticalIcon } from '@heroicons/vue/outline'
 import PanelWrapper from '../components/PanelWrapper.vue'
+import LinkCard from '../components/LinkCard.vue'
 
 log('web/about')
 let guide = $ref({})
@@ -49,36 +50,11 @@ init()
       <p>GoGaucho is developed and maintained by UCSB students independently. GoGaucho obtains data from various sources. We are not permitted to store your personal data (schedule etc.) in any form. <b>Your personal data is directly passed from official UCSB server to your devices under proper authorization. </b></p>
       <h2 class="text-xl mt-20 mb-4 font-bold">How to contact us?</h2>
       <p>You are welcomed to contact us for bug reports, feature suggestions, and joining applications. We appreciate your precious ideas and valuable experiences.</p>
-      <div class="flex justify-center flex-wrap text-left">
-
-        <a class="w-full sm:w-72 m-2 all-transition rounded flex items-center bg-gradient-to-r from-white to-gray-100 sm:to-white p-2 w-full sm:border hover:shadow hover:from-blue-50" href="mailto:gogauchoapp@ucsb.edu" target="_blank" style="min-width: 18rem;">
-          <img class="rounded mr-2 object-cover object-top" style="width: 2.5rem; max-height: 2.5rem;" src="/icons/logo.png">
-          <div class="flex-grow">
-            <h4 class="font-bold">Email</h4>
-            <p @click.prevent="" class="text-xs text-gray-500 cursor-text select-all">gogauchoapp@ucsb.edu</p>
-          </div>
-        </a>
-        <a class="w-full sm:w-72 m-2 all-transition cursor-pointer rounded flex items-center bg-gradient-to-r from-white to-gray-100 sm:to-white p-2 w-full sm:border hover:shadow hover:from-blue-50" style="min-width: 18rem;" href="https://discord.gg/64jqp8Z3xH" target="_blank">
-          <img class="rounded mr-2 object-cover object-top" style="width: 2.5rem; max-height: 2.5rem;" src="/icons/links/discord.png">
-          <div class="flex-grow">
-            <h4 class="font-bold">Discord</h4>
-            <p class="text-xs text-gray-500">Join GoGaucho Server</p>
-          </div>
-        </a>
-        <a class="w-full sm:w-72 m-2 all-transition cursor-pointer rounded flex items-center bg-gradient-to-r from-white to-gray-100 sm:to-white p-2 w-full sm:border hover:shadow hover:from-blue-50" style="min-width: 18rem;" href="https://twitter.com/GoGauchoApp" target="_blank">
-          <img class="rounded mr-2 object-cover object-top" style="width: 2.5rem; max-height: 2.5rem;" src="/icons/links/Twitter.png">
-          <div class="flex-grow">
-            <h4 class="font-bold">Twitter</h4>
-            <p class="text-xs text-gray-500">Follow @GoGauchoApp</p>
-          </div>
-        </a>
-        <a class="w-full sm:w-72 m-2 all-transition cursor-pointer rounded flex items-center bg-gradient-to-r from-white to-gray-100 sm:to-white p-2 w-full sm:border hover:shadow hover:from-blue-50" style="min-width: 18rem;" href="https://www.instagram.com/GoGauchoApp/" target="_blank">
-          <img class="rounded mr-2 object-cover object-top" style="width: 2.5rem; max-height: 2.5rem;" src="/icons/links/Instagram.png">
-          <div class="flex-grow">
-            <h4 class="font-bold">Instagram</h4>
-            <p class="text-xs text-gray-500">Follow @GoGauchoApp</p>
-          </div>
-        </a>
+      <div class="my-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1 sm:gap-3">
+        <link-card title="Email" description="gogauchoapp@ucsb.edu" href="mailto:gogauchoapp@ucsb.edu" icon="/icons/logo.png" />
+        <link-card title="Discord" description="Join GoGaucho Server" href="https://discord.gg/64jqp8Z3xH" icon="/icons/links/discord.png" />
+        <link-card title="Twitter" description="Follow @GoGauchoApp" href="https://twitter.com/GoGauchoApp" icon="/icons/links/Twitter.png" />
+        <link-card title="Instagram" description="Follow @GoGauchoApp" href="https://www.instagram.com/GoGauchoApp/" icon="/icons/links/Instagram.png" />
       </div>
     </div>
     <img class="w-40 sm:w-60 absolute bottom-0" :src="fire">
