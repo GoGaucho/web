@@ -50,11 +50,11 @@ init()
       <p>GoGaucho is developed and maintained by UCSB students independently. GoGaucho obtains data from various sources. We are not permitted to store your personal data (schedule etc.) in any form. <b>Your personal data is directly passed from official UCSB server to your devices under proper authorization. </b></p>
       <h2 class="text-xl mt-20 mb-4 font-bold">How to contact us?</h2>
       <p>You are welcomed to contact us for bug reports, feature suggestions, and joining applications. We appreciate your precious ideas and valuable experiences.</p>
-      <div class="my-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-1 sm:gap-3">
-        <link-card title="Email" description="gogauchoapp@ucsb.edu" href="mailto:gogauchoapp@ucsb.edu" icon="/icons/logo.png" />
-        <link-card title="Discord" description="Join GoGaucho Server" href="https://discord.gg/64jqp8Z3xH" icon="/icons/links/discord.png" />
-        <link-card title="Twitter" description="Follow @GoGauchoApp" href="https://twitter.com/GoGauchoApp" icon="/icons/links/Twitter.png" />
-        <link-card title="Instagram" description="Follow @GoGauchoApp" href="https://www.instagram.com/GoGauchoApp/" icon="/icons/links/Instagram.png" />
+      <div class="my-4 flex justify-center flex-wrap">
+        <link-card class="w-full sm:w-64" title="Email" description="gogauchoapp@ucsb.edu" href="mailto:gogauchoapp@ucsb.edu" icon="/icons/logo.png" />
+        <link-card class="w-full sm:w-64" title="Discord" description="Join GoGaucho Server" href="https://discord.gg/64jqp8Z3xH" icon="/icons/links/discord.png" />
+        <link-card class="w-full sm:w-64" title="Twitter" description="Follow @GoGauchoApp" href="https://twitter.com/GoGauchoApp" icon="/icons/links/Twitter.png" />
+        <link-card class="w-full sm:w-64" title="Instagram" description="Follow @GoGauchoApp" href="https://www.instagram.com/GoGauchoApp/" icon="/icons/links/Instagram.png" />
       </div>
     </div>
     <img class="w-40 sm:w-60 absolute bottom-0" :src="fire">
