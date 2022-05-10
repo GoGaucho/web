@@ -18,7 +18,7 @@ log('web/course')
 let loading = $ref(true), list = $ref(null), hideList = $ref({}), showSub = $ref({}), subjects = $ref([])
 let quarters = $ref([]), focus = $ref('')
 const query = reactive({
-  search: '', subject: '', college: '', GE: {}
+  search: '', college: '', GE: {}
 })
 const showFocus = $computed(() => Object.keys(state.course.focus).filter(x => state.course.focus[x]).length)
 
@@ -36,7 +36,6 @@ const computeResult = debounce(() => {
   const key = query.search.replaceAll(' ', '').toUpperCase()
   const ges = Object.keys(query.GE).filter(x => query.GE[x]).map(x => query.college + '-' + x)
   for (const sub in list) {
-    if (query.subject && query.subject !== sub) continue
     let hasOne = false
     for (const k in list[sub]) {
       hideList[k] = isHide(k, list[sub][k], key, ges)
@@ -97,10 +96,6 @@ watch(() => state.course.focus, v => {
           Search: 
           <input class="py-1 px-2 border rounded bg-transparent appearance-none" type="text" v-model="query.search" placeholder="Course ID or Title">
         </label>
-        <select class="py-1 px-2 border rounded bg-transparent mx-4 my-1" v-model="query.subject">
-          <option value="">All subjects</option>
-          <option v-for="s in subjects" :value="s">{{ s }}: {{ lookup.subjects[s] }}</option>
-        </select>
         <label class="font-bold mx-4 my-1 flex items-center flex-wrap">
           GE:
           <select class="py-1 px-2 mx-2 border rounded bg-transparent" v-model="query.college" @change="query.GE = {}">
