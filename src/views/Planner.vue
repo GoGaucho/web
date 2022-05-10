@@ -209,14 +209,14 @@ function help () {
             <template v-for="(ss, lec) in v.tree">
               <tr class="border-white bg-gray-200 border-y-1 all-transition cursor-pointer" :set="s = v.sections[lec]" :class="sections[lec].status" @click="choose(k, lec)"><!-- lecture -->
                 <td class="text-sm" v-if="isSummer">{{ s.session }}</td>
-                <td>{{ lec }}</td>
+                <td :class="s.closed && 'line-through'">{{ lec }}</td>
                 <td><div v-for="i in s.instructors" @click="instructorName = i" @mouseenter="instructorName = i" @mouseleave="leaveInstructor">{{ i }}</div></td>
                 <td><div v-for="p in s.periods">{{ p.time }}</div></td>
                 <td><div v-for="p in s.periods">{{ p.location }}</div></td>
               </tr>
               <tr class="opacity-60 bg-gray-200 border-white border border-x-0 all-transition cursor-pointer" v-for="sec in ss" :set="s = v.sections[sec]" :class="sections[sec].status" @click="choose(k, lec, sec)">
                 <td class="text-sm" v-if="isSummer">{{ s.session }}</td>
-                <td>{{ sec }}</td>
+                <td :class="s.closed && 'line-through'">{{ sec }}</td>
                 <td><div v-for="i in s.instructors" @mouseenter="instructorName = i" @mouseleave="instructorName = ''">{{ i }}</div></td>
                 <td><div v-for="p in s.periods">{{ p.time }}</div></td>
                 <td><div v-for="p in s.periods">{{ p.location }}</div></td>

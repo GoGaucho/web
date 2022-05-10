@@ -79,14 +79,14 @@ function toggleFocus () {
           <template v-for="(ss, lec) in course.tree">
             <tr class="bg-blue-100 border-white border-y-1" :set="s = course.sections[lec]"><!-- lecture -->
               <td class="text-sm" v-if="isSummer">{{ s.session }}</td>
-              <td>{{ lec }}</td>
+              <td :class="s.closed && 'line-through'">{{ lec }}</td>
               <td><div v-for="i in s.instructors" @click="instructorName = i" @mouseenter="instructorName = i" @mouseleave="leaveInstructor">{{ i }}</div></td>
               <td><div v-for="p in s.periods">{{ p.time }}</div></td>
               <td><div v-for="p in s.periods">{{ p.location }}</div></td>
             </tr>
             <tr class="opacity-60 bg-blue-100 border-white border border-x-0 all-transition" v-for="code in ss" :set="s = course.sections[code]">
               <td class="text-sm" v-if="isSummer">{{ s.session }}</td>
-              <td>{{ code }}</td>
+              <td :class="s.closed && 'line-through'">{{ code }}</td>
               <td><div v-for="i in s.instructors" @mouseenter="instructorName = i" @mouseleave="instructorName = ''">{{ i }}</div></td>
               <td><div v-for="p in s.periods">{{ p.time }}</div></td>
               <td><div v-for="p in s.periods">{{ p.location }}</div></td>
