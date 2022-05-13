@@ -31,7 +31,7 @@ export default [[{
   href: 'https://dsp.sa.ucsb.edu/services/'
 }],
 [{
-  title: 'BRAC',
+  title: 'BARC',
   href: 'https://mybarc.ucsb.edu/SIWeb/login.jsp',
   description: 'Billing Information'
 }, {
