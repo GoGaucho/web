@@ -3,7 +3,7 @@ import { watch } from 'vue'
 import { getDoc, doc } from 'firebase/firestore'
 import { db, log } from '../firebase.js'
 import { cache } from '../model.js'
-import { CreditCardIcon, HeartIcon, VideoCameraIcon } from '@heroicons/vue/outline'
+import { CreditCardIcon, HeartIcon, VideoCameraIcon, ArrowCircleRightIcon, ArrowCircleLeftIcon } from '@heroicons/vue/outline'
 import Wrapper from '../components/Wrapper.vue'
 log('web/dining')
 
@@ -14,12 +14,15 @@ const dcs = {
   'ortega': 'Ortega'
 }
 
-let data = $ref({}), date = $ref(undefined), dc = $ref(''), mc = $ref('')
-getDoc(doc(db, 'cache', 'dining')).then(r => {
-  data = JSON.parse(r.data().data)
-  date = r.data().date
-  dc = cache.get('dining') || Object.keys(data)[0]
-})
+let data = $ref({}), date = $ref(undefined), dc = $ref(''), mc = $ref(''), isNext = $ref(false)
+
+watch($$(isNext), v => {
+  getDoc(doc(db, 'cache', 'dining' + (v ? '-next' : ''))).then(r => {
+    data = JSON.parse(r.data().data)
+    date = r.data().date
+    dc = cache.get('dining') || Object.keys(data)[0]
+  })
+}, { immediate: true })
 
 function isPast (period) {
   const m = period.match(/\s\-\s(\d*?):(\d*?)\s(\w)M$/)
@@ -53,11 +56,15 @@ function showCam () {
 <template>
   <div class="p-4 sm:p-10">
     <h1 class="text-2xl">Dining Commons</h1>
-    <p class="text-sm text-gray-500">{{ date || 'Loading' }}</p>
+    <p class="text-sm text-gray-500 flex items-center">
+      <arrow-circle-left-icon v-if="date && isNext" class="cursor-pointer w-5 mx-2" @click="isNext = false" />
+      {{ date || 'Loading' }}
+      <arrow-circle-right-icon v-if="date && !isNext" class="cursor-pointer w-5 mx-2" @click="isNext = true" />
+    </p>
     <div class="flex items-center my-4 flex-wrap">
       <a class="cursor-pointer my-1 px-3 py-1 text-sm sm:text-base sm:px-4 sm:py-2 rounded-full border font-bold text-blue-500 bg-white flex items-center all-transition hover:shadow" href="https://ucsb-sp.transactcampus.com/eaccounts/AccountSummary.aspx?menu=0"><credit-card-icon class="w-5 mr-1" />Check Meal Plan</a>
     </div>
-    <div class="rounded shadow-md p-3 my-4 bg-white" v-if="Object.keys(data).length">
+    <div class="rounded shadow-md p-3 my-4 bg-white" v-if="Object.keys(data).length" :key="date">
       <h2 class="text-2xl flex items-center">
         Meals
         <select class="text-base bg-white border font-bold mx-2 px-4 py-1 rounded-full appearance-none cursor-pointer" v-model="dc">

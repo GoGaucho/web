@@ -47,7 +47,7 @@ async function fetchData () {
   state.loading = false
   if (!raw) return
   data = raw
-  cache.set('class' + q, raw)
+  cache.set('class' + q, raw, 86400e6)
 }
 
 let unsub = null
