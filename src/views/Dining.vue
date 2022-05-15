@@ -55,7 +55,6 @@ function showCam () {
     <h1 class="text-2xl">Dining Commons</h1>
     <p class="text-sm text-gray-500">{{ date || 'Loading' }}</p>
     <div class="flex items-center my-4 flex-wrap">
-      <a class="cursor-pointer my-1 mr-2 px-3 py-1 text-sm sm:text-base sm:px-4 sm:py-2 rounded-full border font-bold text-red-400 bg-white flex items-center all-transition hover:shadow" href="https://sso.ucsb.edu/cas/login?service=https%3a%2f%2fstudenthealthoc.sa.ucsb.edu%2f"><heart-icon class="w-5 mr-1" />Open Student Health Badge</a>
       <a class="cursor-pointer my-1 px-3 py-1 text-sm sm:text-base sm:px-4 sm:py-2 rounded-full border font-bold text-blue-500 bg-white flex items-center all-transition hover:shadow" href="https://ucsb-sp.transactcampus.com/eaccounts/AccountSummary.aspx?menu=0"><credit-card-icon class="w-5 mr-1" />Check Meal Plan</a>
     </div>
     <div class="rounded shadow-md p-3 my-4 bg-white" v-if="Object.keys(data).length">
