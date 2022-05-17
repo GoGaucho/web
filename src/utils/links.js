@@ -54,9 +54,9 @@ export default [[{
   icon: '/icons/links/Box.png',
   description: 'Box Cloud Storage'
 }, {
-  title: 'The Daily Nexus',
-  href: 'https://dailynexus.com/',
-  icon: 'https://dailynexus.com/wp-content/themes/dailynexus/graphics/nexuslogo.png'
+  title: 'AS',
+  href: 'https://www.as.ucsb.edu/',
+  icon: 'https://www.as.ucsb.edu/files/2022/04/logo2022-420px-72x72.png'
 }],
 [{
   title: 'UC Police',
