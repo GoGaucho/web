@@ -53,13 +53,13 @@ window.signin = signin
 
 <template>
   <transition name="fade" mode="out-in">
-    <img v-if="state.user.photoURL" class="w-6 sm:w-8 rounded-full cursor-pointer" :src="state.user.photoURL" @click="showPanel = true">
-    <button v-else class="all-transition shadow hover:shadow-md rounded bg-blue-500 text-white font-bold px-3 py-1 text-sm sm:text-base" @click="signin()">Sign in</button>
+    <img v-if="state.user.photoURL" class="w-8 rounded-full cursor-pointer" :src="state.user.photoURL" @click="showPanel = true">
+    <button v-else class="all-transition shadow hover:shadow-md rounded bg-blue-500 text-white font-bold px-3 py-1" @click="signin()">Sign in</button>
   </transition>
   <transition name="fade">
     <div v-if="showPanel" @click="showPanel = false" class="fixed w-full h-screen bg-transparant z-50 top-0" />
   </transition>
-  <div class="fixed z-50 top-12 sm:top-16 w-72 rounded shadow-lg bg-white all-transition" :class="showPanel ? 'right-2' : '-right-72'">
+  <div class="fixed z-50 top-16 w-72 rounded shadow-lg bg-white all-transition" :class="showPanel ? 'right-2' : '-right-72'">
     <wrapper :show="showPanel" class="pt-4 flex flex-col items-center">
       <img :src="state.user.photoURL" class="w-16 rounded-full">
       <h3 class="text-xl">{{ state.user.name }}</h3>
