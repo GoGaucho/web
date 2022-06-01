@@ -74,7 +74,7 @@ document.onvisibilitychange = () => { date = new Date() }
       </div>
       <div class="flex-grow overflow-x-auto h-full overflow-y-hidden"><!-- right -->
         <div class="grid grid-cols-5 text-center w-full" style=" height: 24px;">
-          <div v-for="d in state.isMobile ? ds : days">{{ d }}</div>
+          <div v-for="d in state.screen.md ? ds : days">{{ d }}</div>
         </div>
         <div class="grid grid-cols-5 gap-px relative w-full" style="height: 976px;"><!-- body -->
           <div v-for="j in 80" class="bg-gray-100" />

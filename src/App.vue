@@ -5,11 +5,17 @@ const Bar = defineAsyncComponent(() => import('./components/Bar.vue'))
 const embed = window.location.hash.includes('embed')
 
 import state from './model.js'
+
+let height = $computed(() => {
+  if (embed) return '100vh'
+  if (state.screen.sm) return 'calc(100vh - 2.74rem)'
+  return 'calc(100vh - 3.5rem)'
+})
 </script>
 
 <template>
   <bar v-if="!embed"></bar>
-  <div class="relative overflow-y-auto" :style="{ height: embed ? '100vh' : 'calc(100vh - 3.5rem)' }">
+  <div class="relative overflow-y-auto" :style="{ height }">
     <transition name="fade">
       <div v-if="state.loading" class="absolute z-20 top-0 left-0 right-0 bottom-0 flex flex-col items-center justify-between bg-gray-50">
         <div></div>

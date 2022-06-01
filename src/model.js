@@ -4,11 +4,14 @@ export const state = reactive({
   loading: false,
   course: {},
   user: {},
-  isMobile: false,
+  screen: { sm: false, md: false },
   isStandalone: window.matchMedia('(display-mode: standalone)').matches
 })
 
-window.onresize = () => { state.isMobile = window.innerWidth < 768 }
+window.onresize = () => {
+  state.screen.md = window.innerWidth < 768
+  state.screen.sm = window.innerWidth < 640
+}
 window.onresize()
 
 export default state

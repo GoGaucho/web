@@ -15,7 +15,7 @@ let isSummer = $computed(() => state.course?.quarter && state.course.quarter[4] 
 
 let instructorName = $ref('')
 function leaveInstructor () {
-  if (!state.isMobile) instructorName = ''
+  if (!state.screen.md) instructorName = ''
 }
 
 const sections = {}, courses = [], conflicts = {}
