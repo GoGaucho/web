@@ -2,8 +2,8 @@
 import User from './User.vue'
 import { useRouter, useRoute } from 'vue-router'
 const router = useRouter(), route = useRoute()
-import { HomeIcon, MapIcon, AcademicCapIcon, LightBulbIcon } from '@heroicons/vue/outline'
-import { HomeIcon as SolidHomeIcon, MapIcon as SolidMapIcon, AcademicCapIcon as SolidAcademicCapIcon, LightBulbIcon as SolidLightBulbIcon } from '@heroicons/vue/solid'
+import { HomeIcon, MapIcon, BookOpenIcon, AcademicCapIcon, LightBulbIcon } from '@heroicons/vue/outline'
+import { HomeIcon as SolidHomeIcon, MapIcon as SolidMapIcon, BookOpenIcon as SolidBookOpenIcon, AcademicCapIcon as SolidAcademicCapIcon, LightBulbIcon as SolidLightBulbIcon } from '@heroicons/vue/solid'
 
 const tabs = [{
   icon: HomeIcon,
@@ -14,9 +14,13 @@ const tabs = [{
   solid: SolidMapIcon,
   path: '/map'
 }, {
+  icon: BookOpenIcon,
+  solid: SolidBookOpenIcon,
+  path: '/course',
+}, {
   icon: AcademicCapIcon,
   solid: SolidAcademicCapIcon,
-  path: '/course'
+  path: '/class'
 }, {
   icon: LightBulbIcon,
   solid: SolidLightBulbIcon,
@@ -29,7 +33,8 @@ let page = $computed(() => {
     '/map': 1,
     '/course': 2,
     '/planner': 2,
-    '/about': 3
+    '/class': 3,
+    '/about': 4
   }[route.path]
   return res === undefined ? -1 : res
 })
@@ -42,7 +47,7 @@ let page = $computed(() => {
       <h1 class="text-2xl font-bold flex items-center cursor-pointer group" @click="router.push('/')">
         <img class="mr-2 w-8 rounded" src="/icons/logo.png">GoGaucho
       </h1>
-      <div class="flex overflow-hidden bg-white fixed bottom-0 left-0 sm:relative w-screen sm:w-48 sm:mx-5 border-t-2 sm:border-none"><!-- tab -->
+      <div class="flex overflow-hidden bg-white fixed bottom-0 left-0 sm:relative w-screen sm:w-56 sm:mx-5 border-t-2 sm:border-none"><!-- tab -->
         <div v-for="(t, i) in tabs" class="flex-grow flex flex-col items-center justify-center px-1 cursor-pointer h-14" @click="router.push(t.path)" :class="page === i ? 'text-selected' : 'text-gray-500'">
           <component :is="page === i ? t.solid : t.icon" class="w-7" />
         </div>
