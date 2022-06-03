@@ -47,9 +47,14 @@ let page = $computed(() => {
       <h1 class="text-2xl font-bold flex items-center cursor-pointer group" @click="router.push('/')">
         <img class="mr-2 w-8 rounded" src="/icons/logo.png">GoGaucho
       </h1>
-      <div class="flex overflow-hidden bg-white fixed bottom-0 left-0 sm:relative w-screen sm:w-56 sm:mx-5 border-t-2 sm:border-none"><!-- tab -->
+      <div class="flex overflow-hidden bg-white fixed bottom-0 left-0 sm:relative w-screen sm:w-60 sm:mx-5 border-t-2 sm:border-none"><!-- tab -->
         <div v-for="(t, i) in tabs" class="flex-grow flex flex-col items-center justify-center px-1 cursor-pointer h-14" @click="router.push(t.path)" :class="page === i ? 'text-selected' : 'text-gray-500'">
-          <component :is="page === i ? t.solid : t.icon" class="w-7" />
+          <div class="relative w-7 h-7">
+            <transition name="fade">
+              <component v-if="page === i" :is="t.solid" class="absolute w-7" />
+              <component v-else :is="t.icon" class="absolute w-7" />
+            </transition>            
+          </div>
         </div>
         <div class="all-transition absolute bottom-0 h-1 rounded-full" style="background: #0b254e;" :style="{ width: 100 / tabs.length + '%', left: page * 100 / tabs.length + '%' }" />
       </div>

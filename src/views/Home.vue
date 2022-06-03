@@ -1,5 +1,5 @@
 <script setup>
-import { LinkIcon, MapIcon, LibraryIcon, BookOpenIcon, ColorSwatchIcon, CalendarIcon } from '@heroicons/vue/outline'
+import { LinkIcon, MapIcon, LibraryIcon, BookOpenIcon, ColorSwatchIcon, AcademicCapIcon } from '@heroicons/vue/outline'
 import banner from '../assets/banner.svg'
 import Wrapper from '../components/Wrapper.vue'
 import { onSnapshot, doc } from 'firebase/firestore'
@@ -27,7 +27,7 @@ onSnapshot(doc(db, 'cache', 'home'), doc => home = doc.data() || {})
       <button @click="router.push('/dining')"><color-swatch-icon class="w-6 mr-2 text-gray-500" />Dining Commons</button>
       <button @click="router.push('/waitz')"><library-icon class="w-6 mr-2 text-gray-500" />Building Capacity</button>
       <button @click="router.push('/course')"><book-open-icon class="w-6 mr-2 text-gray-500" />Course</button>
-      <button @click="router.push('/class')"><calendar-icon class="w-6 mr-2 text-gray-500" />My Classes</button>
+      <button @click="router.push('/class')"><academic-cap-icon class="w-6 mr-2 text-gray-500" />My Classes</button>
     </div>
   </div>
 </template>

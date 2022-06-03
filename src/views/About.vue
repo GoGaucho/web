@@ -44,8 +44,6 @@ init()
         <img class="w-full" :src="guide.ios">
         <p class="text-left p-2"><b>Only Safari browser can work with WebApp on iOS.</b><br>Open Safari browser and visit <b>ucsb.app</b>, click the sharing button at the bottom(on iPhones) or at the top-right(on iPads), and then click <b>Add to Home Screen</b>. After installing, you can open GoGaucho as an App from your home screen.</p>
       </panel-wrapper>
-      <h2 class="text-xl mt-20 mb-4 font-bold">How to navigate?</h2>
-      <p>The top-left icon can bring you back to homepage. <br class="hidden sm:block"> You can login to your UCSB Google account on the top-right corner.</p>
       <h2 class="text-xl mt-20 mb-4 font-bold">How does it work?</h2>
       <p>GoGaucho is developed and maintained by UCSB students independently. GoGaucho obtains data from various sources. We are not permitted to store your personal data (schedule etc.) in any form. <b>Your personal data is directly passed from official UCSB server to your devices under proper authorization. </b></p>
       <h2 class="text-xl mt-20 mb-4 font-bold">How to contact us?</h2>

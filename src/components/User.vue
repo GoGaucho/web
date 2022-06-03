@@ -1,5 +1,5 @@
 <script setup>
-import { CalendarIcon } from '@heroicons/vue/outline'
+import { AcademicCapIcon } from '@heroicons/vue/outline'
 import Wrapper from './Wrapper.vue'
 import { state, cache } from '../model.js'
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
@@ -66,7 +66,7 @@ window.signin = signin
       <p class="text-sm text-gray-500">{{ state.user.email }}</p>
       <button class="all-transition text-gray-500 border rounded px-4 py-1 my-2 hover:bg-gray-50" @click="signout">Sign out</button>
       <button class="all-transition w-full text-gray-500 flex items-center px-6 py-3 border border-x-0 hover:bg-gray-50" @click="goto('/class')">
-        <calendar-icon class="w-6 mr-2" />My Classes
+        <academic-cap-icon class="w-6 mr-2" />My Classes
       </button>
       <div class="rounded-b bg-gray-100 text-gray-500 text-sm py-2 flex items-center justify-around w-full">
         <p class="cursor-pointer" @click="goto('/about')">About</p>
