@@ -8,7 +8,7 @@ import state from './model.js'
 
 let height = $computed(() => {
   if (embed) return '100vh'
-  if (state.screen.sm) return 'calc(100vh - 3.5rem)'
+  if (state.screen.sm) return 'calc(100vh - 7rem)'
   return 'calc(100vh - 3.5rem)'
 })
 </script>
