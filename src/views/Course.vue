@@ -1,8 +1,7 @@
 <script setup>
 import { watch, reactive } from 'vue'
 import { ChipIcon } from '@heroicons/vue/outline'
-import { getDoc, doc } from 'firebase/firestore'
-import { db, log } from '../firebase.js'
+import { get, log } from '../firebase.js'
 import { state, cache } from '../model.js'
 import * as parse from '../utils/parse.js'
 import debounce from '../utils/debounce.js'
@@ -49,14 +48,14 @@ watch(query, computeResult)
 
 async function fetchList () {
   loading = true
-  list = await getDoc(doc(db, 'cache', 'course.' + state.course.quarter)).then(r => JSON.parse(r.data().data))
+  list = await get('cache/course.' + state.course.quarter).then(data => JSON.parse(data.data))
   subjects = Object.keys(list).sort()
   computeResult()
   loading = false
 }
 
-getDoc(doc(db, 'cache', 'quarter')).then(r => {
-  quarters = r.data().course.split(',')
+get('cache/home').then(data => {
+  quarters = data.quarter.course.split(',')
   if (quarters.includes(state.course.quarter)) fetchList()
   else state.course.quarter = quarters[0]
 })

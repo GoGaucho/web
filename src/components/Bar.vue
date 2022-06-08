@@ -14,13 +14,13 @@ const tabs = [{
   solid: SolidMapIcon,
   path: '/map'
 }, {
-  icon: BookOpenIcon,
-  solid: SolidBookOpenIcon,
-  path: '/course',
-}, {
   icon: AcademicCapIcon,
   solid: SolidAcademicCapIcon,
   path: '/class'
+}, {
+  icon: BookOpenIcon,
+  solid: SolidBookOpenIcon,
+  path: '/course',
 }, {
   icon: LightBulbIcon,
   solid: SolidLightBulbIcon,

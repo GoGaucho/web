@@ -1,7 +1,6 @@
 <script setup>
 import { ArrowLeftIcon, ChipIcon, InformationCircleIcon } from '@heroicons/vue/outline'
-import { getDoc, doc } from 'firebase/firestore'
-import { db, log } from '../firebase.js'
+import { get, log } from '../firebase.js'
 import state from '../model.js'
 import PanelWrapper from '../components/PanelWrapper.vue'
 import Schedule from '../components/Schedule.vue'
@@ -24,7 +23,7 @@ async function fetchData () {
   for (const k in focus) if (!focus[k]) delete focus[k]
   if (!Object.keys(focus).length) return router.push('/course')
   for (const k in focus) {
-    const c = focus[k] = await getDoc(doc(db, 'course', state.course.quarter + k)).then(r => r.data())
+    const c = focus[k] = await get('course/' + state.course.quarter + k)
     focus[k] = c
     choices[k] = {}
     courses.push(k)

@@ -2,6 +2,7 @@ import { reactive } from 'vue'
 
 export const state = reactive({
   loading: false,
+  quarter: '', // current quarter
   course: {},
   user: {},
   screen: { sm: false, md: false },
