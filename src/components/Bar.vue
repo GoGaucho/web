@@ -31,9 +31,9 @@ let page = $computed(() => {
   const res = {
     '/': 0,
     '/map': 1,
-    '/course': 2,
-    '/planner': 2,
-    '/class': 3,
+    '/class': 2,
+    '/course': 3,
+    '/planner': 3,
     '/about': 4
   }[route.path]
   return res === undefined ? -1 : res
