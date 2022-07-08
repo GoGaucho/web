@@ -1,8 +1,7 @@
 <script setup>
 import { watch } from 'vue'
 import { CheckIcon } from '@heroicons/vue/outline'
-import { getDoc, doc } from 'firebase/firestore'
-import { db } from '../firebase.js'
+import { get } from '../firebase.js'
 import state from '../model.js'
 const props = defineProps(['modelValue'])
 const emits = defineEmits(['update:modelValue'])
@@ -25,7 +24,7 @@ function leaveInstructor () {
 watch(() => props.modelValue, async v => {
   if (!v) return
   course = {}
-  course = await getDoc(doc(db, 'course', state.course.quarter + v)).then(r => r.data())
+  course = await get('course/' + state.course.quarter + v)
   for (const s in course.sections) {
     if (course.sections[s].session) {
       isSummer = true

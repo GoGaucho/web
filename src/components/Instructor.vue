@@ -3,8 +3,7 @@ import { watch } from 'vue'
 import { XIcon } from '@heroicons/vue/outline'
 const props = defineProps(['name'])
 const emits = defineEmits(['close'])
-import { getDoc, doc } from 'firebase/firestore'
-import { db } from '../firebase.js'
+import { get } from '../firebase.js'
 
 const GRADE = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'D-', 'F']
 const GPA = [4, 4, 3.7, 3.3, 3.0, 2.7, 2.3, 2.0, 1.7, 1.3, 1.0, 0.7, 0]
@@ -23,7 +22,7 @@ let grade = $computed(() => {
 watch(() => props.name, async v => {
   if (!v) return
   data = null
-  data = await getDoc(doc(db, 'instructor', v)).then(r => r.data())
+  data = await get('instructor/' + v)
   if (data) data.key = v
 })
 </script>

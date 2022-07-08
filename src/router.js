@@ -10,7 +10,6 @@ const index = {
   '/course': () => import('./views/Course.vue'),
   '/planner': () => import('./views/Planner.vue'),
   '/class': () => import('./views/Class.vue'),
-  '/poll': () => import('./views/Poll.vue'),
   '/:any(.*)*': () => import('./views/Home.vue')
 }
 

@@ -2,7 +2,7 @@
 import { RefreshIcon, XCircleIcon } from '@heroicons/vue/outline'
 import { call, db, log } from '../firebase.js'
 import { state, cache } from '../model.js'
-import { getDoc, onSnapshot, setDoc, doc } from 'firebase/firestore'
+import { onSnapshot, setDoc, doc } from 'firebase/firestore'
 import * as parse from '../utils/parse.js'
 import Wrapper from '../components/Wrapper.vue'
 import Schedule from '../components/Schedule.vue'
@@ -69,7 +69,7 @@ function getData () {
 window.onsignin = getData
 
 async function init () {
-  q = await getDoc(doc(db, 'cache', 'quarter')).then(r => r.data().current)
+  q = state.quarter
   qs = [parse.quarterLast(q), q, parse.quarterNext(q)]
   if (state.user.uid) getData()
   else window.signin('Please verify your identity')

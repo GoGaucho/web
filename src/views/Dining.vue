@@ -1,7 +1,6 @@
 <script setup>
 import { watch } from 'vue'
-import { getDoc, doc } from 'firebase/firestore'
-import { db, log } from '../firebase.js'
+import { get, log } from '../firebase.js'
 import { cache } from '../model.js'
 import { CreditCardIcon, HeartIcon, VideoCameraIcon, ArrowCircleRightIcon, ArrowCircleLeftIcon } from '@heroicons/vue/outline'
 import Wrapper from '../components/Wrapper.vue'
@@ -17,9 +16,9 @@ const dcs = {
 let data = $ref({}), date = $ref(undefined), dc = $ref(''), mc = $ref(''), isNext = $ref(false)
 
 watch($$(isNext), v => {
-  getDoc(doc(db, 'cache', 'dining' + (v ? '-next' : ''))).then(r => {
-    data = JSON.parse(r.data().data)
-    date = r.data().date
+  get('cache/dining' + (v ? '-next' : '')).then(r => {
+    data = JSON.parse(r.data)
+    date = r.date
     dc = cache.get('dining') || Object.keys(data)[0]
   })
 }, { immediate: true })

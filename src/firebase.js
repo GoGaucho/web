@@ -1,8 +1,8 @@
 import { initializeApp } from 'firebase/app'
 import { getStorage, ref, getDownloadURL } from 'firebase/storage'
 import { getAnalytics, logEvent } from 'firebase/analytics'
-import { getPerformance } from "firebase/performance";
-import { getFirestore, enableIndexedDbPersistence } from 'firebase/firestore'
+import { getPerformance } from "firebase/performance"
+import { getFirestore, enableIndexedDbPersistence, getDoc, doc } from 'firebase/firestore'
 import { getFunctions, httpsCallable } from 'firebase/functions'
 
 const firebaseConfig = {
@@ -23,6 +23,7 @@ export const url = path => getDownloadURL(ref(storage, path))
 
 export const db = getFirestore()
 enableIndexedDbPersistence(db)
+export const get = path => getDoc(doc(db, path)).then(r => r.data())
 
 const analytics = getAnalytics(app)
 export const log = (k, p = {}) => logEvent(analytics, k, p)
