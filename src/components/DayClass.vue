@@ -10,7 +10,7 @@ function getClasses () {
   const schedule = cache.get('class' + state.quarter)?.schedule
   if (!schedule) return classes = false
   classes = []
-  const day = 4// (new Date()).getDay()
+  const day = (new Date()).getDay()
   for (const c in schedule) {
     const session = schedule[c].session?.substring(5).trim()
     const periods = schedule[c].periods
@@ -46,7 +46,10 @@ watch(() => state.quarter, getClasses)
           <div class="text-sm">{{ c.location }}</div>
           <div class="text-sm">{{ c.time }}</div>
         </div>
-        <button v-if="classes" class="bg-white rounded px-4 py-2 mx-2 all-transition text-blue-500 font-bold shadow hover:shadow-md whitespace-nowrap" @click="router.push('/class')">Full Schedule ></button>
+        <div class="mx-2">
+          <div v-if="classes && !classes.length">You don't have classes today! 👻</div>
+          <button v-if="classes" class="bg-white rounded px-4 py-2 my-2 all-transition text-blue-500 font-bold shadow hover:shadow-md whitespace-nowrap" @click="router.push('/class')">Full Schedule ></button>
+        </div>
       </div>
     </transition>
   </div>
