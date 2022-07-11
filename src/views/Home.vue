@@ -28,8 +28,8 @@ init()
       </wrapper>
     </div>
     <h1 class="font-bold text-2xl mt-4">Hi, {{ state.user.name || 'Gaucho' }}</h1>
-    <p class="text-sm text-gray-500 mb-6">{{ home.subtitle || (state.user.name ? 'Welcome to GoGaucho' : 'Signin to see your classes' ) }}</p>
-    <day-class v-if="state.user.name"></day-class>
+    <p class="text-sm text-gray-500 mb-6">{{ home.subtitle || 'Welcome to GoGaucho' }}</p>
+    <day-class></day-class>
     <div class="flex relative flex-col sm:flex-row items-start">
       <div class="hidden lg:block w-80 mr-4 rounded-lg overflow-hidden relative cursor-pointer group" @click="router.push('/dining')">
         <div class="all-transition bg-black opacity-60 absolute z-10 left-0 top-0 right-0 bottom-0 group-hover:opacity-20" />
