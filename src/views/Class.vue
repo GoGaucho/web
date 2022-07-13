@@ -1,4 +1,5 @@
 <script setup>
+import { onActivated } from 'vue'
 import { RefreshIcon, XCircleIcon } from '@heroicons/vue/outline'
 import { call, db, log } from '../firebase.js'
 import { state, cache } from '../model.js'
@@ -74,7 +75,7 @@ async function init () {
   if (state.user.uid) getData()
   else window.signin('Please verify your identity')
 }
-init()
+onActivated(init)
 
 // following are about customize schedule
 const wTime = (d, hr, min) => d * 1440 + hr * 60 + Number(min)

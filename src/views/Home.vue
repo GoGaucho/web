@@ -30,25 +30,31 @@ init()
     <h1 class="font-bold text-2xl mt-4">Hi, {{ state.user.name || 'Gaucho' }}</h1>
     <p class="text-sm text-gray-500 mb-6">{{ home.subtitle || 'Welcome to GoGaucho' }}</p>
     <day-class></day-class>
-    <div class="flex relative flex-col sm:flex-row items-start">
+    <div class="flex relative flex-col sm:flex-row flex-wrap items-start">
       <div class="hidden lg:block w-80 mr-4 rounded-lg overflow-hidden relative cursor-pointer group" @click="router.push('/dining')">
-        <div class="all-transition bg-black opacity-60 absolute z-10 left-0 top-0 right-0 bottom-0 group-hover:opacity-20" />
+        <div class="all-transition bg-black opacity-30 absolute z-10 left-0 top-0 right-0 bottom-0 group-hover:opacity-10" />
         <img class="w-full relative z-0" :src="diningImg">
         <div class="absolute left-4 top-4 text-white z-20">
           <h3 class="font-bold text-lg">Dining Commons</h3>
           <p class="border border-x-0 border-b-0 text-sm pr-2">Click to see hours and menus</p>
         </div>
       </div>
-      <div class="sm:pr-4 w-full sm:w-64">
+      <div class="sm:pr-4 w-full sm:w-64 xl:w-80">
         <div class="button" @click="router.push('/map')"><map-icon class="w-6 mr-2" />Map</div>
         <div class="button" @click="router.push('/dining')"><color-swatch-icon class="w-6 mr-2" />Dining</div>
         <div class="button" @click="router.push('/course')"><book-open-icon class="w-6 mr-2" />Course</div>
         <div class="button" @click="router.push('/waitz')"><library-icon class="w-6 mr-2" />Building Capacity</div>
         <hr>
       </div>
-      <div class="w-full sm:w-56 my-4 sm:my-0">
+      <div class="w-full sm:w-56 2xl:hidden my-4 sm:my-0">
         <link-card class="w-full m-1" v-for="l in links[0]" :title="l.title" :icon="l.icon" :href="l.href" small="1" />
-        <p class="text-xs text-gray-500 px-2 cursor-pointer" @click="router.push('/link')">More links ></p>
+        <p class="text-xs text-gray-500 px-2 cursor-pointer" @click="router.push('/link')">All links ></p>
+      </div>
+      <div class="hidden w-full 2xl:block my-4">
+        <div v-for="i in 4" class="flex flex-wrap">
+          <link-card class="w-64 m-1" v-for="l in links[i - 1]" :title="l.title" :icon="l.icon" :href="l.href" small="1" />
+        </div>
+        <p class="text-xs text-gray-500 px-2 cursor-pointer" @click="router.push('/link')">All links ></p>
       </div>
     </div>
     <div class="h-20" />
