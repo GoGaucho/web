@@ -39,18 +39,18 @@ init()
           <p class="border border-x-0 border-b-0 text-sm pr-2">Click to see hours and menus</p>
         </div>
       </div>
-      <div class="sm:pr-4 w-full sm:w-64 xl:w-80">
+      <div class="sm:pr-4 w-full sm:w-64 xl:w-80 text-lg">
         <div class="button" @click="router.push('/map')"><map-icon class="w-6 mr-2" />Map</div>
         <div class="button" @click="router.push('/dining')"><color-swatch-icon class="w-6 mr-2" />Dining</div>
         <div class="button" @click="router.push('/course')"><book-open-icon class="w-6 mr-2" />Course</div>
         <div class="button" @click="router.push('/waitz')"><library-icon class="w-6 mr-2" />Building Capacity</div>
         <hr>
       </div>
-      <div class="w-full sm:w-56 2xl:hidden my-4 sm:my-0">
+      <div class="w-full sm:w-56 sm-link my-4 sm:my-0">
         <link-card class="w-full m-1" v-for="l in links[0]" :title="l.title" :icon="l.icon" :href="l.href" small="1" />
         <p class="text-xs text-gray-500 px-2 cursor-pointer" @click="router.push('/link')">All links ></p>
       </div>
-      <div class="hidden w-full 2xl:block my-4">
+      <div class="w-full lg-link my-4">
         <div v-for="i in 4" class="flex flex-wrap">
           <link-card class="w-64 m-1" v-for="l in links[i - 1]" :title="l.title" :icon="l.icon" :href="l.href" small="1" />
         </div>
@@ -69,5 +69,12 @@ init()
 .button {
   transition: all 0.3s ease;
   @apply cursor-pointer p-2 flex items-center font-bold border border-x-0 border-b-0 hover:bg-gray-200;
+}
+
+.sm-link { display: block; }
+.lg-link { display: none; }
+@media (min-height: 1000px) and (min-width: 1400px) {
+  .sm-link { display: none; }
+  .lg-link { display: block; }
 }
 </style>
