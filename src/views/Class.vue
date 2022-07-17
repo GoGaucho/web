@@ -1,7 +1,7 @@
 <script setup>
 import { onActivated } from 'vue'
 import { RefreshIcon, XCircleIcon } from '@heroicons/vue/outline'
-import { call, db, log } from '../firebase.js'
+import { call, db, log, get } from '../firebase.js'
 import { state, cache } from '../model.js'
 import { onSnapshot, setDoc, doc } from 'firebase/firestore'
 import * as parse from '../utils/parse.js'
@@ -70,6 +70,9 @@ function getData () {
 window.onsignin = getData
 
 async function init () {
+  if (!state.quarter) {
+    state.quarter = (await get('cache/home')).quarter.current
+  }
   q = state.quarter
   qs = [parse.quarterLast(q), q, parse.quarterNext(q)]
   if (state.user.uid) getData()
