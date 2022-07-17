@@ -1,10 +1,13 @@
 <script setup>
+import { onActivated } from 'vue'
 import { log } from '../firebase.js'
 import { XIcon } from '@heroicons/vue/outline'
 import { Loader } from 'google-maps'
-import locations from '../utils/locations.js'
+import { locations, classrooms } from '../utils/locations.js'
 import debounce from '../utils/debounce.js'
 import Wrapper from '../components/Wrapper.vue'
+import { useRoute } from 'vue-router'
+const route = useRoute()
 log('web/map')
 
 const ll = s => ({ lat: Number(s.split(',')[0]), lng: Number(s.split(',')[1]) })
@@ -56,6 +59,7 @@ async function init () {
   } })
   map.zoom_changed = onzoom
   navigator.geolocation.watchPosition(listener, () => {}, { enableHighAccuracy: true })
+  if (route.query.q) focus(route.query.q)
 }
 init()
 
@@ -64,15 +68,20 @@ let query = $ref(''), result = $ref([])
 
 const computeResult = debounce(() => {
   if (marker) marker.setPosition(ll('0,0'))
-  if (!query) return result = []
+  if (!query || query.length < 2) return result = []
   const res = new Set(), qu = query.toUpperCase()
   for (const k in locations) {
     if (k.toUpperCase().indexOf(qu) === 0) res.add(k)
   }
-  if (qu.length > 2) {
-    for (const k in locations) {
-      if (k.toUpperCase().indexOf(qu) > 0) res.add(k)
-    }
+  for (const k in classrooms) {
+    if (k.indexOf(qu) === 0) res.add(k)
+  }
+  if (qu.length < 3) return result = [...res]
+  for (const k in locations) {
+    if (k.toUpperCase().indexOf(qu) > 0) res.add(k)
+  }
+  for (const k in classrooms) {
+    if (k.indexOf(qu) > 0) res.add(k)
   }
   result = [...res]
 })
@@ -80,9 +89,10 @@ const computeResult = debounce(() => {
 function focus (r) {
   query = r
   result = []
-  const pos = ll(locations[r])
+  const pos = ll(locations[r] || classrooms[r])
   if (marker) marker.setPosition(pos)
   if (map) map.panTo(pos)
+  if (classrooms[r]) map.setZoom(18)
 }
 
 function clear () {
@@ -90,6 +100,9 @@ function clear () {
   if (selfPos && map) map.panTo(selfPos)
   computeResult()
 }
+onActivated(() => {
+  if (map && route.query.q) focus(route.query.q)
+})
 </script>
 
 <template>
@@ -101,7 +114,7 @@ function clear () {
       </svg>
     </button>
     <div class="absolute top-3 mx-auto w-96 bg-white shadow-md rounded" style="max-width: 90%;">
-      <input v-model="query" @input="computeResult" placeholder="Search locations" class="px-3 py-1.5 w-full rounded font-bold">
+      <input v-model="query" @input="computeResult" placeholder="Search locations & classrooms!" class="px-3 py-1.5 w-full rounded font-bold">
       <x-icon v-if="query" @click="clear" class="w-5 text-gray-500 absolute cursor-pointer right-2 top-2 bg-white" />
       <hr v-if="result.length" class="w-full">
       <wrapper :show="result.length" class="h-60 overflow-y-auto px-2 text-gray-500 text-sm">

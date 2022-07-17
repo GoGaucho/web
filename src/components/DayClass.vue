@@ -1,6 +1,8 @@
 <script setup>
 import { onActivated, watch } from 'vue'
 import { state, cache } from '../model.js'
+import { classrooms } from '../utils/locations.js'
+import { LocationMarkerIcon } from '@heroicons/vue/outline'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 let classes = $ref(false)
@@ -31,6 +33,10 @@ function getClasses () {
 
 onActivated(getClasses)
 watch(() => state.quarter, getClasses)
+
+function locate (location) {
+  router.push('/map?q=' + location)
+}
 </script>
 
 <template>
@@ -43,7 +49,10 @@ watch(() => state.quarter, getClasses)
             <b>{{ c.course }}</b>
             <span class="text-xs ml-1" v-if="c.session">(session {{ c.session }})</span>
           </div>
-          <div class="text-sm">{{ c.location }}</div>
+          <div class="text-sm flex items-center" :class="classrooms[c.location] && 'cursor-pointer'" @click="locate(c.location)">
+            {{ c.location }}
+            <location-marker-icon class="ml-1 w-5 text-gray-500" v-if="classrooms[c.location]" />
+          </div>
           <div class="text-sm">{{ c.time }}</div>
         </div>
         <div class="mx-2">
