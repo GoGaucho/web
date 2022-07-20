@@ -35,7 +35,7 @@ onActivated(getClasses)
 watch(() => state.quarter, getClasses)
 
 function locate (location) {
-  router.push('/map?q=' + location)
+  if (classrooms[location]) router.push('/map?q=' + location)
 }
 </script>
 
