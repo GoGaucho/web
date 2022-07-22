@@ -62,22 +62,22 @@ document.onvisibilitychange = () => { date = new Date() }
 
 <template>
   <div class="w-full h-full relative bg-white overflow-y-auto">
-    <wrapper class="flex items-center px-4 py-1" :show="labels && Object.keys(labels).length">
+    <wrapper class="flex items-center p-2 pb-1" :show="labels && Object.keys(labels).length">
       <label-switch v-for="(v, l) in labels" v-model="labels[l]">{{ l }}</label-switch>
     </wrapper>
     <div class="flex overflow-y-hidden" style="height: 1000px;">
-      <div class="mr-1 text-right h-full" style="width: 1rem;"><!-- left -->
+      <div class="mr-1 text-right h-full select-none" style="width: 1rem;"><!-- left -->
         <div style="height: 24px;">&nbsp;</div>
         <div class="grid grid-cols-1 text-right font-mono text-xs text-gray-500" style="height: 976px;"><!-- time axis -->
           <div v-for="i in 16">{{ i + 7 }}</div>
         </div>
       </div>
       <div class="flex-grow overflow-x-auto h-full overflow-y-hidden"><!-- right -->
-        <div class="grid grid-cols-5 text-center w-full" style=" height: 24px;">
+        <div class="grid grid-cols-5 text-center w-full font-bold select-none" style=" height: 24px;">
           <div v-for="d in state.screen.md ? ds : days">{{ d }}</div>
         </div>
         <div class="grid grid-cols-5 gap-px relative w-full" style="height: 976px;"><!-- body -->
-          <div v-for="j in 80" class="bg-gray-100" />
+          <div v-for="j in 80" class="all-transition bg-gray-100 hover:bg-gray-50 rounded" />
           <template v-for="p in props.pieces" :key="p.key">
             <div v-if="!isHide(p)" :style="pStyle(p)" class="all-transition absolute p-1 text-xs rounded overflow-hidden hover:opacity-30 hover:ring">
               <div class="font-bold text-shadow text-[0.7rem] sm:text-xs">{{ p.title || p.key }}</div>
@@ -87,7 +87,7 @@ document.onvisibilitychange = () => { date = new Date() }
               <div class="absolute bottom-0 top-0 left-0 right-0 opacity-20" :class="colorMap[p.key]" />
             </div>
           </template>
-          <div class="flex items-center absolute bg-blue-500 h-0.5 w-1/5" :style="cStyle" />
+          <div class="flex items-center absolute bg-blue-500 rounded h-0.5 w-1/5" :style="cStyle" />
         </div>
       </div>
     </div>

@@ -122,18 +122,17 @@ function removeCustom (i) {
 
 <template>
   <div>
-    <div class="flex justify-between items-center w-full p-4 sm:px-10">
+    <div class="flex justify-between items-center w-full p-4 pb-2 sm:px-10">
       <div>
         <h1 class="text-2xl">My Classes</h1>
-        <select class="px-2 border rounded m-0 bg-white appearance-none text-sm block" v-model="q" @change="getData">
+        <select class="px-2 py-1 rounded mt-1 appearance-none text-sm block shadow bg-white cursor-pointer" v-model="q" @change="getData">
           <option v-for="o in qs" :value="o">{{ parse.quarter(o) }}</option>
         </select>
       </div>
       <refresh-icon class="w-6 text-gray-500 cursor-pointer" @click="fetchData" />
     </div>
-    <hr>
     <div class="w-full flex flex-wrap justify-center items-start" v-if="data" :key="q">
-      <div class="flex-grow bg-white pb-2 sm:p-2 lg:px-6 rounded shadow m-0 sm:m-4" v-if="data.schedule"><!-- schedule -->
+      <div class="flex-grow bg-white sm:p-2 sm:pb-4 lg:px-6 pb-4 rounded shadow m-0 sm:m-4" v-if="data.schedule"><!-- schedule -->
         <schedule :pieces="pieces" />
       </div>
       <div class="m-2 w-full lg:w-80"><!-- side -->
