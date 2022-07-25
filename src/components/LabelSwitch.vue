@@ -7,6 +7,6 @@ const emits = defineEmits(['update:modelValue', 'close'])
 <template>
   <label class="all-transition border text-sm rounded px-2 m-1 flex items-center cursor-pointer select-none" :class="props.modelValue ? 'shadow text-white border-blue-500 bg-blue-500' : 'border-blue-500 text-blue-500 bg-blue-100'" @click="emits('update:modelValue', !props.modelValue)">
     <slot></slot>
-    <x-icon v-if="props.closable" class="w-4" @click.stop="emits('close')" />
+    <XIcon v-if="props.closable" class="w-4" @click.stop="emits('close')" />
   </label>
 </template>

@@ -42,18 +42,18 @@ function toggleFocus () {
 </script>
 
 <template>
-  <transition name="fade">
+  <Transition name="fade">
     <div v-if="state.screen.md && props.modelValue" @click="emits('update:modelValue', false)" class="fixed w-full h-screen bg-black opacity-30 z-50 top-0" />
-  </transition>
+  </Transition>
   <div class="course bg-white p-4 sm:p-6 flex-grow all-transition
     fixed top-0 h-screen w-5/6 sm:w-11/12 z-50 overflow-auto
     md:sticky md:top-20 md:w-auto md:h-auto md:shadow-md md:z-10
   " :style="{ left: state.screen.md && !props.modelValue ? '-100%' : '0px' }">
     <h2 class="text-xl sm:text-2xl font-bold mr-6">{{ title }}</h2>
-    <wrapper :show="course.show" :key="props.modelValue">
+    <Wrapper :show="course.show" :key="props.modelValue">
       <p class="text-sm text-gray-600">{{ course.college }} &nbsp; {{ course.department }} &nbsp; {{ levels[course.level] }}</p>
       <button class="text-white text-sm shadow rounded-full bg-blue-500 px-4 py-1 my-2 flex items-center" @click="toggleFocus">
-        <check-icon class="all-transition overflow-x-hidden" :class="state.course.focus[props.modelValue] ? 'w-5 mr-1' : 'w-0'" />
+        <CheckIcon class="all-transition overflow-x-hidden" :class="state.course.focus[props.modelValue] ? 'w-5 mr-1' : 'w-0'" />
         Focus
       </button>
       <p class="my-2">{{ course.description }}</p>
@@ -62,7 +62,7 @@ function toggleFocus () {
       <p><b>Contact Hours:</b> {{ course.hours }}</p>
       <p v-if="course.GE" class="flex flex-wrap items-center">
         <b>GE: </b>
-        <label-switch v-for="g in course.GE">{{ g }}</label-switch>
+        <LabelSwitch v-for="g in course.GE">{{ g }}</LabelSwitch>
         <span v-if="!course.GE.length" class="px-1">N/A</span>
       </p>
       <hr class="my-3">
@@ -93,9 +93,9 @@ function toggleFocus () {
           </template>
         </table>
       </div>
-    </wrapper>
+    </Wrapper>
   </div>
-  <instructor :name="instructorName" @close="instructorName = ''" />
+  <Instructor :name="instructorName" @close="instructorName = ''" />
 </template>
 
 <style scoped>

@@ -115,11 +115,11 @@ onActivated(() => {
     </button>
     <div class="absolute top-3 mx-auto w-96 bg-white shadow-md rounded" style="max-width: 90%;">
       <input v-model="query" @input="computeResult" placeholder="Search locations & classrooms!" class="px-3 py-1.5 w-full rounded font-bold">
-      <x-icon v-if="query" @click="clear" class="w-5 text-gray-500 absolute cursor-pointer right-2 top-2 bg-white" />
+      <XIcon v-if="query" @click="clear" class="w-5 text-gray-500 absolute cursor-pointer right-2 top-2 bg-white" />
       <hr v-if="result.length" class="w-full">
-      <wrapper :show="result.length" class="h-60 overflow-y-auto px-2 text-gray-500 text-sm">
+      <Wrapper :show="result.length" class="h-60 overflow-y-auto px-2 text-gray-500 text-sm">
         <div v-for="r in result" @click="focus(r)" class="cursor-pointer py-1">{{ r }}</div>
-      </wrapper>
+      </Wrapper>
     </div>
   </div>
 </template>

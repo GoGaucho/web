@@ -85,11 +85,11 @@ watch(() => state.course.focus, v => {
     </h1>
     <p v-if="loading" class="text-sm text-gray-500 mb-4">Loading...</p>
     <div class="bg-white my-4 rounded border" v-if="!loading">
-      <wrapper class="flex items-center flex-wrap px-4 border border-t-0 border-x-0 py-1" :show="showFocus"><!-- focus -->
+      <Wrapper class="flex items-center flex-wrap px-4 border border-t-0 border-x-0 py-1" :show="showFocus"><!-- focus -->
         <label class="font-bold">Focus:</label>
-        <label-switch closable="1" v-for="(v, k) in state.course.focus" @close="delete state.course.focus[k]">{{ k }}</label-switch>
-        <button class="text-sm mx-2 my-1 px-4 py-1 rounded-full border font-bold text-blue-500 flex items-center" @click="router.push('/planner')"><chip-icon class="w-4 mr-1" />Go to Planner!</button>
-      </wrapper>
+        <LabelSwitch closable="1" v-for="(v, k) in state.course.focus" @close="delete state.course.focus[k]">{{ k }}</LabelSwitch>
+        <button class="text-sm mx-2 my-1 px-4 py-1 rounded-full border font-bold text-blue-500 flex items-center" @click="router.push('/planner')"><ChipIcon class="w-4 mr-1" />Go to Planner!</button>
+      </Wrapper>
       <div class="flex items-center flex-wrap py-1"><!-- query -->
         <label class="font-bold mx-4 my-1">
           Search: 
@@ -101,7 +101,7 @@ watch(() => state.course.focus, v => {
             <option v-for="(v, k) in lookup.GEs">{{ k }}</option>
           </select>
           <div class="flex items-center flex-wrap font-normal">
-            <label-switch v-for="g in lookup.GEs[query.college]" v-model="query.GE[g]">{{ g }}</label-switch>
+            <LabelSwitch v-for="g in lookup.GEs[query.college]" v-model="query.GE[g]">{{ g }}</LabelSwitch>
           </div>
         </label>
       </div>
@@ -109,17 +109,17 @@ watch(() => state.course.focus, v => {
     <div class="flex items-start" v-if="!loading">
       <div class="w-full md:w-80 md:mr-6 shadow-md" style="min-width: 20rem;"><!-- course list -->
         <template v-for="sub in subjects"><!-- subject -->
-          <panel-wrapper v-if="showSub[sub] > -1" :title="sub + ': ' + lookup.subjects[sub]" v-model="showSub[sub]">
+          <PanelWrapper v-if="showSub[sub] > -1" :title="sub + ': ' + lookup.subjects[sub]" v-model="showSub[sub]">
             <template v-for="(v, k) in list[sub]">
               <!-- course -->
               <div class="bg-white border p-2 cursor-pointer" v-if="!hideList[k]" @click="focus = k">
                 <h3 class="pl-2">{{ k }}: {{ v[0] }}</h3>
               </div>
             </template>
-          </panel-wrapper>
+          </PanelWrapper>
         </template>
       </div>
-      <course v-model="focus" />
+      <Course v-model="focus" />
     </div>
   </div>
 </template>

@@ -185,18 +185,18 @@ function help () {
 <template>
   <div class="p-4 sm:p-10 min-h-full bg-white">
     <h1 class="text-2xl flex items-center mb-4">
-      <button class="cursor-pointer" @click="router.push('/course')"><arrow-left-icon class="all-transition w-12 pl-2 pr-3 hover:pl-0 hover:pr-5" /></button>
+      <button class="cursor-pointer" @click="router.push('/course')"><ArrowLeftIcon class="all-transition w-12 pl-2 pr-3 hover:pl-0 hover:pr-5" /></button>
       Planner
     </h1>
     <p v-if="loading" class="text-sm text-gray-500 mb-4">Loading...</p>
     <div class="my-2 flex items-center">
-      <button class="mx-2 my-1 px-4 py-2 rounded-full shadow-md font-bold text-white bg-blue-500 flex items-center" @click="auto"><chip-icon class="w-4 mr-1" />Auto Choose</button>
-      <button class="text-gray-500 flex items-center ml-2" @click="help"><information-circle-icon class="w-4 mr-1" />Help</button>
+      <button class="mx-2 my-1 px-4 py-2 rounded-full shadow-md font-bold text-white bg-blue-500 flex items-center" @click="auto"><ChipIcon class="w-4 mr-1" />Auto Choose</button>
+      <button class="text-gray-500 flex items-center ml-2" @click="help"><InformationCircleIcon class="w-4 mr-1" />Help</button>
     </div>
     <div class="flex items-start overflow-x-auto" style="min-height: 70vh;">
       <div class="overflow-x-auto shadow-md" :style="{ minWidth: isSummer ? '560px' : '480px' }">
         <!-- course list -->
-        <panel-wrapper v-if="!loading" v-for="(v, k) in focus" :title="k" :class="choices[k]?.done ? 'bg-blue-100' : 'bg-gray-100'">
+        <PanelWrapper v-if="!loading" v-for="(v, k) in focus" :title="k" :class="choices[k]?.done ? 'bg-blue-100' : 'bg-gray-100'">
           <table v-if="v.tree" class="w-full text-center">
             <tr>
               <th v-if="isSummer">Session</th>
@@ -222,13 +222,13 @@ function help () {
               </tr>
             </template>
           </table>
-        </panel-wrapper>
+        </PanelWrapper>
       </div>
       <div class="flex-grow" style="min-width: 520px;">
-        <schedule :pieces="pieces" />
+        <Schedule :pieces="pieces" />
       </div>
     </div>
-    <instructor :name="instructorName" @close="instructorName = ''" />
+    <Instructor :name="instructorName" @close="instructorName = ''" />
   </div>
 </template>
 

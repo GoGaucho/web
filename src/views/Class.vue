@@ -129,21 +129,21 @@ function removeCustom (i) {
           <option v-for="o in qs" :value="o">{{ parse.quarter(o) }}</option>
         </select>
       </div>
-      <refresh-icon class="w-6 text-gray-500 cursor-pointer" @click="fetchData" />
+      <RefreshIcon class="w-6 text-gray-500 cursor-pointer" @click="fetchData" />
     </div>
     <div class="w-full flex flex-wrap justify-center items-start" v-if="data" :key="q">
       <div class="flex-grow bg-white sm:p-2 sm:pb-4 lg:px-6 pb-4 rounded shadow m-0 sm:m-4" v-if="data.schedule"><!-- schedule -->
-        <schedule :pieces="pieces" />
+        <Schedule :pieces="pieces" />
       </div>
       <div class="m-2 w-full lg:w-80"><!-- side -->
-        <wrapper :show="1" v-if="data.schedule" class="p-2" :key="custom.length">
+        <Wrapper :show="1" v-if="data.schedule" class="p-2" :key="custom.length">
           <div class="rounded shadow-md bg-white overflow-hidden">
             <div class="text-white font-bold p-2 bg-green-800">Customize Schedule</div>
             <div class="px-2">
               <div class="m-2 flex items-center flex-wrap" v-for="(c, i) in custom">
                 <b>{{ c.title }}</b>
                 <span class="text-xs text-gray-500 mx-2">{{ c.time }}</span>
-                <x-circle-icon class="w-5 text-red-500 cursor-pointer" @click="removeCustom(i)"/>
+                <XCircleIcon class="w-5 text-red-500 cursor-pointer" @click="removeCustom(i)"/>
               </div>
             </div>
             <div class="flex flex-wrap items-center m-2 mb-0">
@@ -154,8 +154,8 @@ function removeCustom (i) {
             <p class="text-xs text-gray-500 mx-4">Time format: 24-hour hh:mm</p>
             <button class="all-transition rounded shadow text-white font-bold m-4 mt-2 px-2 py-1" :class="ready ? 'bg-blue-500 hover:shadow-md' : 'bg-gray-300'" @click="addCustom">Add Event</button>
           </div>
-        </wrapper>
-        <registration v-if="data.registration" :data="data.registration"/>
+        </Wrapper>
+        <Registration v-if="data.registration" :data="data.registration"/>
       </div>
     </div>
     <p class="m-4" v-else>No data</p>

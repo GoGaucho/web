@@ -41,7 +41,7 @@ function locate (location) {
 
 <template>
   <div class="mb-4 sm:mb-8 relative h-24 flex items-center w-full overflow-x-auto overflow-y-hidden">
-    <transition name="fade" mode="out-in">
+    <Transition name="fade" mode="out-in">
       <button v-if="!classes" class="bg-blue-500 rounded px-4 py-2 font-bold text-white all-transition shadow hover:shadow-md" @click="router.push('/class')">Load your classes</button>
       <div v-else class="h-full flex items-center">
         <div v-for="c in classes" class="border-2 p-2 mx-2 h-full" style="border-color: #0b254e; min-width: 10rem;">
@@ -51,7 +51,7 @@ function locate (location) {
           </div>
           <div class="text-sm flex items-center" :class="classrooms[c.location] && 'cursor-pointer'" @click="locate(c.location)">
             {{ c.location }}
-            <location-marker-icon class="ml-1 w-5 text-gray-500" v-if="classrooms[c.location]" />
+            <LocationMarkerIcon class="ml-1 w-5 text-gray-500" v-if="classrooms[c.location]" />
           </div>
           <div class="text-sm">{{ c.time }}</div>
         </div>
@@ -60,6 +60,6 @@ function locate (location) {
           <button v-if="classes" class="bg-white rounded px-4 py-2 my-2 all-transition text-blue-500 font-bold shadow hover:shadow-md whitespace-nowrap" @click="router.push('/class')">Full Schedule ></button>
         </div>
       </div>
-    </transition>
+    </Transition>
   </div>
 </template>

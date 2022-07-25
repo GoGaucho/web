@@ -32,27 +32,27 @@ init()
       <p>GoGaucho is the best campus app for UCSB students. <br class="hidden sm:block"> GoGaucho Web is the next generation WebApp, which is designed to serve UCSB students anywhere, anytime, and on any platforms.</p>
       <h2 class="text-xl mt-20 mb-4 font-bold">How to install?</h2>
       <p>Follow the instructions for better experiences.</p>
-      <panel-wrapper title="Desktop (Chrome)" class="bg-white mt-4">
+      <PanelWrapper title="Desktop (Chrome)" class="bg-white mt-4">
         <img class="w-full" :src="guide.desktop">
         <p class="text-left p-2">Open Google Chrome browser and visit <b>ucsb.app</b>, click the install icon on the address bar and install the WebApp to your computer. After installing, you can open GoGaucho as an App from your desktop or Home menu.</p>
-      </panel-wrapper>
-      <panel-wrapper title="Android (Chrome)" class="bg-white">
+      </PanelWrapper>
+      <PanelWrapper title="Android (Chrome)" class="bg-white">
         <img class="w-full" :src="guide.android">
-        <p class="text-left p-2">Open Google Chrome browser (or any supporting browser) and visit <b>ucsb.app</b>, click the top-right <dots-vertical-icon class="w-5 inline border border-gray-300" /> icon to open the menu, and then click <b>Install app</b>. After installing, you can open GoGaucho as an App from your home screen.</p>
-      </panel-wrapper>
-      <panel-wrapper title="iOS (Safari)" class="bg-white">
+        <p class="text-left p-2">Open Google Chrome browser (or any supporting browser) and visit <b>ucsb.app</b>, click the top-right <DotsVerticalIcon class="w-5 inline border border-gray-300" /> icon to open the menu, and then click <b>Install app</b>. After installing, you can open GoGaucho as an App from your home screen.</p>
+      </PanelWrapper>
+      <PanelWrapper title="iOS (Safari)" class="bg-white">
         <img class="w-full" :src="guide.ios">
         <p class="text-left p-2"><b>Only Safari browser can work with WebApp on iOS.</b><br>Open Safari browser and visit <b>ucsb.app</b>, click the sharing button at the bottom(on iPhones) or at the top-right(on iPads), and then click <b>Add to Home Screen</b>. After installing, you can open GoGaucho as an App from your home screen.</p>
-      </panel-wrapper>
+      </PanelWrapper>
       <h2 class="text-xl mt-20 mb-4 font-bold">How does it work?</h2>
       <p>GoGaucho is developed and maintained by UCSB students independently. GoGaucho obtains data from various sources. We are not permitted to store your personal data (schedule etc.) in any form. <b>Your personal data is directly passed from official UCSB server to your devices under proper authorization. </b></p>
       <h2 class="text-xl mt-20 mb-4 font-bold">How to contact us?</h2>
       <p>You are welcomed to contact us for bug reports, feature suggestions, and joining applications. We appreciate your precious ideas and valuable experiences.</p>
       <div class="my-4 flex justify-center flex-wrap">
-        <link-card class="m-1 w-full sm:w-64" title="Email" description="gogauchoapp@ucsb.edu" href="mailto:gogauchoapp@ucsb.edu" icon="/icons/logo.png" />
-        <link-card class="m-1 w-full sm:w-64" title="Discord" description="Join GoGaucho Server" href="https://discord.gg/64jqp8Z3xH" icon="/icons/links/discord.png" />
-        <link-card class="m-1 w-full sm:w-64" title="Twitter" description="Follow @GoGauchoApp" href="https://twitter.com/GoGauchoApp" icon="/icons/links/Twitter.png" />
-        <link-card class="m-1 w-full sm:w-64" title="Instagram" description="Follow @GoGauchoApp" href="https://www.instagram.com/GoGauchoApp/" icon="/icons/links/Instagram.png" />
+        <LinkCard class="m-1 w-full sm:w-64" title="Email" description="gogauchoapp@ucsb.edu" href="mailto:gogauchoapp@ucsb.edu" icon="/icons/logo.png" />
+        <LinkCard class="m-1 w-full sm:w-64" title="Discord" description="Join GoGaucho Server" href="https://discord.gg/64jqp8Z3xH" icon="/icons/links/discord.png" />
+        <LinkCard class="m-1 w-full sm:w-64" title="Twitter" description="Follow @GoGauchoApp" href="https://twitter.com/GoGauchoApp" icon="/icons/links/Twitter.png" />
+        <LinkCard class="m-1 w-full sm:w-64" title="Instagram" description="Follow @GoGauchoApp" href="https://www.instagram.com/GoGauchoApp/" icon="/icons/links/Instagram.png" />
       </div>
     </div>
     <img class="w-40 sm:w-60 absolute bottom-0" :src="fire">

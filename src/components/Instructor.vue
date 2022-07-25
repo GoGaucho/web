@@ -28,9 +28,9 @@ watch(() => props.name, async v => {
 </script>
 
 <template>
-  <transition name="fade">
+  <Transition name="fade">
     <div class="fixed z-50 bottom-4 right-4 w-72 rounded bg-white p-3 ring" v-if="props.name && data">
-      <x-icon class="w-5 text-gray-500 absolute z-50 right-3 top-3 cursor-pointer" @click="emits('close')" />
+      <XIcon class="w-5 text-gray-500 absolute z-50 right-3 top-3 cursor-pointer" @click="emits('close')" />
       <h3 class="font-bold">{{ data.name || data.key }}</h3>
       <p v-if="data.name" class="text-xs text-gray-400">{{ data.key }}</p>
       <hr class="my-1">
@@ -43,5 +43,5 @@ watch(() => props.name, async v => {
         <p class="text-xs text-gray-200">Based on 2015-2021 public grades</p>
       </template>
     </div>
-  </transition>
+  </Transition>
 </template>
