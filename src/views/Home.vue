@@ -20,7 +20,7 @@ init()
 </script>
 
 <template>
-  <div class="relative w-full h-full flex flex-col py-10 px-6 sm:px-20 all-transition">
+  <div class="relative w-full min-h-full flex flex-col py-10 px-6 sm:px-20 all-transition sm:items-start">
     <img class="fixed z-0 left-0 bottom-14 sm:bottom-0 w-full" :src="banner">
     <div class="absolute top-0 left-0 w-full">
       <Wrapper :show="home.top">
@@ -57,7 +57,7 @@ init()
         <p class="text-xs text-gray-500 px-2 cursor-pointer" @click="router.push('/link')">All links ></p>
       </div>
     </div>
-    <div class="h-20" />
+    <div class="h-12" />
   </div>
 </template>
 

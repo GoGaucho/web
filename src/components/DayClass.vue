@@ -2,7 +2,7 @@
 import { onActivated, watch } from 'vue'
 import { state, cache } from '../model.js'
 import { classrooms } from '../utils/locations.js'
-import { LocationMarkerIcon } from '@heroicons/vue/outline'
+import { LocationMarkerIcon, AcademicCapIcon } from '@heroicons/vue/outline'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 let classes = $ref(false)
@@ -40,11 +40,11 @@ function locate (location) {
 </script>
 
 <template>
-  <div class="mb-4 sm:mb-8 relative h-24 flex items-center w-full overflow-x-auto overflow-y-hidden">
+  <div class="mb-4 sm:mb-8 -mx-6 sm:mx-0 sm:max-w-full relative h-28 flex items-center overflow-x-auto bg-white p-4 sm:rounded border">
     <Transition name="fade" mode="out-in">
-      <button v-if="!classes" class="bg-blue-500 rounded px-4 py-2 font-bold text-white all-transition shadow hover:shadow-md" @click="router.push('/class')">Load your classes</button>
+      <button v-if="!classes" class="bg-blue-500 rounded-full mx-10 px-4 py-2 font-bold text-white all-transition shadow hover:shadow-md" @click="router.push('/class')">Load your classes</button>
       <div v-else class="h-full flex items-center">
-        <div v-for="c in classes" class="border-2 p-2 mx-2 h-full" style="border-color: #0b254e; min-width: 10rem;">
+        <div v-for="c in classes" class="relative rounded p-2 mx-1 h-full bg-blue-50 overflow-hidden w-40">
           <div>
             <b>{{ c.course }}</b>
             <span class="text-xs ml-1" v-if="c.session">(session {{ c.session }})</span>
@@ -54,10 +54,11 @@ function locate (location) {
             <LocationMarkerIcon class="ml-1 w-5 text-gray-500" v-if="classrooms[c.location]" />
           </div>
           <div class="text-sm">{{ c.time }}</div>
+          <div class="all-transition absolute bottom-0 top-0 left-0 w-0.5 bg-blue-500" />
         </div>
         <div class="mx-2">
           <div v-if="classes && !classes.length">You don't have classes today! 👻</div>
-          <button v-if="classes" class="bg-white rounded px-4 py-2 my-2 all-transition text-blue-500 font-bold shadow hover:shadow-md whitespace-nowrap" @click="router.push('/class')">Full Schedule ></button>
+          <button v-if="classes" class="bg-white rounded-full px-4 py-2 my-2 all-transition text-blue-500 flex items-center font-bold border hover:bg-gray-100 whitespace-nowrap" @click="router.push('/class')"><AcademicCapIcon class="w-6 mr-2" />Full Schedule</button>
         </div>
       </div>
     </Transition>

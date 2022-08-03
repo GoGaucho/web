@@ -123,9 +123,9 @@ function removeCustom (i) {
 <template>
   <div>
     <div class="flex justify-between items-center w-full p-4 pb-2 sm:px-10">
-      <div>
+      <div class="flex items-center">
         <h1 class="text-2xl">My Classes</h1>
-        <select class="px-2 py-1 rounded mt-1 appearance-none text-sm block shadow bg-white cursor-pointer" v-model="q" @change="getData">
+        <select class="ml-3 px-2 py-1 rounded appearance-none text-sm block shadow bg-white cursor-pointer" v-model="q" @change="getData">
           <option v-for="o in qs" :value="o">{{ parse.quarter(o) }}</option>
         </select>
       </div>
