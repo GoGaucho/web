@@ -5,11 +5,12 @@ export const state = reactive({
   quarter: '', // current quarter
   course: {},
   user: {},
-  screen: { sm: false, md: false },
+  screen: { sm: false, md: false, lg: false },
   isStandalone: window.matchMedia('(display-mode: standalone)').matches
 })
 
 window.onresize = () => {
+  state.screen.lg = window.innerWidth < 1024
   state.screen.md = window.innerWidth < 768
   state.screen.sm = window.innerWidth < 640
 }

@@ -3,9 +3,9 @@ import { watch } from 'vue'
 import LabelSwitch from './LabelSwitch.vue'
 import Wrapper from './Wrapper.vue'
 import state from '../model.js'
-const props = defineProps(['pieces'])
-const ds = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
-const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+const props = defineProps(['pieces', 'whole'])
+const ds = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 const colors = ['bg-yellow-500', 'bg-purple-500', 'bg-red-500', 'bg-green-500', 'bg-sky-500', 'bg-lime-500', 'bg-orange-500', 'bg-teal-500', 'bg-pink-500']
 
 let colorMap = $ref({}), labels = $ref({})
@@ -41,10 +41,10 @@ const isHide = p => {
 }
 
 const pStyle = p => ({
-  left: 20 * Math.floor(p.wTime[0] / 1440) + '%',
+  left: 14.286 * Math.floor(p.wTime[0] / 1440) + '%',
   top: 0.10417 * (p.wTime[0] % 1440 - 480) + '%',
   height: 0.10417 * (p.wTime[1] - p.wTime[0]) + '%',
-  width: '19.5%'
+  width: '14%'
 })
 
 let date = $ref(new Date())
@@ -72,12 +72,12 @@ document.onvisibilitychange = () => { date = new Date() }
           <div v-for="i in 16">{{ i + 7 }}</div>
         </div>
       </div>
-      <div class="flex-grow overflow-x-auto h-full overflow-y-hidden"><!-- right -->
-        <div class="grid grid-cols-5 text-center w-full font-bold select-none" style=" height: 24px;">
+      <div class="flex-grow h-full overflow-y-hidden" :class="props.whole ? 'overflow-x-auto' : 'overflow-x-hidden'"><!-- right -->
+        <div class="grid grid-cols-7 text-center w-full font-bold select-none" :style="{ width: state.screen.md || !props.whole ? '140%' : '100%', height: '24px' }">
           <div v-for="d in state.screen.md ? ds : days">{{ d }}</div>
         </div>
-        <div class="grid grid-cols-5 gap-px relative w-full" style="height: 976px;"><!-- body -->
-          <div v-for="j in 80" class="all-transition bg-gray-100 hover:bg-gray-50 rounded" />
+        <div class="grid grid-cols-7 gap-px relative w-full" :style="{ width: state.screen.md || !props.whole ? '140%' : '100%', height: '976px' }"><!-- body -->
+          <div v-for="j in 112" class="all-transition bg-gray-100 hover:bg-gray-50 rounded" />
           <template v-for="p in props.pieces" :key="p.key">
             <div v-if="!isHide(p)" :style="pStyle(p)" class="all-transition absolute p-1 text-xs rounded overflow-hidden hover:opacity-30 hover:ring">
               <div class="font-bold text-shadow text-[0.7rem] sm:text-xs">{{ p.title || p.key }}</div>

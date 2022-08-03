@@ -82,11 +82,11 @@ onActivated(init)
 
 // following are about customize schedule
 const wTime = (d, hr, min) => d * 1440 + hr * 60 + Number(min)
-const days = 'MTWRF'
+const days = 'MTWRFSU'
 let edit = $ref({})
 let ready = $computed(() => {
   if (!edit.title || !edit.time) return false
-  const m = edit.time.toUpperCase().match(/^([MTWRF ]+)\s*(\d{2}):(\d{2})\s*-\s*(\d{2}):(\d{2})$/)
+  const m = edit.time.toUpperCase().match(/^([MTWRFSU ]+)\s*(\d{2}):(\d{2})\s*-\s*(\d{2}):(\d{2})$/)
   if (!m || m[2] > 23 || m[4] > 23 || m[3] > 59 || m[5] > 59 || wTime(0, m[2], m[3]) >= wTime(0, m[4], m[5])) return false
   const ws = []
   let ds = ''
@@ -133,10 +133,10 @@ function removeCustom (i) {
     </div>
     <div class="w-full flex flex-wrap justify-center items-start" v-if="data" :key="q">
       <div class="flex-grow bg-white sm:p-2 sm:pb-4 lg:px-6 pb-4 rounded shadow m-0 sm:m-4" v-if="data.schedule"><!-- schedule -->
-        <Schedule :pieces="pieces" />
+        <Schedule :pieces="pieces" whole="1" />
       </div>
       <div class="m-2 w-full lg:w-80"><!-- side -->
-        <Wrapper :show="1" v-if="data.schedule" class="p-2" :key="custom.length">
+        <Wrapper :show="1" v-if="data.schedule" class="p-2">
           <div class="rounded shadow-md bg-white overflow-hidden">
             <div class="text-white font-bold p-2 bg-green-800">Customize Schedule</div>
             <div class="px-2">
@@ -149,7 +149,7 @@ function removeCustom (i) {
             <div class="flex flex-wrap items-center m-2 mb-0">
               <input class="rounded border bg-transparent appearance-none m-1 px-1" placeholder="Title" v-model="edit.title">
               <input class="rounded border bg-transparent appearance-none m-1 px-1" placeholder="Location" v-model="edit.location">
-              <input class="rounded border bg-transparent appearance-none m-1 px-1" placeholder="MTWRF 00:00 - 23:59" v-model="edit.time">
+              <input class="rounded border bg-transparent appearance-none m-1 px-1" placeholder="MTWRFSU 08:00 - 23:59" v-model="edit.time">
             </div>
             <p class="text-xs text-gray-500 mx-4">Time format: 24-hour hh:mm</p>
             <button class="all-transition rounded shadow text-white font-bold m-4 mt-2 px-2 py-1" :class="ready ? 'bg-blue-500 hover:shadow-md' : 'bg-gray-300'" @click="addCustom">Add Event</button>
