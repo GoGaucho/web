@@ -52,7 +52,8 @@ let cStyle = $computed(() => {
   const day = date.getDay(), hour = date.getHours(), minute = date.getMinutes()
   if (day < 1 || day > 5 || hour < 8) return { opacity: 0 }
   return {
-    left: 20 * (day - 1) + '%',
+    width: '14%',
+    left: 14.286 * (day - 1) + '%',
     top: 0.10417 * (hour * 60 + minute - 480) + '%'
   }
 })
@@ -76,7 +77,7 @@ document.onvisibilitychange = () => { date = new Date() }
         <div class="grid grid-cols-7 text-center w-full font-bold select-none" :style="{ width: state.screen.md || !props.whole ? '140%' : '100%', height: '24px' }">
           <div v-for="d in state.screen.md ? ds : days">{{ d }}</div>
         </div>
-        <div class="grid grid-cols-7 gap-px relative w-full" :style="{ width: state.screen.md || !props.whole ? '140%' : '100%', height: '976px' }"><!-- body -->
+        <div class="grid grid-cols-7 gap-px relative w-full overflow-y-hidden" :style="{ width: state.screen.md || !props.whole ? '140%' : '100%', height: '976px' }"><!-- body -->
           <div v-for="j in 112" class="all-transition bg-gray-100 hover:bg-gray-50 rounded" />
           <template v-for="p in props.pieces" :key="p.key">
             <div v-if="!isHide(p)" :style="pStyle(p)" class="all-transition absolute p-1 text-xs rounded overflow-hidden hover:opacity-30 hover:ring">
@@ -87,7 +88,7 @@ document.onvisibilitychange = () => { date = new Date() }
               <div class="absolute bottom-0 top-0 left-0 right-0 opacity-20" :class="colorMap[p.key]" />
             </div>
           </template>
-          <div class="flex items-center absolute bg-blue-500 rounded h-0.5 w-1/5" :style="cStyle" />
+          <div class="flex items-center absolute bg-blue-500 rounded h-0.5" :style="cStyle" />
         </div>
       </div>
     </div>
