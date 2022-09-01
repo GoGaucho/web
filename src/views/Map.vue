@@ -31,7 +31,7 @@ function debug () {
 
 function onzoom () {
   const Z = 20
-  const z = map.getZoom(), scale = Math.max(1.4, selfPos.acc / Math.pow(2, Z - z))
+  const z = map.getZoom(), scale = Math.max(1.4, selfPos?.acc / Math.pow(2, Z - z))
   selfBlur.setIcon({
     path: 'm -8,0 a 8,8 0 1,0 16,0 a 8,8 0 1,0 -16,0',
     fillColor: '#4285F4', fillOpacity: 0.3, strokeOpacity: 0, scale
