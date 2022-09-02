@@ -2,7 +2,7 @@
 import { onActivated, watch } from 'vue'
 import { state, cache } from '../model.js'
 import { classrooms } from '../utils/locations.js'
-import { LocationMarkerIcon, AcademicCapIcon } from '@heroicons/vue/outline'
+import { MapPinIcon, AcademicCapIcon } from '@heroicons/vue/24/outline'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 let classes = $ref(false)
@@ -51,7 +51,7 @@ function locate (location) {
           </div>
           <div class="text-sm flex items-center" :class="classrooms[c.location] && 'cursor-pointer'" @click="locate(c.location)">
             {{ c.location }}
-            <LocationMarkerIcon class="ml-1 w-5 text-gray-500" v-if="classrooms[c.location]" />
+            <MapPinIcon class="ml-1 w-5 text-gray-500" v-if="classrooms[c.location]" />
           </div>
           <div class="text-sm">{{ c.time }}</div>
           <div class="all-transition absolute bottom-0 top-0 left-0 w-0.5 bg-blue-500" />

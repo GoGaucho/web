@@ -1,6 +1,6 @@
 <script setup>
 import { watch, reactive } from 'vue'
-import { ChipIcon } from '@heroicons/vue/outline'
+import { CpuChipIcon } from '@heroicons/vue/24/outline'
 import { get, log } from '../firebase.js'
 import { state, cache } from '../model.js'
 import * as parse from '../utils/parse.js'
@@ -88,7 +88,7 @@ watch(() => state.course.focus, v => {
       <Wrapper class="flex items-center flex-wrap px-4 border border-t-0 border-x-0 py-1" :show="showFocus"><!-- focus -->
         <label class="font-bold">Focus:</label>
         <LabelSwitch closable="1" v-for="(v, k) in state.course.focus" @close="delete state.course.focus[k]">{{ k }}</LabelSwitch>
-        <button class="text-sm mx-2 my-1 px-4 py-1 rounded-full border font-bold text-blue-500 flex items-center" @click="router.push('/planner')"><ChipIcon class="w-4 mr-1" />Go to Planner!</button>
+        <button class="text-sm mx-2 my-1 px-4 py-1 rounded-full border font-bold text-blue-500 flex items-center" @click="router.push('/planner')"><CpuChipIcon class="w-4 mr-1" />Go to Planner!</button>
       </Wrapper>
       <div class="flex items-center flex-wrap py-1"><!-- query -->
         <label class="font-bold mx-4 my-1">

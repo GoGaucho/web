@@ -1,5 +1,5 @@
 <script setup>
-import { ArrowLeftIcon, ChipIcon, InformationCircleIcon } from '@heroicons/vue/outline'
+import { ArrowLeftIcon, CpuChipIcon, InformationCircleIcon } from '@heroicons/vue/24/outline'
 import { get, log } from '../firebase.js'
 import state from '../model.js'
 import PanelWrapper from '../components/PanelWrapper.vue'
@@ -190,7 +190,7 @@ function help () {
     </h1>
     <p v-if="loading" class="text-sm text-gray-500 mb-4">Loading...</p>
     <div class="my-2 flex items-center">
-      <button class="mx-2 my-1 px-4 py-2 rounded-full shadow-md font-bold text-white bg-blue-500 flex items-center" @click="auto"><ChipIcon class="w-4 mr-1" />Auto Choose</button>
+      <button class="mx-2 my-1 px-4 py-2 rounded-full shadow-md font-bold text-white bg-blue-500 flex items-center" @click="auto"><CpuChipIcon class="w-4 mr-1" />Auto Choose</button>
       <button class="text-gray-500 flex items-center ml-2" @click="help"><InformationCircleIcon class="w-4 mr-1" />Help</button>
     </div>
     <div class="flex items-start overflow-x-auto" style="min-height: 70vh;">

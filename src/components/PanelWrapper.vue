@@ -1,7 +1,7 @@
 <script setup>
 import { watch } from 'vue'
 import Wrapper from '../components/Wrapper.vue'
-import { ChevronDownIcon } from '@heroicons/vue/solid'
+import { ChevronDownIcon } from '@heroicons/vue/24/solid'
 
 const props = defineProps(['title', 'class', 'modelValue'])
 const emits = defineEmits(['update:modelValue'])

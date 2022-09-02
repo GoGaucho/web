@@ -1,5 +1,5 @@
 <script setup>
-import { AcademicCapIcon } from '@heroicons/vue/outline'
+import { AcademicCapIcon } from '@heroicons/vue/24/outline'
 import Wrapper from './Wrapper.vue'
 import { state, cache } from '../model.js'
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'

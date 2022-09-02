@@ -1,6 +1,6 @@
 <script setup>
 import { watch } from 'vue'
-import { XIcon } from '@heroicons/vue/outline'
+import { XMarkIcon } from '@heroicons/vue/24/outline'
 const props = defineProps(['name'])
 const emits = defineEmits(['close'])
 import { get } from '../firebase.js'
@@ -30,7 +30,7 @@ watch(() => props.name, async v => {
 <template>
   <Transition name="fade">
     <div class="fixed z-50 bottom-4 right-4 w-72 rounded bg-white p-3 ring" v-if="props.name && data">
-      <XIcon class="w-5 text-gray-500 absolute z-50 right-3 top-3 cursor-pointer" @click="emits('close')" />
+      <XMarkIcon class="w-5 text-gray-500 absolute z-50 right-3 top-3 cursor-pointer" @click="emits('close')" />
       <h3 class="font-bold">{{ data.name || data.key }}</h3>
       <p v-if="data.name" class="text-xs text-gray-400">{{ data.key }}</p>
       <hr class="my-1">

@@ -2,7 +2,7 @@
 import { watch } from 'vue'
 import { get, log } from '../firebase.js'
 import { cache } from '../model.js'
-import { CreditCardIcon, HeartIcon, VideoCameraIcon, ArrowCircleRightIcon, ArrowCircleLeftIcon } from '@heroicons/vue/outline'
+import { CreditCardIcon, HeartIcon, VideoCameraIcon, ArrowRightCircleIcon, ArrowLeftCircleIcon } from '@heroicons/vue/24/outline'
 import Wrapper from '../components/Wrapper.vue'
 log('web/dining')
 
@@ -56,9 +56,9 @@ function showCam () {
   <div class="p-4 sm:p-10">
     <h1 class="text-2xl">Dining Commons</h1>
     <p class="text-sm text-gray-500 flex items-center">
-      <ArrowCircleLeftIcon v-if="date && isNext" class="cursor-pointer w-5 mx-2" @click="isNext = false" />
+      <ArrowLeftCircleIcon v-if="date && isNext" class="cursor-pointer w-5 mx-2" @click="isNext = false" />
       {{ date || 'Loading' }}
-      <ArrowCircleRightIcon v-if="date && !isNext" class="cursor-pointer w-5 mx-2" @click="isNext = true" />
+      <ArrowRightCircleIcon v-if="date && !isNext" class="cursor-pointer w-5 mx-2" @click="isNext = true" />
     </p>
     <div class="flex items-center my-4 flex-wrap">
       <a class="cursor-pointer my-1 px-3 py-1 text-sm sm:text-base sm:px-4 sm:py-2 rounded-full border font-bold text-blue-500 bg-white flex items-center all-transition hover:shadow" href="https://ucsb-sp.transactcampus.com/eaccounts/AccountSummary.aspx?menu=0"><CreditCardIcon class="w-5 mr-1" />Check Meal Plan</a>

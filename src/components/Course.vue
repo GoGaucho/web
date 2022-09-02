@@ -1,6 +1,6 @@
 <script setup>
 import { watch } from 'vue'
-import { CheckIcon } from '@heroicons/vue/outline'
+import { CheckIcon } from '@heroicons/vue/24/outline'
 import { get } from '../firebase.js'
 import state from '../model.js'
 const props = defineProps(['modelValue'])

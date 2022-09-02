@@ -1,7 +1,7 @@
 <script setup>
 import { onActivated } from 'vue'
 import { log } from '../firebase.js'
-import { XIcon } from '@heroicons/vue/outline'
+import { XMarkIcon } from '@heroicons/vue/24/outline'
 import { Loader } from 'google-maps'
 import { locations, classrooms } from '../utils/locations.js'
 import debounce from '../utils/debounce.js'
@@ -115,7 +115,7 @@ onActivated(() => {
     </button>
     <div class="absolute top-3 mx-auto w-96 bg-white shadow-md rounded" style="max-width: 90%;">
       <input v-model="query" @input="computeResult" placeholder="Search locations & classrooms!" class="px-3 py-1.5 w-full rounded font-bold">
-      <XIcon v-if="query" @click="clear" class="w-5 text-gray-500 absolute cursor-pointer right-2 top-2 bg-white" />
+      <XMarkIcon v-if="query" @click="clear" class="w-5 text-gray-500 absolute cursor-pointer right-2 top-2 bg-white" />
       <hr v-if="result.length" class="w-full">
       <Wrapper :show="result.length" class="h-60 overflow-y-auto px-2 text-gray-500 text-sm">
         <div v-for="r in result" @click="focus(r)" class="cursor-pointer py-1">{{ r }}</div>

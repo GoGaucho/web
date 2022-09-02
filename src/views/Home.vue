@@ -1,5 +1,5 @@
 <script setup>
-import { LinkIcon, MapIcon, LibraryIcon, BookOpenIcon, ColorSwatchIcon, AcademicCapIcon } from '@heroicons/vue/outline'
+import { LinkIcon, MapIcon, BuildingLibraryIcon, BookOpenIcon, SwatchIcon, AcademicCapIcon } from '@heroicons/vue/24/outline'
 import banner from '../assets/banner.svg'
 import diningImg from '../assets/portola.jpg'
 import Wrapper from '../components/Wrapper.vue'
@@ -41,9 +41,9 @@ init()
       </div>
       <div class="sm:pr-4 w-full sm:w-64 xl:w-80 text-lg">
         <div class="button" @click="router.push('/map')"><MapIcon class="w-6 mr-2" />Map</div>
-        <div class="button" @click="router.push('/dining')"><ColorSwatchIcon class="w-6 mr-2" />Dining</div>
+        <div class="button" @click="router.push('/dining')"><SwatchIcon class="w-6 mr-2" />Dining</div>
         <div class="button" @click="router.push('/course')"><BookOpenIcon class="w-6 mr-2" />Course</div>
-        <div class="button" @click="router.push('/waitz')"><LibraryIcon class="w-6 mr-2" />Building Capacity</div>
+        <div class="button" @click="router.push('/waitz')"><BuildingLibraryIcon class="w-6 mr-2" />Building Capacity</div>
         <hr>
       </div>
       <div class="w-full sm:w-56 sm-link my-4 sm:my-0">

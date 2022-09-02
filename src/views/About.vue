@@ -1,7 +1,7 @@
 <script setup>
 import fire from '../assets/fire.svg'
 import { url, log } from '../firebase.js'
-import { DotsVerticalIcon } from '@heroicons/vue/outline'
+import { EllipsisVerticalIcon } from '@heroicons/vue/24/outline'
 import PanelWrapper from '../components/PanelWrapper.vue'
 import LinkCard from '../components/LinkCard.vue'
 
@@ -38,7 +38,7 @@ init()
       </PanelWrapper>
       <PanelWrapper title="Android (Chrome)" class="bg-white">
         <img class="w-full" :src="guide.android">
-        <p class="text-left p-2">Open Google Chrome browser (or any supporting browser) and visit <b>ucsb.app</b>, click the top-right <DotsVerticalIcon class="w-5 inline border border-gray-300" /> icon to open the menu, and then click <b>Install app</b>. After installing, you can open GoGaucho as an App from your home screen.</p>
+        <p class="text-left p-2">Open Google Chrome browser (or any supporting browser) and visit <b>ucsb.app</b>, click the top-right <EllipsisVerticalIcon class="w-5 inline border border-gray-300" /> icon to open the menu, and then click <b>Install app</b>. After installing, you can open GoGaucho as an App from your home screen.</p>
       </PanelWrapper>
       <PanelWrapper title="iOS (Safari)" class="bg-white">
         <img class="w-full" :src="guide.ios">

@@ -1,6 +1,6 @@
 <script setup>
 import { onActivated } from 'vue'
-import { RefreshIcon, XCircleIcon } from '@heroicons/vue/outline'
+import { ArrowPathIcon, XCircleIcon } from '@heroicons/vue/24/outline'
 import { call, db, log, get } from '../firebase.js'
 import { state, cache } from '../model.js'
 import { onSnapshot, setDoc, doc } from 'firebase/firestore'
@@ -129,7 +129,7 @@ function removeCustom (i) {
           <option v-for="o in qs" :value="o">{{ parse.quarter(o) }}</option>
         </select>
       </div>
-      <RefreshIcon class="w-6 text-gray-500 cursor-pointer" @click="fetchData" />
+      <ArrowPathIcon class="w-6 text-gray-500 cursor-pointer" @click="fetchData" />
     </div>
     <div class="w-full flex flex-wrap justify-center items-start" v-if="data" :key="q">
       <div class="flex-grow bg-white sm:p-2 sm:pb-4 lg:px-6 pb-4 rounded shadow m-0 sm:m-4" v-if="data.schedule"><!-- schedule -->
