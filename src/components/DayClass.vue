@@ -44,7 +44,7 @@ function locate (location) {
     <Transition name="fade" mode="out-in">
       <button v-if="!classes" class="bg-blue-500 rounded-full mx-10 px-4 py-2 font-bold text-white all-transition shadow hover:shadow-md" @click="router.push('/class')">Load your classes</button>
       <div v-else class="h-full flex items-center">
-        <div v-for="c in classes" class="relative rounded p-2 mx-1 h-full bg-blue-50 overflow-hidden w-40">
+        <div v-for="c in classes" class="relative rounded-r-sm p-2 mx-1 h-full bg-blue-50 overflow-hidden w-40">
           <div>
             <b>{{ c.course }}</b>
             <span class="text-xs ml-1" v-if="c.session">(session {{ c.session }})</span>

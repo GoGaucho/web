@@ -1,11 +1,10 @@
 <script setup>
-import Wrapper from './Wrapper.vue'
 import * as lookup from '../utils/lookup.js'
 const props = defineProps(['data'])
 </script>
 
 <template>
-  <Wrapper :show="1" class="p-2">
+  <div class="p-2">
     <div class="rounded shadow-md overflow-hidden bg-white my-2">
       <div class="text-white font-bold p-2" style="background: #0b254e;">Personal Information</div>
       <div class="mx-4 my-2"><b>Perm Number: </b><code>{{ props.data.perm }}</code></div>
@@ -24,5 +23,5 @@ const props = defineProps(['data'])
       <div class="mx-4 my-2"><b>Pass 2: </b><code>{{ props.data.pass2.replace('T', ' ') }}</code></div>
       <div class="mx-4 my-2"><b>Pass 3: </b><code>{{ props.data.pass3.replace('T', ' ') }}</code></div>
     </div>
-  </Wrapper>
+  </div>
 </template>

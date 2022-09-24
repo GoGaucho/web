@@ -1,7 +1,7 @@
 <script setup>
 import { watch } from 'vue'
 import LabelSwitch from './LabelSwitch.vue'
-import Wrapper from './Wrapper.vue'
+import Toggle from './Toggle.vue'
 import state from '../model.js'
 const props = defineProps(['pieces', 'whole'])
 const ds = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -18,7 +18,7 @@ const colors = [
   ['bg-pink-500', 'text-pink-700']
 ]
 
-let colorMap = $ref({}), labels = $ref({})
+let colorMap = $ref({}), labels = $ref({}), showTime = $ref(true)
 
 watch(() => props.pieces, v => {
   const keys = new Set()
@@ -73,13 +73,16 @@ document.onvisibilitychange = () => { date = new Date() }
 
 <template>
   <div class="w-full h-full relative bg-white overflow-y-auto">
-    <Wrapper class="flex items-center p-2 pb-1" :show="labels && Object.keys(labels).length">
-      <LabelSwitch v-for="(v, l) in labels" v-model="labels[l]">{{ l }}</LabelSwitch>
-    </Wrapper>
-    <div class="flex overflow-y-hidden" style="height: 1000px;">
+    <div class="flex items-start justify-between p-2 pb-1 pr-0">
+      <div class="flex items-center flex-wrap">
+        <LabelSwitch v-for="(v, l) in labels" v-model="labels[l]">{{ l }}</LabelSwitch>
+      </div>
+      <Toggle v-model="showTime" class="scale-75 -mr-2 whitespace-nowrap">Show time</Toggle>
+    </div>
+    <div class="flex overflow-y-hidden">
       <div class="mr-1 text-right h-full select-none" style="width: 1rem;"><!-- left -->
         <div style="height: 24px;">&nbsp;</div>
-        <div class="grid grid-cols-1 text-right font-mono text-xs text-gray-500" style="height: 976px;"><!-- time axis -->
+        <div class="grid grid-cols-1 text-right font-mono text-xs text-gray-500 all-transition" :style="{ height: showTime ? '976px' : '736px' }"><!-- time axis -->
           <div v-for="i in 16">{{ i + 7 }}</div>
         </div>
       </div>
@@ -87,12 +90,12 @@ document.onvisibilitychange = () => { date = new Date() }
         <div class="grid grid-cols-7 text-center w-full select-none" :style="{ width: state.screen.md || !props.whole ? '140%' : '100%', height: '24px' }">
           <div v-for="d in state.screen.md ? ds : days">{{ d }}</div>
         </div>
-        <div class="grid grid-cols-7 gap-px relative w-full overflow-y-hidden" :style="{ width: state.screen.md || !props.whole ? '140%' : '100%', height: '976px' }"><!-- body -->
+        <div class="grid grid-cols-7 gap-px relative w-full overflow-y-hidden all-transition" :style="{ width: state.screen.md || !props.whole ? '140%' : '100%', height: showTime ? '976px' : '736px' }"><!-- body -->
           <div v-for="j in 112" class="all-transition bg-gray-100 hover:bg-gray-50 rounded" />
           <template v-for="p in props.pieces" :key="p.key">
-            <div v-if="!isHide(p)" :style="pStyle(p)" class="all-transition absolute p-1 text-xs rounded-r-md overflow-hidden hover:opacity-30">
+            <div v-if="!isHide(p)" :style="pStyle(p)" class="all-transition absolute p-1 text-xs rounded-r-sm overflow-hidden hover:opacity-30">
               <div class="font-semibold text-shadow text-[0.7rem] sm:text-xs" :class="colorMap[p.key][1]">{{ p.title || p.key }}</div>
-              <div class="text-[0.6rem] sm:text-xs opacity-90" :class="colorMap[p.key][1]">{{ p.time }}</div>
+              <div class="text-[0.6rem] sm:text-xs opacity-90" :class="colorMap[p.key][1]" v-if="showTime">{{ p.time }}</div>
               <div class="text-[0.625rem] sm:text-xs opacity-90" :class="colorMap[p.key][1]">{{ p.location }}</div>
               <div class="all-transition absolute bottom-0 top-0 left-0 w-0.5" :class="colorMap[p.key][0]" />
               <div class="absolute bottom-0 top-0 left-0 right-0" :class="colorMap[p.key][0]" style="opacity: 15%;"/>

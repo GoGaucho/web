@@ -5,7 +5,6 @@ import { call, db, log, get } from '../firebase.js'
 import { state, cache } from '../model.js'
 import { onSnapshot, setDoc, doc } from 'firebase/firestore'
 import * as parse from '../utils/parse.js'
-import Wrapper from '../components/Wrapper.vue'
 import Schedule from '../components/Schedule.vue'
 import Registration from '../components/Registration.vue'
 
@@ -136,7 +135,7 @@ function removeCustom (i) {
         <Schedule :pieces="pieces" whole="1" />
       </div>
       <div class="m-2 w-full lg:w-80"><!-- side -->
-        <Wrapper :show="1" v-if="data.schedule" class="p-2">
+        <div :show="1" v-if="data.schedule" class="p-2">
           <div class="rounded shadow-md bg-white overflow-hidden">
             <div class="text-white font-bold p-2 bg-green-800">Customize Schedule</div>
             <div class="px-2">
@@ -154,7 +153,7 @@ function removeCustom (i) {
             <p class="text-xs text-gray-500 mx-4">Time format: 24-hour hh:mm</p>
             <button class="all-transition rounded shadow text-white font-bold m-4 mt-2 px-2 py-1" :class="ready ? 'bg-blue-500 hover:shadow-md' : 'bg-gray-300'" @click="addCustom">Add Event</button>
           </div>
-        </Wrapper>
+        </div>
         <Registration v-if="data.registration" :data="data.registration"/>
       </div>
     </div>
