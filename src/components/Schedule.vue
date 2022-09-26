@@ -64,7 +64,8 @@ let cStyle = $computed(() => {
   return {
     width: '14%',
     left: 14.286 * (day - 1) + '%',
-    top: 0.10417 * (hour * 60 + minute - 480) + '%'
+    top: 0.10417 * (hour * 60 + minute - 480) + '%',
+    marginTop: '-0.2rem'
   }
 })
 setInterval(() => { date = new Date() }, 60e3)
@@ -101,7 +102,10 @@ document.onvisibilitychange = () => { date = new Date() }
               <div class="absolute bottom-0 top-0 left-0 right-0" :class="colorMap[p.key][0]" style="opacity: 15%;"/>
             </div>
           </template>
-          <div class="flex items-center absolute bg-blue-500 rounded h-0.5" :style="cStyle" />
+          <div class="flex items-center absolute" :style="cStyle">
+            <div class="rounded-full bg-blue-500" style="width: 0.4rem; height: 0.4rem; margin-left: -0.15rem; margin-right: 0.08rem;" />
+            <div class="h-0.5 rounded bg-blue-500" style="width: calc(100% - 0.2rem);" />
+          </div>
         </div>
       </div>
     </div>

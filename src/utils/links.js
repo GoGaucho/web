@@ -63,7 +63,7 @@ export default [[{
   href: 'tel:8058933446',
   description: '(805) 893-3446'
 }, {
-  title: 'ESO Escort',
+  title: 'CSO Escort',
   href: 'tel:8058932000',
   description: '(805) 893-2000'
 }, {
