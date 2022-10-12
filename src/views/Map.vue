@@ -20,6 +20,7 @@ import { fromLonLat } from 'ol/proj'
 import { Circle as CircleStyle, Fill, Stroke, Style, Icon } from 'ol/style'
 import { OSM, Vector as VectorSource } from 'ol/source'
 import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer'
+import { Control, defaults as defaultControls } from 'ol/control'
 import 'ol/ol.css'
 
 // Maps
@@ -49,16 +50,34 @@ positionFeature.setStyle(new Style({
 }))
 
 const markerFeature = new Feature()
-
+let selfPos = null
 geolocation.on('change:position', function () {
-  const coordinates = geolocation.getPosition()
-  positionFeature.setGeometry(coordinates ? new Point(coordinates) : null)
+  selfPos = geolocation.getPosition()
+  positionFeature.setGeometry(selfPos ? new Point(selfPos) : null)
 })
+
+class CenterControl extends Control {
+  constructor (opt_options) {
+    const options = opt_options || {}
+    const button = document.createElement('button')
+    button.innerHTML = '<svg style="width: 80%; height: 80%; margin: auto;" viewBox="0 0 24 24"><path fill="currentColor" d="M12,8A4,4 0 0,1 16,12A4,4 0 0,1 12,16A4,4 0 0,1 8,12A4,4 0 0,1 12,8M3.05,13H1V11H3.05C3.5,6.83 6.83,3.5 11,3.05V1H13V3.05C17.17,3.5 20.5,6.83 20.95,11H23V13H20.95C20.5,17.17 17.17,20.5 13,20.95V23H11V20.95C6.83,20.5 3.5,17.17 3.05,13M12,5A7,7 0 0,0 5,12A7,7 0 0,0 12,19A7,7 0 0,0 19,12A7,7 0 0,0 12,5Z" /></svg>'
+    const element = document.createElement('div')
+    element.className = 'center-control ol-unselectable ol-control'
+    element.appendChild(button)
+    super({ element: element, target: options.target })
+    button.addEventListener('click', this.handle.bind(this), false)
+  }
+  handle () {
+    if (!selfPos) return
+    this.getMap().getView().animate({ center: selfPos, zoom: 17 })
+  }
+}
 
 let map = null
 onMounted(() => {
   geolocation.setTracking(true)
   map = new Map({
+    controls: defaultControls().extend([new CenterControl()]),
     layers: [ new TileLayer({ source: new OSM() }) ],
     target: el, view
   })
@@ -114,15 +133,16 @@ function clear () {
   markerFeature.setGeometry(null)
   computeResult()
 }
+
 onActivated(() => {
   if (map && route.query.q) focus(route.query.q)
 })
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col relative items-center">
+  <div class="w-full h-full flex flex-col relative items-end">
     <div ref="el" class="w-full h-full absolute"></div>
-    <div class="absolute top-3 mx-auto w-96 bg-white shadow-md rounded" style="max-width: 90%;">
+    <div class="absolute top-3 mr-3 w-96 bg-white shadow-md rounded" style="max-width: 80%;">
       <input v-model="query" @input="computeResult" placeholder="Search locations & classrooms!" class="px-3 py-1.5 w-full rounded font-bold">
       <XMarkIcon v-if="query" @click="clear" class="w-5 text-gray-500 absolute cursor-pointer right-2 top-2 bg-white" />
       <hr v-if="result.length" class="w-full">
@@ -132,3 +152,13 @@ onActivated(() => {
     </div>
   </div>
 </template>
+
+<style>
+.center-control {
+  top: 65px;
+  left: .5em;
+}
+.ol-touch .center-control {
+  top: 80px;
+}
+</style>
