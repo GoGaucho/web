@@ -34,6 +34,7 @@ const geolocation = new Geolocation({
   trackingOptions: { enableHighAccuracy: true },
   projection: view.getProjection()
 })
+geolocation.setTracking(true)
 
 const accuracyFeature = new Feature()
 geolocation.on('change:accuracyGeometry', function () {
@@ -68,14 +69,17 @@ class CenterControl extends Control {
     button.addEventListener('click', this.handle.bind(this), false)
   }
   handle () {
-    if (!selfPos) return
-    this.getMap().getView().animate({ center: selfPos, zoom: 17 })
+    if (!selfPos) {
+      geolocation.setTracking(false)
+      geolocation.setTracking(true)
+      return
+    }
+    this.getMap().getView().animate({ center: selfPos, zoom: 17, rotation: 0 })
   }
 }
 
 let map = null
 onMounted(() => {
-  geolocation.setTracking(true)
   map = new Map({
     controls: defaultControls().extend([new CenterControl()]),
     layers: [ new TileLayer({ source: new OSM() }) ],
