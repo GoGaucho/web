@@ -131,10 +131,10 @@ function removeCustom (i) {
       <ArrowPathIcon class="w-6 text-gray-500 cursor-pointer" @click="fetchData" />
     </div>
     <div class="w-full flex flex-wrap justify-center items-start" v-if="data" :key="q">
-      <div class="flex-grow bg-white sm:p-2 sm:pb-4 lg:px-6 pb-4 rounded shadow m-0 sm:m-4" v-if="data.schedule"><!-- schedule -->
+      <div class="flex-grow bg-white sm:p-2 sm:pb-4 lg:px-6 pb-4 rounded shadow m-0 sm:m-4 lg:mr-0" v-if="data.schedule"><!-- schedule -->
         <Schedule :pieces="pieces" whole="1" />
       </div>
-      <div class="m-2 w-full lg:w-80"><!-- side -->
+      <div class="m-2 w-full lg:w-72 xl:w-80"><!-- side -->
         <div :show="1" v-if="data.schedule" class="p-2">
           <div class="rounded shadow-md bg-white overflow-hidden">
             <div class="text-white font-bold p-2 bg-green-800">Customize Schedule</div>

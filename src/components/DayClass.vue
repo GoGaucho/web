@@ -8,7 +8,6 @@ const router = useRouter()
 let classes = $ref(false)
 
 function getClasses () {
-  if (!state.user.name) return false
   const schedule = cache.get('class' + state.quarter)?.schedule
   if (!schedule) return classes = false
   classes = []
@@ -31,8 +30,15 @@ function getClasses () {
   classes.sort((a, b) => a.wTime[0] - b.wTime[0])
 }
 
+getClasses()
 onActivated(getClasses)
 watch(() => state.quarter, getClasses)
+watch(() => state.user.time, () => {
+  if (!state.user.name) {
+    classes = false
+    cache.set('class' + state.quarter, false)
+  } else getClasses()
+})
 
 function locate (location) {
   if (classrooms[location]) router.push('/map?q=' + location)

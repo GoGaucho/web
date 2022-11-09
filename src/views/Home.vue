@@ -7,7 +7,7 @@ import LinkCard from '../components/LinkCard.vue'
 import DayClass from '../components/DayClass.vue'
 import links from '../utils/links.js'
 import { get } from '../firebase.js'
-import state from '../model.js'
+import { state, cache } from '../model.js'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
@@ -15,6 +15,7 @@ let home = $ref({})
 async function init () {
   home = await get('cache/home')
   state.quarter = home.quarter.current
+  cache.set('quarter', state.quarter)
 }
 init()
 </script>
@@ -23,11 +24,13 @@ init()
   <div class="relative w-full min-h-full flex flex-col py-10 px-6 sm:px-20 all-transition sm:items-start">
     <img class="fixed z-0 left-0 bottom-14 sm:bottom-0 w-full" :src="banner">
     <div class="absolute top-0 left-0 w-full">
-      <Wrapper :show="home.top">
-        <div class="bg-blue-200 text-blue-700 p-2 flex items-center justify-center" v-html="home.top" />
+      <Wrapper :show="!state.isStandalone">
+        <div class="bg-blue-200 text-blue-700 p-2 flex items-center justify-center">
+          <a class="font-bold" href="/#/about">Want to install the NEW GoGaucho?</a>
+        </div>
       </Wrapper>
     </div>
-    <h1 class="font-bold text-2xl mt-4">Hi, {{ state.user.name || 'Gaucho' }}</h1>
+    <h1 class="font-bold text-2xl" :class="!state.isStandalone && 'mt-4'">Hi, {{ state.user.name || 'Gaucho' }}</h1>
     <p class="text-sm text-gray-500 mb-6">{{ home.subtitle || 'Welcome to GoGaucho' }}</p>
     <DayClass></DayClass>
     <div class="flex relative flex-col sm:flex-row flex-wrap items-start">

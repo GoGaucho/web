@@ -1,23 +1,5 @@
 import { reactive } from 'vue'
 
-export const state = reactive({
-  loading: false,
-  quarter: '', // current quarter
-  course: {},
-  user: {},
-  screen: { sm: false, md: false, lg: false },
-  isStandalone: window.matchMedia('(display-mode: standalone)').matches
-})
-
-window.onresize = () => {
-  state.screen.lg = window.innerWidth < 1024
-  state.screen.md = window.innerWidth < 768
-  state.screen.sm = window.innerWidth < 640
-}
-window.onresize()
-
-export default state
-
 export const LS = window.localStorage
 
 // LS cache { ':': value, _: expire time }
@@ -42,3 +24,21 @@ setTimeout(() => {
     LS.removeItem(_k)
   }
 }, 5e3)
+
+export const state = reactive({
+  loading: false,
+  quarter: cache.get('quarter') || '',
+  course: {},
+  user: {},
+  screen: { sm: false, md: false, lg: false },
+  isStandalone: window.matchMedia('(display-mode: standalone)').matches
+})
+
+export default state
+
+window.onresize = () => {
+  state.screen.lg = window.innerWidth < 1024
+  state.screen.md = window.innerWidth < 768
+  state.screen.sm = window.innerWidth < 640
+}
+window.onresize()

@@ -21,12 +21,13 @@ provider.setCustomParameters({ hd: 'ucsb.edu' })
 
 // listeners
 auth.onAuthStateChanged(u => {
-  state.user = {}
+  state.user = { time: Date.now() }
   if (u) state.user = {
     uid: u.uid,
     name: u.displayName,
     email: u.email,
-    photoURL: u.photoURL
+    photoURL: u.photoURL,
+    time: Date.now()
   }
 })
 

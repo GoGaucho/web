@@ -11,6 +11,11 @@ export default [[{
   title: 'GradeScope',
   href: 'https://www.gradescope.com/auth/saml/ucsb',
   icon: '/icons/links/GradeScope.png'
+}, {
+  title: 'Canvas',
+  href: 'https://ucsb.instructure.com/login/saml',
+  icon: '/icons/links/Canvas.png',
+  description: 'Learning Management System'
 }],
 [{
   title: 'Library Room',
