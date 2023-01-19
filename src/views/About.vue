@@ -29,7 +29,7 @@ init()
     </div>
     <div class="p-4 sm:p-10 w-full" style="max-width: 800px;">
       <h2 class="text-xl mt-20 mb-4 font-bold">What's GoGaucho?</h2>
-      <p>GoGaucho is the best campus app for UCSB students. <br class="hidden sm:block"> GoGaucho Web is the next generation WebApp, which is designed to serve UCSB students anywhere, anytime, and on any platforms.</p>
+      <p>GoGaucho is the best campus app for UCSB students. <br class="hidden sm:block"> GoGaucho Web is the next generation WebApp, which is designed to serve UCSB students anywhere, anytime, and on any platforms. <br class="hidden sm:block">GoGaucho is run by students and is not an official UCSB application.</p>
       <h2 class="text-xl mt-20 mb-4 font-bold">How to install?</h2>
       <p>Follow the instructions for better experiences.</p>
       <PanelWrapper title="Desktop (Chrome)" class="bg-white mt-4">
