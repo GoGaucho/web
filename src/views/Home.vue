@@ -4,7 +4,7 @@ import banner from '../assets/banner.svg'
 import diningImg from '../assets/portola.jpg'
 import Wrapper from '../components/Wrapper.vue'
 import LinkCard from '../components/LinkCard.vue'
-import DayClass from '../components/DayClass.vue'
+import DaySummary from '../components/DaySummary.vue'
 import links from '../utils/links.js'
 import { get } from '../firebase.js'
 import { state, cache } from '../model.js'
@@ -32,7 +32,7 @@ init()
     </div>
     <h1 class="font-bold text-2xl" :class="!state.isStandalone && 'mt-4'">Hi, {{ state.user.name || 'Gaucho' }}</h1>
     <p class="text-sm text-gray-500 mb-6">{{ home.subtitle || 'Welcome to GoGaucho' }}</p>
-    <DayClass></DayClass>
+    <DaySummary></DaySummary>
     <div class="flex relative flex-col sm:flex-row flex-wrap items-start">
       <div class="hidden lg:block w-80 mr-4 rounded-lg overflow-hidden relative cursor-pointer group" @click="router.push('/dining')">
         <div class="all-transition bg-black opacity-30 absolute z-10 left-0 top-0 right-0 bottom-0 group-hover:opacity-10" />
@@ -55,7 +55,7 @@ init()
       </div>
       <div class="w-full lg-link my-4">
         <div v-for="i in 4" class="flex flex-wrap">
-          <LinkCard class="w-64 m-1" v-for="l in links[i - 1]" :title="l.title" :icon="l.icon" :href="l.href" small="1" />
+          <LinkCard class="w-72 m-1" v-for="l in links[i - 1]" :title="l.title" :icon="l.icon" :href="l.href" />
         </div>
         <p class="text-xs text-gray-500 px-2 cursor-pointer" @click="router.push('/link')">All links ></p>
       </div>

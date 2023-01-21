@@ -1,21 +1,16 @@
 export default [[{
-  title: 'GOLD',
-  href: 'https://my.sa.ucsb.edu/gold/',
-  description: 'Student Registration Services'
-}, {
-  title: 'GauchoSpace',
-  href: 'https://sso.ucsb.edu:8443/cas/login?service=https%3A%2F%2Fgauchospace.ucsb.edu%2Fcourses%2Flogin%2Findex.php%3FauthCAS%3DCAS',
-  icon: '/icons/links/GauchoSpace.jpg',
-  description: 'Course Management System'
+  title: 'Canvas',
+  href: 'https://ucsb.instructure.com/login/saml',
+  icon: '/icons/links/Canvas.png',
+  description: 'Learning Management System'
 }, {
   title: 'GradeScope',
   href: 'https://www.gradescope.com/auth/saml/ucsb',
   icon: '/icons/links/GradeScope.png'
 }, {
-  title: 'Canvas',
-  href: 'https://ucsb.instructure.com/login/saml',
-  icon: '/icons/links/Canvas.png',
-  description: 'Learning Management System'
+  title: 'GOLD',
+  href: 'https://my.sa.ucsb.edu/gold/',
+  description: 'Student Registration Services'
 }],
 [{
   title: 'Library Room',
