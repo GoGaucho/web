@@ -11,18 +11,18 @@
     <h3>Web and Backend Developer</h3>
     <p>Shiheng Li</p>
     <h3>iOS Developers</h3>
-    <p>Jackson Cooley, Mateo Wang, Matthew Nguyen, Heather Nguyen, Kenny Boi</p>
+    <p>Jackson Cooley, Mateo Wang, Matthew Nguyen, Heather Nguyen, Kenny Bui</p>
     <h3>Data Analysis</h3>
     <p>Xiaoyang Hua</p>
     <h3>Project Managers</h3>
     <p>Wanni Wu, Crystal Li</p>
     <h3>Marketing</h3>
-    <p>Chloe Fan</p>
+    <p>Chloe Fan, Ari Li</p>
     <hr>
 
     <h2>Academic Year 2021-2022</h2>
     <h3>Leader</h3>
-    <p>Shiheng Li</p>
+    <p>Shiheng Li, Arthur Wang</p>
     <h3>Developers</h3>
     <p>Arthur Wang, Shiheng Li</p>
     <hr>
