@@ -4,6 +4,8 @@ import { url, log } from '../firebase.js'
 import { EllipsisVerticalIcon } from '@heroicons/vue/24/outline'
 import PanelWrapper from '../components/PanelWrapper.vue'
 import LinkCard from '../components/LinkCard.vue'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 log('web/about')
 let guide = $ref({})
@@ -53,6 +55,10 @@ init()
         <LinkCard class="m-1 w-full sm:w-64" title="Discord" description="Join GoGaucho Server" href="https://discord.gg/64jqp8Z3xH" icon="/icons/links/discord.png" />
         <LinkCard class="m-1 w-full sm:w-64" title="Twitter" description="Follow @GoGauchoApp" href="https://twitter.com/GoGauchoApp" icon="/icons/links/Twitter.png" />
         <LinkCard class="m-1 w-full sm:w-64" title="Instagram" description="Follow @GoGauchoApp" href="https://www.instagram.com/GoGauchoApp/" icon="/icons/links/Instagram.png" />
+      </div>
+      <div class="my-8 flex items-center justify-center">
+        <button class="all-transition rounded-full hover:bg-gray-200 text-blue-500 font-bold px-4 py-1 m-4" @click="router.push('/privacy')">Privacy Policy</button>
+        <button class="all-transition rounded-full hover:bg-gray-200 text-blue-500 font-bold px-4 py-1 m-4" @click="router.push('/team')">GoGaucho Team</button>
       </div>
     </div>
     <img class="w-40 sm:w-60 absolute bottom-0" :src="fire">

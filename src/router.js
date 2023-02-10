@@ -3,6 +3,8 @@ import state from './model.js'
 
 const index = {
   '/about': () => import('./views/About.vue'),
+  '/privacy': () => import('./views/Privacy.vue'),
+  '/team': () => import('./views/Team.vue'),
   '/link': () => import('./views/Link.vue'),
   '/map': () => import('./views/Map.vue'),
   '/dining': () => import('./views/Dining.vue'),

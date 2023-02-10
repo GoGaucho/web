@@ -71,7 +71,7 @@ window.signin = signin
       </button>
       <div class="rounded-b bg-gray-100 text-gray-500 text-sm py-2 flex items-center justify-around w-full">
         <p class="cursor-pointer" @click="goto('/about')">About</p>
-        <p>&copy; GoGaucho 2022</p>
+        <p>&copy; GoGaucho 2023</p>
       </div>
     </Wrapper>
   </div>
