@@ -46,7 +46,7 @@
 
 <style scoped>
 article {
-  @apply p-6 font-serif;
+  @apply p-6 font-serif mb-16;
 }
 strong {
   @apply block mt-4 mb-2 text-lg;

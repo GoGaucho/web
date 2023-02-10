@@ -89,7 +89,7 @@
 
 <style scoped>
 article {
-  @apply p-6 font-mono text-gray-700;
+  @apply p-6 font-mono text-gray-700 mb-16;
 }
 h2 {
   @apply mt-4 mb-2 text-lg font-bold text-black;
