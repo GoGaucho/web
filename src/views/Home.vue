@@ -49,14 +49,8 @@ init()
         <div class="button" @click="router.push('/waitz')"><BuildingLibraryIcon class="w-6 mr-2" />Building Capacity</div>
         <hr>
       </div>
-      <div class="w-full sm:w-56 sm-link my-4 sm:my-0">
+      <div class="w-full sm:w-56 my-4 sm:my-0">
         <LinkCard class="w-full m-1" v-for="l in links[0]" :title="l.title" :icon="l.icon" :href="l.href" small="1" />
-        <p class="text-xs text-gray-500 px-2 cursor-pointer" @click="router.push('/link')">All links ></p>
-      </div>
-      <div class="w-full lg-link my-4">
-        <div v-for="i in 4" class="flex flex-wrap">
-          <LinkCard class="w-72 m-1" v-for="l in links[i - 1]" :title="l.title" :icon="l.icon" :href="l.href" />
-        </div>
         <p class="text-xs text-gray-500 px-2 cursor-pointer" @click="router.push('/link')">All links ></p>
       </div>
     </div>
@@ -72,12 +66,5 @@ init()
 .button {
   transition: all 0.3s ease;
   @apply cursor-pointer p-2 flex items-center font-bold border border-x-0 border-b-0 hover:bg-gray-200;
-}
-
-.sm-link { display: block; }
-.lg-link { display: none; }
-@media (min-height: 1000px) and (min-width: 1400px) {
-  .sm-link { display: none; }
-  .lg-link { display: block; }
 }
 </style>
