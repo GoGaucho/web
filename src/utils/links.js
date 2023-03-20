@@ -24,7 +24,7 @@ export default [[{
 }],
 [{
   title: 'Student Health',
-  href: 'https://sso.ucsb.edu/cas/login?service=https%3a%2f%2fstudenthealthoc.sa.ucsb.edu%2f',
+  href: 'https://sso.ucsb.edu/cas/login?service=https%3a%2f%2fmyhealth.ucsb.edu%2f',
   icon: '/icons/links/SH.png'
 }, {
   title: 'Disabled Students',
