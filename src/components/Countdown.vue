@@ -7,11 +7,12 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 let classes = $ref(false)
+
+
 let progress = $ref({
   percent: 0,
 })
 let currClass = $ref(false)
-
 let currTime = $ref({
   hour: (new Date()).getHours(),
   minute: (new Date()).getMinutes(),
@@ -41,12 +42,16 @@ function getClasses() {
       }
     }
   }
-  // }
-  //  classes = [{course:"MAT201",session:"1",location:"B1",wTime:[2820,2830],time:"8:00-9:30"},
-  // {course:"MAT202",session:"1",location:"B1",wTime:[4211,4299],time:"8:00-9:30"},
-  // {course:"MAT203",session:"1",location:"B1",wTime:[4340,4340],time:"8:00-9:30"}]
-  //classes = [{course:"MAT201",session:"1",location:"B1",wTime:[2820,2830],time:"8:00-9:30"}]
-  //classes = []
+  
+    //Some test data
+    // }
+    //  classes = [{course:"MAT201",session:"1",location:"B1",wTime:[2820,2830],time:"8:00-9:30"},
+    // {course:"MAT202",session:"1",location:"B1",wTime:[4211,4299],time:"8:00-9:30"},
+    // {course:"MAT203",session:"1",location:"B1",wTime:[4340,4340],time:"8:00-9:30"}]
+    //classes = [{course:"MAT201",session:"1",location:"B1",wTime:[2820,2830],time:"8:00-9:30"}]
+    //classes = []
+  
+
   classes.sort((a, b) => a.wTime[0] - b.wTime[0])
 }
 
@@ -66,7 +71,7 @@ const updateTime = () => {
   currTime.minute = (new Date()).getMinutes();
   currTime.day = (new Date()).getDay();
   currTime.second = (new Date()).getSeconds();
-  //this will be negative on sunday
+  //this will be negative on sunday but it's fine, since no classes on sunday
   currTime.wTime = (currTime.day - 1) * 1440 + currTime.hour * 60 + currTime.minute;
 };
 
@@ -110,7 +115,7 @@ const updateProgress = () => {
   return progress.percent = 0;
 };
 
-// update every one minute
+// update on every second
 setInterval(() => {
   updateTime();
   updateProgress();
@@ -155,7 +160,8 @@ onActivated(updateTime)
                   seconds
                 </div>
             </div>
-
+        
+        <!-- Caption -->
         <div class="flex flex-row absolute top-2 left-5">
           <div class="relative top-2">
             <div v-if="classes.length>0 && currTime.nextEventTime != -1">
@@ -175,7 +181,7 @@ onActivated(updateTime)
             <button v-if="classes" :class="(classes && !classes.length)?'absolute -left-7 px-4 py-1 top-0':''" class="scale-75 bg-white rounded-full px-4 py-2 all-transition text-blue-500 flex items-center font-bold border hover:bg-gray-100 whitespace-nowrap" @click="router.push('/class')"><AcademicCapIcon class="w-6 mr-2" />Full Schedule</button>
         </div>
 
-
+        <!-- Course list -->
         <div v-for="c in classes" class="relative top-4 rounded-r-sm p-2 mx-1 overflow-hidden w-40" :class="(c.course==currClass.course)? 'bg-red-50':'bg-blue-50'">
               <div>
                 <b>{{ c.course }}</b>
@@ -197,64 +203,3 @@ onActivated(updateTime)
 </template>
 
 <style scoped></style>
-
-<!-- 
-<div v-if="currTime.nextEventTime != -1" class="mb-4 w-92 sm:mb-8 -mx-6 sm:mx-0 sm:max-w-full relative h-40 flex items-center overflow-x-auto bg-white p-4 sm:rounded border">
-  <div class="flex-row flex">
-    <p v-if="progress.percent" class="absolute top-4 left-5 border-x-0 border-b-0 text-xl font-bold pr-2">
-      Current class
-    </p>
-
-    <p v-else class="absolute top-4 left-5 border-x-0 border-b-0 text-xl font-bold pr-2">
-      Next class
-    </p>
-
-
-    <div class="relative rounded-r-sm top-4 p-2 mx-1 h-full bg-red-50 overflow-hidden w-40">
-      //only showing upcoming class 
-      <div>
-        <b>{{ currClass.course }}</b>
-        <span class="text-xs ml-1" v-if="currClass.session">(session {{ currClass.session }})</span>
-      </div>
-      <div class="text-sm flex items-center" :class="classrooms[currClass.location] && 'cursor-pointer'"
-        @click="locate(currClass.location)">
-        {{ currClass.location }}
-        <MapPinIcon class="ml-1 w-5 text-gray-500" v-if="classrooms[currClass.location]" />
-      </div>
-      <div class="text-sm">{{ currClass.time }}</div>
-      <div class="all-transition absolute bottom-0 top-0 left-0 w-0.5 bg-red-500" />
-    </div>
-
-    <div class="relative grid grid-flow-col mx-6 gap-5 top-5 text-center auto-cols-max">
-      <div class="flex flex-col">
-        <span class="countdown font-mono text-5xl">
-          <span :style="'--value:' + Math.floor(currTime.nextEventTime / 60)"></span>
-        </span>
-        hours
-      </div>
-      <div class="flex flex-col">
-        <span class="countdown font-mono text-5xl">
-          <span :style="'--value:' + currTime.nextEventTime % 60"></span>
-        </span>
-        mins
-      </div>
-      <div class="flex flex-col">
-        <span class="countdown font-mono text-5xl">
-          <span :style="'--value:' + (59 - currTime.second)"></span>
-        </span>
-        seconds
-      </div>
-    </div>
-    //<div v-if="progress.percent!=0" class="relative top-3 left-0 px-4">
-        <div class="radial-progress font-bold" :style="'--value:'+progress.percent">{{String(Math.floor(progress.percent))+"%"}}</div> 
-      </div> //
-  </div>
-</div>
-
-<div v-else
-  class="mb-4 w-30 sm:mb-8 -mx-6 sm:mx-0 sm:max-w-full relative h-16 flex overflow-x-auto bg-white p-4 sm:rounded border">
-  <div class="flex mx-2 text-xl font-bold">
-    <p>All clear today! 🍾️</p> 
-   </div>
-    </div>
-  -->
