@@ -10,7 +10,7 @@ export const cache = {
     const raw = JSON.parse(LS[_k])
     return raw._ > Date.now() ? raw[':'] : null
   },
-  set: (k, v, expire = 7*86400e3) => {
+  set: (k, v, expire = 7 * 86400e3) => {
     LS['_' + k] = JSON.stringify({ _: Date.now() + expire, ':': v })
   }
 }

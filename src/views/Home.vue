@@ -5,6 +5,7 @@ import diningImg from '../assets/portola.jpg'
 import Wrapper from '../components/Wrapper.vue'
 import LinkCard from '../components/LinkCard.vue'
 import DayClass from '../components/DayClass.vue'
+import CountDown from '../components/Countdown.vue'
 import links from '../utils/links.js'
 import { get } from '../firebase.js'
 import { state, cache } from '../model.js'
@@ -12,7 +13,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 let home = $ref({})
-async function init () {
+async function init() {
   home = await get('cache/home')
   state.quarter = home.quarter.current
   cache.set('quarter', state.quarter)
@@ -33,9 +34,12 @@ init()
     <h1 class="font-bold text-2xl" :class="!state.isStandalone && 'mt-4'">Hi, {{ state.user.name || 'Gaucho' }}</h1>
     <p class="text-sm text-gray-500 mb-6">{{ home.subtitle || 'Welcome to GoGaucho' }}</p>
     <DayClass></DayClass>
+    <!-- <CountDown></CountDown> -->
     <div class="flex relative flex-col sm:flex-row flex-wrap items-start">
-      <div class="hidden lg:block w-80 mr-4 rounded-lg overflow-hidden relative cursor-pointer group" @click="router.push('/dining')">
-        <div class="all-transition bg-black opacity-30 absolute z-10 left-0 top-0 right-0 bottom-0 group-hover:opacity-10" />
+      <div class="hidden lg:block w-80 mr-4 rounded-lg overflow-hidden relative cursor-pointer group"
+        @click="router.push('/dining')">
+        <div
+          class="all-transition bg-black opacity-30 absolute z-10 left-0 top-0 right-0 bottom-0 group-hover:opacity-10" />
         <img class="w-full relative z-0" :src="diningImg">
         <div class="absolute left-4 top-4 text-white z-20">
           <h3 class="font-bold text-lg">Dining Commons</h3>
@@ -43,10 +47,18 @@ init()
         </div>
       </div>
       <div class="sm:pr-4 w-full sm:w-64 xl:w-80 text-lg">
-        <div class="button" @click="router.push('/map')"><MapIcon class="w-6 mr-2" />Map</div>
-        <div class="button" @click="router.push('/dining')"><SwatchIcon class="w-6 mr-2" />Dining</div>
-        <div class="button" @click="router.push('/course')"><BookOpenIcon class="w-6 mr-2" />Course</div>
-        <div class="button" @click="router.push('/waitz')"><BuildingLibraryIcon class="w-6 mr-2" />Building Capacity</div>
+        <div class="button" @click="router.push('/map')">
+          <MapIcon class="w-6 mr-2" />Map
+        </div>
+        <div class="button" @click="router.push('/dining')">
+          <SwatchIcon class="w-6 mr-2" />Dining
+        </div>
+        <div class="button" @click="router.push('/course')">
+          <BookOpenIcon class="w-6 mr-2" />Course
+        </div>
+        <div class="button" @click="router.push('/waitz')">
+          <BuildingLibraryIcon class="w-6 mr-2" />Building Capacity
+        </div>
         <hr>
       </div>
       <div class="w-full sm:w-56 sm-link my-4 sm:my-0">
@@ -69,15 +81,27 @@ init()
   transition: all 0.3s ease;
   @apply rounded shadow hover:shadow-md bg-white py-1 px-2 m-1 cursor-pointer overflow-hidden;
 }
+
 .button {
   transition: all 0.3s ease;
   @apply cursor-pointer p-2 flex items-center font-bold border border-x-0 border-b-0 hover:bg-gray-200;
 }
 
-.sm-link { display: block; }
-.lg-link { display: none; }
+.sm-link {
+  display: block;
+}
+
+.lg-link {
+  display: none;
+}
+
 @media (min-height: 1000px) and (min-width: 1400px) {
-  .sm-link { display: none; }
-  .lg-link { display: block; }
+  .sm-link {
+    display: none;
+  }
+
+  .lg-link {
+    display: block;
+  }
 }
 </style>

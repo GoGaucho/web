@@ -15,13 +15,13 @@ const index = {
 
 const routes = []
 for (const r in index) routes.push({ path: r, component: index[r] })
-const router = createRouter({ history: createWebHashHistory(), routes }) 
+const router = createRouter({ history: createWebHashHistory(), routes })
 
 router.beforeEach(() => { NProgress.start() })
 router.afterEach(() => {
   Swal.close()
   NProgress.done()
-  window.onsignin = () => {}
+  window.onsignin = () => { }
   state.loading = false
 })
 

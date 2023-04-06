@@ -43,6 +43,7 @@ watch(() => state.user.time, () => {
 function locate (location) {
   if (classrooms[location]) router.push('/map?q=' + location)
 }
+
 </script>
 
 <template>
@@ -69,4 +70,6 @@ function locate (location) {
       </div>
     </Transition>
   </div>
+
 </template>
+
