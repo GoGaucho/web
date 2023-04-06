@@ -4,7 +4,7 @@ import banner from '../assets/banner.svg'
 import diningImg from '../assets/portola.jpg'
 import Wrapper from '../components/Wrapper.vue'
 import LinkCard from '../components/LinkCard.vue'
-import DayClass from '../components/DayClass.vue'
+// import DayClass from '../components/DayClass.vue'
 import CountDown from '../components/Countdown.vue'
 import links from '../utils/links.js'
 import { get } from '../firebase.js'
@@ -33,8 +33,8 @@ init()
     </div>
     <h1 class="font-bold text-2xl" :class="!state.isStandalone && 'mt-4'">Hi, {{ state.user.name || 'Gaucho' }}</h1>
     <p class="text-sm text-gray-500 mb-6">{{ home.subtitle || 'Welcome to GoGaucho' }}</p>
-    <DayClass></DayClass>
-    <!-- <CountDown></CountDown> -->
+    <!-- <DayClass></DayClass> -->
+    <CountDown></CountDown>
     <div class="flex relative flex-col sm:flex-row flex-wrap items-start">
       <div class="hidden lg:block w-80 mr-4 rounded-lg overflow-hidden relative cursor-pointer group"
         @click="router.push('/dining')">
