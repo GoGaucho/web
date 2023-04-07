@@ -19,9 +19,9 @@ const props = defineProps(['data'])
     </div>
     <div class="rounded shadow-md overflow-hidden bg-white my-2">
       <div class="text-white font-bold p-2" style="background: #0b254e;">Pass Time</div>
-      <div class="mx-4 my-2"><b>Pass 1: </b><code>{{ props.data.pass1.replace('T', ' ') }}</code></div>
-      <div class="mx-4 my-2"><b>Pass 2: </b><code>{{ props.data.pass2.replace('T', ' ') }}</code></div>
-      <div class="mx-4 my-2"><b>Pass 3: </b><code>{{ props.data.pass3.replace('T', ' ') }}</code></div>
+      <div class="mx-4 my-2"><b>Pass 1: </b><code>{{ props.data.pass1?.replace('T', ' ') }}</code></div>
+      <div class="mx-4 my-2"><b>Pass 2: </b><code>{{ props.data.pass2?.replace('T', ' ') }}</code></div>
+      <div class="mx-4 my-2"><b>Pass 3: </b><code>{{ props.data.pass3?.replace('T', ' ') }}</code></div>
     </div>
   </div>
 </template>

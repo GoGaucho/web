@@ -47,6 +47,7 @@ async function fetchData () {
   state.loading = false
   if (!raw) return
   data = raw
+  qs = data.quarters
   cache.set('class' + q, raw, 86400e6)
 }
 
@@ -64,9 +65,11 @@ function getData () {
   if (!data) {
     data = {}
     fetchData()
-  }
+  } else qs = data.quarters
 }
 window.onsignin = getData
+
+const sleep = ms => new Promise(r => setTimeout(r, ms))
 
 async function init () {
   if (!state.quarter) {
@@ -74,6 +77,7 @@ async function init () {
   }
   q = state.quarter
   qs = [parse.quarterLast(q), q, parse.quarterNext(q)]
+  await sleep(500)
   if (state.user.uid) getData()
   else window.signin('Please verify your identity')
 }

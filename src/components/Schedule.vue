@@ -93,7 +93,7 @@ document.onvisibilitychange = () => { date = new Date() }
         </div>
         <div class="grid grid-cols-7 gap-px relative w-full overflow-y-hidden all-transition" :style="{ width: state.screen.md || !props.whole ? '140%' : '100%', height: showTime ? '976px' : '736px' }"><!-- body -->
           <div v-for="j in 112" class="all-transition bg-gray-100 hover:bg-gray-50 rounded" />
-          <template v-for="p in props.pieces" :key="p.key">
+          <template v-for="p in props.pieces">
             <div v-if="!isHide(p)" :style="pStyle(p)" class="all-transition absolute p-1 text-xs rounded-r-sm overflow-hidden hover:opacity-30">
               <div class="font-semibold text-shadow text-[0.7rem] sm:text-xs" :class="colorMap[p.key][1]">{{ p.title || p.key }}</div>
               <div class="text-[0.6rem] sm:text-xs opacity-90" :class="colorMap[p.key][1]" v-if="showTime">{{ p.time }}</div>
