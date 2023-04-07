@@ -1,6 +1,6 @@
 <script setup>
 import fire from '../assets/fire.svg'
-import { url, log } from '../firebase.js'
+import { log } from '../firebase.js'
 import { EllipsisVerticalIcon } from '@heroicons/vue/24/outline'
 import PanelWrapper from '../components/PanelWrapper.vue'
 import LinkCard from '../components/LinkCard.vue'
@@ -8,16 +8,6 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 log('web/about')
-let guide = $ref({})
-
-async function init () {
-  guide = {
-    desktop: await url('web/guide_desktop.png'),
-    android: await url('web/guide_android.png'),
-    ios: await url('web/guide_ios.png')
-  }
-}
-init()
 </script>
 
 <template>
@@ -35,15 +25,15 @@ init()
       <h2 class="text-xl mt-20 mb-4 font-bold">How to install?</h2>
       <p>Follow the instructions for better experiences.</p>
       <PanelWrapper title="Desktop (Chrome)" class="bg-white mt-4">
-        <img class="w-full" :src="guide.desktop">
+        <img class="w-full" src="/guide/desktop.png">
         <p class="text-left p-2">Open Google Chrome browser and visit <b>ucsb.app</b>, click the install icon on the address bar and install the WebApp to your computer. After installing, you can open GoGaucho as an App from your desktop or Home menu.</p>
       </PanelWrapper>
       <PanelWrapper title="Android (Chrome)" class="bg-white">
-        <img class="w-full" :src="guide.android">
+        <img class="w-full" src="/guide/android.png">
         <p class="text-left p-2">Open Google Chrome browser (or any supporting browser) and visit <b>ucsb.app</b>, click the top-right <EllipsisVerticalIcon class="w-5 inline border border-gray-300" /> icon to open the menu, and then click <b>Install app</b>. After installing, you can open GoGaucho as an App from your home screen.</p>
       </PanelWrapper>
       <PanelWrapper title="iOS (Safari)" class="bg-white">
-        <img class="w-full" :src="guide.ios">
+        <img class="w-full" src="/guide/ios.png">
         <p class="text-left p-2"><b>Only Safari browser can work with WebApp on iOS.</b><br>Open Safari browser and visit <b>ucsb.app</b>, click the sharing button at the bottom(on iPhones) or at the top-right(on iPads), and then click <b>Add to Home Screen</b>. After installing, you can open GoGaucho as an App from your home screen.</p>
       </PanelWrapper>
       <h2 class="text-xl mt-20 mb-4 font-bold">How does it work?</h2>

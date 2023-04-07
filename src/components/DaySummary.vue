@@ -57,6 +57,7 @@ function currentwTime () {
 function updateStatus () {
   const wTime = currentwTime()
   let t = Infinity // target
+  if (!classes || !classes.length) return
   for (const c of classes) { // check current class
     c.next = false
     c.current = c.wTime[0] <= wTime && wTime <= c.wTime[1]

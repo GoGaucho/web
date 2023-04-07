@@ -1,5 +1,4 @@
 import { initializeApp } from 'firebase/app'
-import { getStorage, ref, getDownloadURL } from 'firebase/storage'
 import { getAnalytics, logEvent } from 'firebase/analytics'
 import { getPerformance } from "firebase/performance"
 import { getFirestore, initializeFirestore, persistentLocalCache, getDoc, doc } from 'firebase/firestore'
@@ -18,9 +17,6 @@ const firebaseConfig = {
 
 export const app = initializeApp(firebaseConfig)
 
-export const storage = getStorage(app)
-export const url = path => getDownloadURL(ref(storage, path))
-
 initializeFirestore(app, { localCache: persistentLocalCache({}) })
 export const db = getFirestore()
 export const get = path => getDoc(doc(db, path)).then(r => r.data())
@@ -28,7 +24,7 @@ export const get = path => getDoc(doc(db, path)).then(r => r.data())
 const analytics = getAnalytics(app)
 export const log = (k, p = {}) => logEvent(analytics, k, p)
 
-const perf = getPerformance(app)
+getPerformance(app)
 
 const functions = getFunctions(app)
 export const call = (name, params = {}) => httpsCallable(functions, name)(params).then(r => r.data)
