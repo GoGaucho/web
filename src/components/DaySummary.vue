@@ -48,7 +48,7 @@ function locate (location) {
 }
 
 function currentwTime () {
-  const date = new Date('2023-04-06 10:00:00')
+  const date = new Date()
   const day = date.getDay(), hour = date.getHours(), minute = date.getMinutes()
   return (day - 1) * 1440 + hour * 60 + minute
 }
