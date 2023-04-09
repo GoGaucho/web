@@ -57,7 +57,7 @@ function currentwTime () {
 function updateStatus () {
   const wTime = currentwTime()
   let t = Infinity // target
-  if (!classes || !classes.length) return tip = 'Day Off!'
+  if (!classes || !classes.length) return tip = 'Day Off! 🏖️'
   for (const c of classes) { // check current class
     c.next = false
     c.current = c.wTime[0] <= wTime && wTime <= c.wTime[1]
@@ -113,7 +113,7 @@ tick()
           <button v-if="classes" class="bg-white rounded-full px-2 py-1 mx-2 all-transition text-blue-500 flex items-center border hover:bg-gray-100 whitespace-nowrap text-sm" @click="router.push('/class')"><AcademicCapIcon class="w-5 mr-1" />Weekly Schedule</button>
         </div>
         <div class="grow flex items-center m-2"><!-- course list -->
-          <div v-if="displayTime" class="mx-2 flex flex-col items-start">
+          <div v-if="displayTime && targetClass" class="mx-2 flex flex-col items-start">
             <span class="text-sm">{{ targetClass.course }}<span v-if="targetClass.session">(session {{ targetClass.session }})</span></span>
             <span class="font-mono text-4xl font-bold">{{ displayTime }}</span>
             <div class="text-sm flex items-center" :class="classrooms[targetClass.location] && 'cursor-pointer'" @click="locate(targetClass.location)">
@@ -133,7 +133,7 @@ tick()
             <div class="text-sm">{{ c.time }}</div>
             <div class="all-transition absolute bottom-0 top-0 left-0 w-0.5" :class="c.current ? 'bg-red-500' : (c.next ? 'bg-yellow-500' : 'bg-blue-500')" />
           </div>
-          <div v-if="classes && !classes.length">You don't have classes today! 👻</div>
+          <div v-if="classes && !classes.length" class="px-4">You don't have classes today! 👻</div>
         </div>
       </div>
     </Transition>
