@@ -11,10 +11,9 @@ import { state, cache } from '../model.js'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 
-let home = $ref({})
 async function init () {
-  home = await get('cache/home')
-  state.quarter = home.quarter.current
+  let quarter = await get('cache/quarter')
+  state.quarter = quarter.current
   cache.set('quarter', state.quarter)
 }
 init()
@@ -31,7 +30,7 @@ init()
       </Wrapper>
     </div>
     <h1 class="font-bold text-2xl" :class="!state.isStandalone && 'mt-4'">Hi, {{ state.user.name || 'Gaucho' }}</h1>
-    <p class="text-sm text-gray-500 mb-6">{{ home.subtitle || 'Welcome to GoGaucho' }}</p>
+    <p class="text-sm text-gray-500 mb-6">{{ 'Welcome to GoGaucho' }}</p>
     <DaySummary></DaySummary>
     <div class="flex relative flex-col sm:flex-row flex-wrap items-start">
       <div class="hidden lg:block w-80 mr-4 rounded-lg overflow-hidden relative cursor-pointer group" @click="router.push('/dining')">

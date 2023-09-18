@@ -73,7 +73,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms))
 
 async function init () {
   if (!state.quarter) {
-    state.quarter = (await get('cache/home')).quarter.current
+    state.quarter = (await get('cache/quarter')).current
   }
   q = state.quarter
   qs = [parse.quarterLast(q), q, parse.quarterNext(q)]

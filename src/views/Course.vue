@@ -54,8 +54,8 @@ async function fetchList () {
   loading = false
 }
 
-get('cache/home').then(data => {
-  quarters = data.quarter.course.split(',')
+get('cache/quarter').then(data => {
+  quarters = data.course.split(',')
   if (quarters.includes(state.course.quarter)) fetchList()
   else state.course.quarter = quarters[0]
 })
