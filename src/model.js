@@ -28,6 +28,7 @@ setTimeout(() => {
 export const state = reactive({
   loading: false,
   quarter: cache.get('quarter') || '',
+  hasClasses: false,
   course: {},
   user: {},
   screen: { sm: false, md: false, lg: false },
