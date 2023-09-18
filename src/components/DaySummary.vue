@@ -12,6 +12,7 @@ function getClasses () {
   const schedule = cache.get('class' + state.quarter)?.schedule
   if (!schedule) return classes = false
   classes = []
+  if (!state.hasClasses) return
   const day = (new Date()).getDay()
   for (const c in schedule) {
     const session = schedule[c].session?.substring(5).trim()
@@ -57,7 +58,7 @@ function currentwTime () {
 function updateStatus () {
   const wTime = currentwTime()
   let t = Infinity // target
-  if (!classes || !classes.length || !state.hasClasses) return tip = 'Day Off! 🏖️'
+  if (!classes || !classes.length) return tip = 'Day Off! 🏖️'
   for (const c of classes) { // check current class
     c.next = false
     c.current = c.wTime[0] <= wTime && wTime <= c.wTime[1]
