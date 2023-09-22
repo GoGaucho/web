@@ -26,7 +26,7 @@ init()
     <div class="absolute top-0 left-0 w-full">
       <Wrapper :show="!state.isStandalone">
         <div class="bg-blue-200 text-blue-700 p-2 flex items-center justify-center">
-          <a class="font-bold" href="/#/about">Want to install the NEW GoGaucho?</a>
+          <a class="font-bold" href="https://apps.apple.com/us/app/gogaucho/id6449792730">Get the new GoGaucho iOS app!</a>
         </div>
       </Wrapper>
     </div>

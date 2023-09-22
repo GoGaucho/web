@@ -22,24 +22,20 @@ log('web/about')
     <div class="p-4 sm:p-10 w-full" style="max-width: 800px;">
       <h2 class="text-xl mt-20 mb-4 font-bold">What's GoGaucho?</h2>
       <p>GoGaucho is the best campus app for UCSB students. <br class="hidden sm:block"> GoGaucho Web is the next generation WebApp, which is designed to serve UCSB students anywhere, anytime, and on any platforms. <br class="hidden sm:block">GoGaucho is run by students and is not an official UCSB application.</p>
-      <h2 class="text-xl mt-20 mb-4 font-bold">How to install?</h2>
-      <p>Follow the instructions for better experiences.</p>
+      <h2 class="text-xl mt-20 mb-4 font-bold">How to install the web app</h2>
+      <p>Follow the instructions for a better web app experiences.</p>
       <PanelWrapper title="Desktop (Chrome)" class="bg-white mt-4">
         <img class="w-full" src="/guide/desktop.png">
-        <p class="text-left p-2">Open Google Chrome browser and visit <b>ucsb.app</b>, click the install icon on the address bar and install the WebApp to your computer. After installing, you can open GoGaucho as an App from your desktop or Home menu.</p>
+        <p class="text-left p-2">Open the Google Chrome browser and visit <b>ucsb.app</b>, click the install icon on the address bar and install the WebApp to your computer. After installing, you can open GoGaucho as an App from your desktop or Home menu.</p>
       </PanelWrapper>
       <PanelWrapper title="Android (Chrome)" class="bg-white">
         <img class="w-full" src="/guide/android.png">
-        <p class="text-left p-2">Open Google Chrome browser (or any supporting browser) and visit <b>ucsb.app</b>, click the top-right <EllipsisVerticalIcon class="w-5 inline border border-gray-300" /> icon to open the menu, and then click <b>Install app</b>. After installing, you can open GoGaucho as an App from your home screen.</p>
-      </PanelWrapper>
-      <PanelWrapper title="iOS (Safari)" class="bg-white">
-        <img class="w-full" src="/guide/ios.png">
-        <p class="text-left p-2"><b>Only Safari browser can work with WebApp on iOS.</b><br>Open Safari browser and visit <b>ucsb.app</b>, click the sharing button at the bottom(on iPhones) or at the top-right(on iPads), and then click <b>Add to Home Screen</b>. After installing, you can open GoGaucho as an App from your home screen.</p>
+        <p class="text-left p-2">Open the Google Chrome browser (or any supporting browser) and visit <b>ucsb.app</b>, click the top-right <EllipsisVerticalIcon class="w-5 inline border border-gray-300" /> icon to open the menu, and then click <b>Install app</b>. After installing, you can open GoGaucho as an App from your home screen.</p>
       </PanelWrapper>
       <h2 class="text-xl mt-20 mb-4 font-bold">How does it work?</h2>
-      <p>GoGaucho is developed and maintained by UCSB students independently. GoGaucho obtains data from various sources. We are not permitted to store your personal data (schedule etc.) in any form. <b>Your personal data is directly passed from official UCSB server to your devices under proper authorization. </b></p>
+      <p>GoGaucho is developed and maintained by UCSB students independently. GoGaucho obtains data from various sources. We are not permitted to store your personal data (schedule etc.) in any form. <b>Your personal data is directly passed from the official UCSB server to your devices under proper authorization. </b></p>
       <h2 class="text-xl mt-20 mb-4 font-bold">How to contact us?</h2>
-      <p>You are welcomed to contact us for bug reports, feature suggestions, and joining applications. We appreciate your precious ideas and valuable experiences.</p>
+      <p>You are welcome to contact us for bug reports, feature suggestions, and joining applications. We appreciate your precious ideas and valuable experiences.</p>
       <div class="my-4 flex justify-center flex-wrap">
         <LinkCard class="m-1 w-full sm:w-64" title="Email" description="gogauchoapp@ucsb.edu" href="mailto:gogauchoapp@ucsb.edu" icon="/icons/logo.png" />
         <LinkCard class="m-1 w-full sm:w-64" title="Discord" description="Join GoGaucho Server" href="https://discord.gg/64jqp8Z3xH" icon="/icons/links/discord.png" />
