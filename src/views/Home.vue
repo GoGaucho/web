@@ -23,13 +23,13 @@ init()
 <template>
   <div class="relative w-full min-h-full flex flex-col py-10 px-6 sm:px-20 all-transition sm:items-start">
     <img class="fixed z-0 left-0 bottom-14 sm:bottom-0 w-full" :src="banner">
-    <div class="absolute top-0 left-0 w-full">
+    <!-- <div class="absolute top-0 left-0 w-full">
       <Wrapper :show="!state.isStandalone">
         <div class="bg-blue-200 text-blue-700 p-2 flex items-center justify-center">
           <a class="font-bold" href="https://apps.apple.com/us/app/gogaucho/id6449792730">Get the new GoGaucho iOS app!</a>
         </div>
       </Wrapper>
-    </div>
+    </div> -->
     <h1 class="font-bold text-2xl" :class="!state.isStandalone && 'mt-4'">Hi, {{ state.user.name || 'Gaucho' }}</h1>
     <p class="text-sm text-gray-500 mb-6">{{ 'Welcome to GoGaucho' }}</p>
     <DaySummary></DaySummary>
