@@ -12,7 +12,7 @@ function getClasses () {
   const schedule = cache.get('class' + state.quarter)?.schedule
   if (!schedule) return classes = false
   classes = []
-  if (!state.hasClasses) return
+  // if (!state.hasClasses) return
   const day = (new Date()).getDay()
   for (const c in schedule) {
     const session = schedule[c].session?.substring(5).trim()
