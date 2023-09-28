@@ -14,7 +14,7 @@ const router = useRouter()
 async function init () {
   let quarter = await get('cache/quarter')
   state.quarter = quarter.current
-  state.hasClasses = Date.now() > new Date(quarter.beginClasses).getTime() && Date.now() < new Date(quarter.endClasses).getTime()+1000*60*60*24
+  state.hasClasses = Date.now() >= new Date(quarter.currentBeginClasses).getTime() && Date.now() <= new Date(quarter.currentEndClasses).getTime()+1000*60*60*24
   cache.set('quarter', state.quarter)
 }
 init()
