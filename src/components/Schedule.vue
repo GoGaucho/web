@@ -86,8 +86,8 @@ document.onvisibilitychange = () => { date = new Date() }
         <LabelSwitch v-for="(v, l) in labels" v-model="labels[l]">{{ l }}</LabelSwitch>
       </div>
       <div>
-        <Toggle v-model="twelveHour" class="scale-75 -mr-2 whitespace-nowrap">12hr time?</Toggle>
-        <Toggle v-model="showTime" class="scale-75 -mr-2 whitespace-nowrap">more details</Toggle>
+        <Toggle v-model="twelveHour" class="scale-75 -mr-2 whitespace-nowrap">12 hr time</Toggle>
+        <Toggle v-model="showTime" class="scale-75 -mr-2 whitespace-nowrap">More details</Toggle>
       </div>
     </div>
     <div class="flex overflow-y-hidden">
