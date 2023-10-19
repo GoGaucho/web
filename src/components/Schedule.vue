@@ -18,7 +18,7 @@ const colors = [
   ['bg-pink-500', 'text-pink-700']
 ]
 
-let colorMap = $ref({}), labels = $ref({}), showTime = $ref(true)
+let colorMap = $ref({}), labels = $ref({}), showTime = $ref(true), twelveHour = $ref(false);
 
 watch(() => props.pieces, v => {
   const keys = new Set()
@@ -57,6 +57,13 @@ const pStyle = p => ({
   width: '14%'
 })
 
+const twelvify = time => time
+  .split(' - ')
+  .map(e => {
+    let hour = parseInt(e.split(':')[0])
+    return `${hour > 12 ? hour - 12: hour}:${e.split(':')[1]} ${hour >= 12 ? 'PM' : 'AM'}`
+  }).join(' - ');
+
 let date = $ref(new Date())
 let cStyle = $computed(() => {
   const day = date.getDay(), hour = date.getHours(), minute = date.getMinutes()
@@ -78,13 +85,16 @@ document.onvisibilitychange = () => { date = new Date() }
       <div class="flex items-center flex-wrap">
         <LabelSwitch v-for="(v, l) in labels" v-model="labels[l]">{{ l }}</LabelSwitch>
       </div>
-      <Toggle v-model="showTime" class="scale-75 -mr-2 whitespace-nowrap">more details</Toggle>
+      <div>
+        <Toggle v-model="twelveHour" class="scale-75 -mr-2 whitespace-nowrap">12hr time?</Toggle>
+        <Toggle v-model="showTime" class="scale-75 -mr-2 whitespace-nowrap">more details</Toggle>
+      </div>
     </div>
     <div class="flex overflow-y-hidden">
       <div class="mr-1 text-right h-full select-none" style="width: 1rem;"><!-- left -->
         <div style="height: 24px;">&nbsp;</div>
         <div class="grid grid-cols-1 text-right font-mono text-xs text-gray-500 all-transition" :style="{ height: showTime ? '976px' : '736px' }"><!-- time axis -->
-          <div v-for="i in 16">{{ i + 7 }}</div>
+          <div v-for="i in 16">{{ i > 5 && twelveHour ? i - 5 : i + 7}}</div> 
         </div>
       </div>
       <div class="flex-grow h-full overflow-y-hidden" :class="props.whole ? 'overflow-x-auto' : 'overflow-x-hidden'"><!-- right -->
@@ -96,7 +106,7 @@ document.onvisibilitychange = () => { date = new Date() }
           <template v-for="p in props.pieces">
             <div v-if="!isHide(p)" :style="pStyle(p)" class="all-transition absolute p-1 text-xs rounded-r-sm overflow-hidden hover:opacity-30">
               <div class="font-semibold text-shadow text-[0.7rem] sm:text-xs" :class="colorMap[p.key][1]">{{ p.title || p.key }}</div>
-              <div class="text-[0.6rem] sm:text-xs opacity-90" :class="colorMap[p.key][1]" v-if="showTime">{{ p.time }}</div>
+              <div class="text-[0.6rem] sm:text-xs opacity-90" :class="colorMap[p.key][1]" v-if="showTime">{{ twelveHour ? twelvify(p.time) : p.time }}</div>
               <div class="text-[0.625rem] sm:text-xs opacity-90" :class="colorMap[p.key][1]">{{ p.location }}</div>
               <div class="all-transition absolute bottom-0 top-0 left-0 w-0.5" :class="colorMap[p.key][0]" />
               <div class="absolute bottom-0 top-0 left-0 right-0" :class="colorMap[p.key][0]" style="opacity: 15%;"/>
