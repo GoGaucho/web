@@ -43,6 +43,8 @@ const pieces = $computed(() => {
 // fetch data from server, and write result to local cache
 async function fetchData () {
   cache.set('class' + q, false)
+  cache.set('qs', false)
+
   const token = cache.get('token')
   if (!token) return window.signin('Please verify your identity')
   data = {}
@@ -52,7 +54,9 @@ async function fetchData () {
   if (!raw) return
   data = raw
   qs = data.quarters
-  cache.set('class' + q, raw, 86400e6)
+
+  cache.set('class' + q, raw, 86400e6);
+  cache.set('qs', qs, 86400e6)
 }
 
 let unsub = null;
@@ -80,13 +84,14 @@ function getData () {
     fetchCustom();
   }
 
-  //data contains the non-custom schedule
   data = cache.get('class' + q)
-  if (!data) {
+  qs = cache.get('qs')
+
+  if (!data || !qs ) {
     data = {}
     fetchData()
-  } else qs = data.quarters
-
+  }
+  
 }
 
 window.onsignin = getData
@@ -98,6 +103,7 @@ async function init () {
     state.quarter = (await get('cache/quarter')).current
   }
   q = state.quarter
+  //initialize qs
   qs = [parse.quarterLast(q), q, parse.quarterNext(q)]
   await sleep(500)
   if (state.user.uid) getData()
