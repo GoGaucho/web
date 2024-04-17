@@ -4,21 +4,30 @@ import { state, cache } from '../model.js'
 import { classrooms } from '../utils/locations.js'
 import { MapPinIcon, AcademicCapIcon } from '@heroicons/vue/24/outline'
 import { useRouter } from 'vue-router'
+
 const router = useRouter()
 let classes = $ref(false)
 let tip = $ref(''), displayTime = $ref(''), target = $ref(0), targetClass = $ref(null)
 
+
+//get all classes / custom events for today, and sort by time
 function getClasses () {
+
   const schedule = cache.get('class' + state.quarter)?.schedule
-  if (!schedule) return classes = false
+  const custom = cache.get('custom' + state.quarter);
+
+  if (!schedule && !custom) return classes = false
   classes = []
+  
   // if (!state.hasClasses) return
   const day = (new Date()).getDay()
   for (const c in schedule) {
+    //session only works for summer session
     const session = schedule[c].session?.substring(5).trim()
     const periods = schedule[c].periods
     for (const p of periods) {
       for (const w of p.wTime) {
+        //only show classes for today
         if (w[0] < (day - 1) * 1440 || w[1] > day * 1440) continue
         classes.push({
           course: c, session,
@@ -31,16 +40,36 @@ function getClasses () {
       }
     }
   }
+
+  if (custom) {
+    for (const c of custom) {
+      //each c is a json object with title, location, time, and wTime
+      for (const w of c.wTime) {
+        if (w[0] < (day - 1) * 1440 || w[1] > day * 1440) continue
+        classes.push({
+          course: c.title, session: null,
+          location: c.location,
+          wTime: w,
+          time: c.time.replace(/^(.*?)\s/, ''),
+          current: false,
+          next: false
+        })
+      }
+    }
+  }
+
   classes.sort((a, b) => a.wTime[0] - b.wTime[0])
 }
 
 getClasses()
 onActivated(getClasses)
+
 watch(() => state.quarter, getClasses)
 watch(() => state.user.time, () => {
   if (!state.user.name) {
     classes = false
-    cache.set('class' + state.quarter, false)
+    cache.set('class' + state.quarter, false);
+    cache.set('custom' + state.quarter, false);
   } else getClasses()
 })
 
@@ -54,9 +83,9 @@ function currentwTime () {
   return (day - 1) * 1440 + hour * 60 + minute
 }
 
-// following for countdown
+//updating status of classes, called per tick
 function updateStatus () {
-  const wTime = currentwTime()
+  const wTime = currentwTime();
   let t = Infinity // target
   if (!classes || !classes.length) return tip = 'Day Off! 🏖️'
   for (const c of classes) { // check current class
