@@ -129,6 +129,8 @@ function submitCustom () {
   setDoc(doc(db, `user/${state.user.uid}/schedule/${q}`), {
     '+': JSON.stringify(custom)
   }, { merge: true })
+  //updat the cache data for custom event
+  cache.set('custom' + q, custom, 86400e6)
 }
 
 function addCustom () {
