@@ -25,6 +25,8 @@ const pieces = $computed(() => {
       })
     }
   }
+
+  // if(custom.length === 0) return res
   for (const c of custom) {
     for (const w of c.wTime) res.push({
       wTime: w, key: 'custom',
@@ -34,11 +36,14 @@ const pieces = $computed(() => {
       label: ['Custom']
     })
   }
+
   return res
 })
 
+// fetch data from server, and write result to local cache
 async function fetchData () {
   cache.set('class' + q, false)
+
   const token = cache.get('token')
   if (!token) return window.signin('Please verify your identity')
   data = {}
@@ -48,25 +53,46 @@ async function fetchData () {
   if (!raw) return
   data = raw
   qs = data.quarters
+
   cache.set('class' + q, raw, 86400e6)
 }
 
 let unsub = null
-function getData () {
-  if (unsub) unsub()
+function fetchCustom(){
+  // fetch customize schedule
+  cache.set('custom' + q, false)
+
+  if(unsub) unsub()
+
   custom = []
-  // fetch customize
   unsub = onSnapshot(doc(db, `user/${state.user.uid}/schedule/${q}`), doc => {
     const c = doc.data()
     if (!c) return
     custom = JSON.parse(c['+'])
+    cache.set('custom' + q, custom, 86400e6)
   })
+}
+
+function getData () {
+
+  custom = cache.get('custom' + q)
+
+  if (!custom || custom.length === 0) {
+    custom = []
+    fetchCustom()
+  }
+
   data = cache.get('class' + q)
+
   if (!data) {
     data = {}
     fetchData()
-  } else qs = data.quarters
+  }else{
+    qs = data.quarters
+  }
+  
 }
+
 window.onsignin = getData
 
 const sleep = ms => new Promise(r => setTimeout(r, ms))
@@ -76,11 +102,13 @@ async function init () {
     state.quarter = (await get('cache/quarter')).current
   }
   q = state.quarter
+  //initialize qs
   qs = [parse.quarterLast(q), q, parse.quarterNext(q)]
   await sleep(500)
   if (state.user.uid) getData()
   else window.signin('Please verify your identity')
 }
+
 onActivated(init)
 
 // following are about customize schedule
@@ -101,11 +129,15 @@ let ready = $computed(() => {
   if (!ws.length) return false
   return [ws, `${ds} ${m[2]}:${m[3]} - ${m[4]}:${m[5]}`]
 })
+
 function submitCustom () {
   setDoc(doc(db, `user/${state.user.uid}/schedule/${q}`), {
     '+': JSON.stringify(custom)
   }, { merge: true })
+  //updat the cache data for custom event
+  cache.set('custom' + q, custom, 86400e6)
 }
+
 function addCustom () {
   if (!ready) return
   custom.push({
@@ -117,10 +149,13 @@ function addCustom () {
   submitCustom()
   edit = {}
 }
+
 function removeCustom (i) {
   custom.splice(i, 1)
   submitCustom()
 }
+
+
 </script>
 
 <template>
