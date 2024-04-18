@@ -14,7 +14,7 @@ let tip = $ref(''), displayTime = $ref(''), target = $ref(0), targetClass = $ref
 function getClasses () {
 
   const schedule = cache.get('class' + state.quarter)?.schedule
-  const custom = cache.get('custom' + state.quarter);
+  const custom = cache.get('custom' + state.quarter)
 
   if (!schedule && !custom) return classes = false
   classes = []
@@ -68,8 +68,8 @@ watch(() => state.quarter, getClasses)
 watch(() => state.user.time, () => {
   if (!state.user.name) {
     classes = false
-    cache.set('class' + state.quarter, false);
-    cache.set('custom' + state.quarter, false);
+    cache.set('class' + state.quarter, false)
+    cache.set('custom' + state.quarter, false)
   } else getClasses()
 })
 
@@ -85,7 +85,7 @@ function currentwTime () {
 
 //updating status of classes, called per tick
 function updateStatus () {
-  const wTime = currentwTime();
+  const wTime = currentwTime()
   let t = Infinity // target
   if (!classes || !classes.length) return tip = 'Day Off! 🏖️'
   for (const c of classes) { // check current class

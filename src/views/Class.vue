@@ -43,7 +43,6 @@ const pieces = $computed(() => {
 // fetch data from server, and write result to local cache
 async function fetchData () {
   cache.set('class' + q, false)
-  cache.set('qs', false)
 
   const token = cache.get('token')
   if (!token) return window.signin('Please verify your identity')
@@ -55,16 +54,15 @@ async function fetchData () {
   data = raw
   qs = data.quarters
 
-  cache.set('class' + q, raw, 86400e6);
-  cache.set('qs', qs, 86400e6)
+  cache.set('class' + q, raw, 86400e6)
 }
 
-let unsub = null;
+let unsub = null
 function fetchCustom(){
   // fetch customize schedule
   cache.set('custom' + q, false)
 
-  if(unsub) unsub();
+  if(unsub) unsub()
 
   custom = []
   unsub = onSnapshot(doc(db, `user/${state.user.uid}/schedule/${q}`), doc => {
@@ -72,24 +70,25 @@ function fetchCustom(){
     if (!c) return
     custom = JSON.parse(c['+'])
     cache.set('custom' + q, custom, 86400e6)
-  });
+  })
 }
 
 function getData () {
 
-  custom = cache.get('custom' + q);
+  custom = cache.get('custom' + q)
 
   if (!custom || custom.length === 0) {
-    custom = [];
-    fetchCustom();
+    custom = []
+    fetchCustom()
   }
 
   data = cache.get('class' + q)
-  qs = cache.get('qs')
 
-  if (!data || !qs ) {
+  if (!data) {
     data = {}
     fetchData()
+  }else{
+    qs = data.quarters
   }
   
 }
