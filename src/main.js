@@ -8,6 +8,7 @@ const updateSW = registerSW({
   onOfflineReady () {}
 })
 
-createApp(App).use(router).mount('#app')
+const app = createApp(App)
+app.use(router).mount('#app')
 
 console.log('%cGoGaucho', 'font-size: 3.5rem; font-weight: bold;')
