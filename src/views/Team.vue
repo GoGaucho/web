@@ -4,6 +4,13 @@
       <h1 class="text-2xl font-bold text-black">GoGaucho Team</h1>
     </header>
     <hr class="border-gray-500 border-t-2">
+    
+    <h2>Academic Year 2023-2024</h2>
+    <h3>Leader</h3>
+    <p>Jackson Cooley</p>
+    <h3>Developers</h3>
+    <p>Jackson Cooley, James Fu, Daniel Lu</p>
+    <hr>
 
     <h2>Academic Year 2022-2023</h2>
     <h3>Leader</h3>
@@ -11,7 +18,7 @@
     <h3>Web and Backend Developer</h3>
     <p>Shiheng Li</p>
     <h3>iOS Developers</h3>
-    <p>Jackson Cooley, Mateo Wang, Matthew Nguyen, Heather Nguyen, Kenny Bui</p>
+    <p>Jackson Cooley, Matthew Nguyen, Heather Nguyen</p>
     <h3>Data Analysis</h3>
     <p>Xiaoyang Hua</p>
     <h3>Project Managers</h3>
