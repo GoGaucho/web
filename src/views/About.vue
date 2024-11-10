@@ -12,13 +12,22 @@ log('web/about')
 
 <template>
   <div class="pb-60 min-h-full relative flex flex-col items-center text-center">
-    <div class="w-full relative overflow-hidden" style="max-height: 24rem;">
+    <!-- <div class="w-full relative overflow-hidden" style="max-height: 24rem;">
       <img class="w-full h-full" src="https://my.sa.ucsb.edu/catalog/Current/Images/photo_catalognoborder.jpg">
       <div class="absolute top-0 h-full w-full bg-white opacity-60" />
       <div class="absolute top-0 h-full w-full flex flex-col justify-center" style="color: #0b254e;">
         <h1 class="text-3xl sm:text-5xl font-bold mt-2">We are here for <br> your success.</h1>
       </div>
+    </div> -->
+
+    <div class="w-full relative overflow-hidden" style="max-height:24rem;">
+      <img class="w-full h-full" src="https://www.ucsb.edu/sites/default/files/images/pages/Home/hero-night.jpg">
+      <div class="absolute top-0 h-full w-full bg-white opacity-60"></div>
+      <div class="absolute top-0 h-full w-full flex flex-col justify-center" style="color:#0b254e; padding-top: 0rem;">
+        <h1 class="text-3xl sm:text-5xl font-bold mt-2">We are here for <br> your success.</h1>
+      </div>
     </div>
+
     <div class="p-4 sm:p-10 w-full" style="max-width: 800px;">
       <h2 class="text-xl mt-20 mb-4 font-bold">What's GoGaucho?</h2>
       <p>GoGaucho is the best campus app for UCSB students. <br class="hidden sm:block"> GoGaucho Web is the next generation WebApp, which is designed to serve UCSB students anywhere, anytime, and on any platforms. <br class="hidden sm:block">GoGaucho is run by students and is not an official UCSB application.</p>
