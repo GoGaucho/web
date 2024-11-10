@@ -21,7 +21,7 @@ log('web/about')
     </div> -->
 
     <div class="w-full relative overflow-hidden" style="max-height:24rem;">
-      <img class="w-full h-full" src="https://www.ucsb.edu/sites/default/files/images/pages/Home/hero-night.jpg">
+      <img class="w-full h-full" src="../../public/icons/hero-night.jpg">
       <div class="absolute top-0 h-full w-full bg-white opacity-60"></div>
       <div class="absolute top-0 h-full w-full flex flex-col justify-center" style="color:#0b254e; padding-top: 0rem;">
         <h1 class="text-3xl sm:text-5xl font-bold mt-2">We are here for <br> your success.</h1>
