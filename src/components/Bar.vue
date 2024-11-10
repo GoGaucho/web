@@ -2,8 +2,8 @@
 import User from './User.vue'
 import { useRouter, useRoute } from 'vue-router'
 const router = useRouter(), route = useRoute()
-import { HomeIcon, MapIcon, BookOpenIcon, AcademicCapIcon, LightBulbIcon } from '@heroicons/vue/24/outline'
-import { HomeIcon as SolidHomeIcon, MapIcon as SolidMapIcon, BookOpenIcon as SolidBookOpenIcon, AcademicCapIcon as SolidAcademicCapIcon, LightBulbIcon as SolidLightBulbIcon } from '@heroicons/vue/24/solid'
+import { HomeIcon, MapIcon, BookOpenIcon, AcademicCapIcon, InformationCircleIcon } from '@heroicons/vue/24/outline'
+import { HomeIcon as SolidHomeIcon, MapIcon as SolidMapIcon, BookOpenIcon as SolidBookOpenIcon, AcademicCapIcon as SolidAcademicCapIcon, InformationCircleIcon as SolidInformationCircleIcon } from '@heroicons/vue/24/solid'
 
 const tabs = [{
   icon: HomeIcon,
@@ -22,8 +22,8 @@ const tabs = [{
   solid: SolidBookOpenIcon,
   path: '/course',
 }, {
-  icon: LightBulbIcon,
-  solid: SolidLightBulbIcon,
+  icon: InformationCircleIcon,
+  solid: SolidInformationCircleIcon,
   path: '/about'
 }]
 
