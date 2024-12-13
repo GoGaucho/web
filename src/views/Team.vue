@@ -7,12 +7,16 @@
     <div class="year-section">
       <h2>Academic Year 2023-2024</h2>
       <div class="role-section">
-        <h3>Leader</h3>
-        <p>Jackson Cooley</p>
+        <h3>Leaders</h3>
+        <p>Jackson Cooley, James Fu, Daniel Lu</p>
       </div>
       <div class="role-section">
-        <h3>Developers</h3>
-        <p>Jackson Cooley, James Fu, Daniel Lu</p>
+        <h3>Web Developers</h3>
+        <p>James Fu, Kun Cheng, Amber Wang</p>
+      </div>
+      <div class="role-section">
+        <h3>iOS Developers</h3>
+        <p>James Fu, Daniel Lu</p>
       </div>
       <div class="role-section">
         <h3>Administrative help</h3>
@@ -23,7 +27,7 @@
     <div class="year-section">
       <h2>Academic Year 2022-2023</h2>
       <div class="role-section">
-        <h3>Leader</h3>
+        <h3>Leaders</h3>
         <p>Shiheng Li</p>
       </div>
       <div class="role-section">
@@ -51,7 +55,7 @@
     <div class="year-section">
       <h2>Academic Year 2021-2022</h2>
       <div class="role-section">
-        <h3>Leader</h3>
+        <h3>Leaders</h3>
         <p>Shiheng Li, Arthur Wang</p>
       </div>
       <div class="role-section">
@@ -111,7 +115,7 @@
     <div class="year-section">
       <h2>Academic Year 2017-2018</h2>
       <div class="role-section">
-        <h3>Leader</h3>
+        <h3>Leaders</h3>
         <p>Hengyu Liu</p>
       </div>
       <div class="role-section">
