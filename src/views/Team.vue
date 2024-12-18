@@ -19,8 +19,8 @@
         <p>James Fu, Daniel Lu</p>
       </div>
       <div class="role-section">
-        <h3>Administrative help</h3>
-        <p>Nathan Li</p>
+        <h3>Project Management & Administrative Help</h3>
+        <p>Nathan Lee</p>
       </div>
     </div>
 
