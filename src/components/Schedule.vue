@@ -114,10 +114,10 @@ document.onvisibilitychange = () => { date = new Date() }
         <div class="grid grid-cols-7 gap-px relative w-full overflow-y-hidden all-transition" :style="{ width: state.screen.md || !props.whole ? '140%' : '100%', height: showTime ? '976px' : '736px' }"><!-- body -->
           <div v-for="j in 112" class="all-transition bg-gray-100 hover:bg-gray-50 rounded" />
           <template v-for="p in props.pieces">
-            <div v-if="!isHide(p)" :style="pStyle(p)" class="all-transition absolute p-1 text-xs rounded-r-sm overflow-hidden hover:opacity-30">
+            <div v-if="!isHide(p)" :style="pStyle(p)" class="all-transition absolute p-1 text-xs rounded-r-sm overflow-hidden">
               <div class="font-semibold text-shadow text-[0.7rem] sm:text-xs" :class="colorMap[p.key][1]">{{ p.title || p.key }}</div>
               <div class="text-[0.6rem] sm:text-xs opacity-90" :class="colorMap[p.key][1]" v-if="showTime">{{ twelveHour ? twelvify(p.time) : p.time }}</div>
-              <div class="text-[0.625rem] sm:text-xs opacity-90" :class="colorMap[p.key][1]">{{ p.location }}</div>
+              <div class="text-[0.625rem] sm:text-xs opacity-90" :class="colorMap[p.key][1]" @click="locate(p.location)"">{{ p.location }}</div>
               <div class="all-transition absolute bottom-0 top-0 left-0 w-0.5" :class="colorMap[p.key][0]" />
               <div class="absolute bottom-0 top-0 left-0 right-0" :class="colorMap[p.key][0]" style="opacity: 15%;"/>
             </div>
