@@ -3,6 +3,10 @@ import { watch } from 'vue'
 import LabelSwitch from './LabelSwitch.vue'
 import Toggle from './Toggle.vue'
 import state from '../model.js'
+import { MapPinIcon } from '@heroicons/vue/24/outline'
+import { useRouter } from 'vue-router'
+import { classrooms } from '../utils/locations.js'
+
 const props = defineProps(['pieces', 'whole'])
 const ds = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -75,6 +79,12 @@ let cStyle = $computed(() => {
     marginTop: '-0.2rem'
   }
 })
+
+// Class to map redirect
+const locate = location => {
+  if (classrooms[location]) router.push('/map?q=' + location)
+}
+
 setInterval(() => { date = new Date() }, 60e3)
 document.onvisibilitychange = () => { date = new Date() }
 </script>
