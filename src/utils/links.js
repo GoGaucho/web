@@ -81,7 +81,6 @@ export default [[{
   title: 'Timekeeping',
   href: 'https://ucsb-sso.prd.mykronos.com/wfd/home',
   description: 'Electronic Working Timecard',
-  // icon: '/icons/links/Kronos.jpg'
 }, {
   title: 'ScholarshipUniverse',
   href: 'https://www.finaid.ucsb.edu/scholarships/scholarship-universe',
