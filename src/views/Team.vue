@@ -5,6 +5,22 @@
     </header>
 
     <div class="year-section">
+      <h2>Academic Year 2025-2026</h2>
+      <div class="role-section">
+        <h3>Leaders</h3>
+        <p>Jackson Cooley, James Fu, Daniel Lu</p>
+      </div>
+      <div class="role-section">
+        <h3>Web Developers</h3>
+        <p>James Fu, Joshua Lee, Samantha Lesner, Jayden Tan</p>
+      </div>
+      <div class="role-section">
+        <h3>iOS Developers</h3>
+        <p>James Fu, Daniel Lu</p>
+      </div>
+    </div>
+
+    <div class="year-section">
       <h2>Academic Year 2023-2024</h2>
       <div class="role-section">
         <h3>Leaders</h3>
