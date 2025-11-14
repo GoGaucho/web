@@ -26,7 +26,13 @@ const showFocus = $computed(() => Object.keys(state.course.focus).filter(x => st
 const computeResult = debounce(() => {
   const key = query.search.replaceAll(' ', '').toUpperCase()
   const ges = Object.keys(query.GE).filter(x => query.GE[x]).map(x => query.college + '-' + x)
-  showCourses =  fuzzyQuery(key, fuse, flatCourses)
+  const res =  fuzzyQuery(key, fuse, flatCourses)
+  showCourses = res.reduce((acc, course) => {
+    const key = course.subject   // group by this property
+    if (!acc[key]) acc[key] = [] // create array if it doesn't exist
+    acc[key].push(course)        // add the course to the array
+    return acc
+  }, {})
 })
 watch(query, computeResult)
 
@@ -93,12 +99,12 @@ watch(() => state.course.focus, v => {
     </div>
     <div class="flex items-start" v-if="!loading">
       <div class="w-full md:w-80 md:mr-6 shadow-md" style="min-width: 20rem;"><!-- course list -->
-        <template v-for="sub in showCourses.keys"><!-- subject -->
-          <PanelWrapper title="sub + ': ' + lookup.subjects[sub]">
-            <template v-for="(v, k) in showCourses[sub]">
+        <template v-for="(courses, subject) in showCourses"><!-- subject -->
+          <PanelWrapper :title="subject + ': ' + lookup.subjects[subject]">
+            <template v-for="course in courses">
               <!-- course -->
-              <div class="bg-white border p-2 cursor-pointer" v-if="!hideList[k]" @click="focus = k">
-                <h3 class="pl-2">{{ k }}: {{ v[0] }}</h3>
+              <div class="bg-white border p-2 cursor-pointer" @click="focus = course.id">
+                <h3 class="pl-2">{{ course.id }}: {{ course.name }}</h3>
               </div>
             </template>
           </PanelWrapper>
