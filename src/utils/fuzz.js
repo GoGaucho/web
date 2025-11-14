@@ -1,5 +1,4 @@
 export const courseFuseOptions = {
-
     includeMatches: false,
     threshold: 0.4,
     keys: [

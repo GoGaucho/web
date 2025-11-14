@@ -16,42 +16,23 @@ import { courseFuseOptions, flattenCourseData, fuzzyQuery } from '../utils/fuzz.
 const router = useRouter()
 log('web/course')
 
-let loading = $ref(true), list = $ref(null), hideList = $ref({}), showSub = $ref({}), subjects = $ref([])
+let loading = $ref(true), list = $ref(null), showCourses = $ref({})
 let quarters = $ref([]), focus = $ref(''), flatCourses = [], fuse = null
 const query = reactive({
   search: '', college: '', GE: {}
 })
 const showFocus = $computed(() => Object.keys(state.course.focus).filter(x => state.course.focus[x]).length)
 
-function isHide (k, v, key, ges) {
-  const genames = v[1].split(',')
-  for (const g of ges) {
-    if (!genames.includes(g)) return true
-  }
-  if (!k.includes(key) && !v[0].includes(key)) return true
-}
-
 const computeResult = debounce(() => {
-  hideList = {}
-  showSub = {}
   const key = query.search.replaceAll(' ', '').toUpperCase()
   const ges = Object.keys(query.GE).filter(x => query.GE[x]).map(x => query.college + '-' + x)
-  for (const sub in list) {
-    let hasOne = false
-    for (const k in list[sub]) {
-      hideList[k] = isHide(k, list[sub][k], key, ges)
-      if (!hideList[k]) hasOne = true
-    }
-    if (hasOne) showSub[sub] = 0
-  }
-  if (Object.keys(showSub).length === 1) showSub[Object.keys(showSub)[0]] = 1
+  showCourses =  fuzzyQuery(key, fuse, flatCourses)
 })
 watch(query, computeResult)
 
 async function fetchList () {
   loading = true
   list = await get('cache/course.' + state.course.quarter).then(data => JSON.parse(data.data))
-  subjects = Object.keys(list).sort()
   flatCourses = flattenCourseData(list)
   fuse = fuse ? (fuse.setCollection(flatCourses), fuse) : new Fuse(flatCourses, courseFuseOptions)
   computeResult()
@@ -112,9 +93,9 @@ watch(() => state.course.focus, v => {
     </div>
     <div class="flex items-start" v-if="!loading">
       <div class="w-full md:w-80 md:mr-6 shadow-md" style="min-width: 20rem;"><!-- course list -->
-        <template v-for="sub in subjects"><!-- subject -->
-          <PanelWrapper v-if="showSub[sub] > -1" :title="sub + ': ' + lookup.subjects[sub]" v-model="showSub[sub]">
-            <template v-for="(v, k) in list[sub]">
+        <template v-for="sub in showCourses.keys"><!-- subject -->
+          <PanelWrapper title="sub + ': ' + lookup.subjects[sub]">
+            <template v-for="(v, k) in showCourses[sub]">
               <!-- course -->
               <div class="bg-white border p-2 cursor-pointer" v-if="!hideList[k]" @click="focus = k">
                 <h3 class="pl-2">{{ k }}: {{ v[0] }}</h3>
