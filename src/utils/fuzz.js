@@ -1,9 +1,11 @@
 export const courseFuseOptions = {
+    shouldSort: true,
     includeMatches: false,
-    threshold: 0.2,
+    threshold: 0.25,
     keys: [
         "id",
         "name",
+        "subject"
     ]
 };
 // in case fuzzy needed elsewhere, put separate configs below
