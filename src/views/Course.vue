@@ -11,11 +11,13 @@ import Wrapper from '../components/Wrapper.vue'
 import PanelWrapper from '../components/PanelWrapper.vue'
 import LabelSwitch from '../components/LabelSwitch.vue'
 import { useRouter } from 'vue-router'
+import Fuse from 'fuse.js'
+import { courseFuseOptions, flattenCourseData, fuzzyQuery } from '../utils/fuzz.js'
 const router = useRouter()
 log('web/course')
 
 let loading = $ref(true), list = $ref(null), hideList = $ref({}), showSub = $ref({}), subjects = $ref([])
-let quarters = $ref([]), focus = $ref('')
+let quarters = $ref([]), focus = $ref(''), flatCourses = [], fuse = null
 const query = reactive({
   search: '', college: '', GE: {}
 })
@@ -50,6 +52,8 @@ async function fetchList () {
   loading = true
   list = await get('cache/course.' + state.course.quarter).then(data => JSON.parse(data.data))
   subjects = Object.keys(list).sort()
+  flatCourses = flattenCourseData(list)
+  fuse = fuse ? (fuse.setCollection(flatCourses), fuse) : new Fuse(flatCourses, courseFuseOptions)
   computeResult()
   loading = false
 }
