@@ -8,7 +8,7 @@ import { useRouter } from 'vue-router'
 import { classrooms } from '../utils/locations.js'
 
 const router = useRouter()
-const props = defineProps(['pieces', 'whole'])
+const props = defineProps(['pieces', 'whole', 'quarter'])
 const ds = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 const colors = [
@@ -86,6 +86,17 @@ const locate = location => {
   if (classrooms[location]) router.push('/map?q=' + location)
 }
 
+// Class to courseInfo redirect
+const courseInfo = (courseId, quarter) => {
+  if (courseId) 
+  router.push({
+    path: '/course',
+    query: {
+      courseId,
+      quarter
+    }})
+}
+
 setInterval(() => { date = new Date() }, 60e3)
 document.onvisibilitychange = () => { date = new Date() }
 </script>
@@ -116,7 +127,7 @@ document.onvisibilitychange = () => { date = new Date() }
           <div v-for="j in 112" class="all-transition bg-gray-100 hover:bg-gray-50 rounded" />
           <template v-for="p in props.pieces">
             <div v-if="!isHide(p)" :style="pStyle(p)"
-                class="all-transition absolute p-1 text-xs rounded-r-sm overflow-hidden"
+                class="all-transition absolute p-1 text-xs rounded-r-sm overflow-hidden z-20"
                 :class="classrooms[p.location] ? 'group' : 'group'">
 
               <div
@@ -124,18 +135,20 @@ document.onvisibilitychange = () => { date = new Date() }
                   absolute
                   right-1
                   top-auto bottom-1
-                  sm:top-1 sm:bottom-auto
-                  flex flex-col gap-1 sm:flex-row sm:items-center
+                  xl:top-1 xl:bottom-auto
+                  flex flex-col gap-1
+                  xl:flex-row xl:items-center
                 "
               >
                 <BookOpenIcon
+                  @click.stop="courseInfo(p.key, props.quarter)"
                   :class="colorMap[p.key][1]"
                   class="
                     w-[clamp(14px,4vw,20px)]
                     h-[clamp(14px,4vw,20px)]
                     opacity-0 group-hover:opacity-100
                     hover:opacity-70
-                    transition-opacity cursor-pointer
+                    z-30 transition-opacity cursor-pointer
                   "
                 />
                 <MapPinIcon
@@ -147,7 +160,7 @@ document.onvisibilitychange = () => { date = new Date() }
                     h-[clamp(14px,4vw,20px)]
                     opacity-0 group-hover:opacity-100
                     hover:opacity-70
-                    transition-opacity cursor-pointer
+                    z-30 transition-opacity cursor-pointer
                   "
                 />
               </div>
