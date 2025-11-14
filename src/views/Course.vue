@@ -28,9 +28,18 @@ const computeResult = debounce(() => {
   const ges = Object.keys(query.GE).filter(x => query.GE[x]).map(x => query.college + '-' + x)
   const res =  fuzzyQuery(key, fuse, flatCourses)
   showCourses = res.reduce((acc, course) => {
-    const key = course.subject   // group by this property
-    if (!acc[key]) acc[key] = [] // create array if it doesn't exist
-    acc[key].push(course)        // add the course to the array
+    const key = course.subject
+    if (ges.length == 0) {
+      if (!acc[key]) acc[key] = []
+      acc[key].push(course) 
+      return acc
+    }
+    for (const ge of ges) {
+      if (list[key][course.id][1].includes(ge)) {
+        if (!acc[key]) acc[key] = []
+        acc[key].push(course) 
+      }
+    }
     return acc
   }, {})
 })
