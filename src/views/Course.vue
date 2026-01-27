@@ -10,8 +10,9 @@ import Course from '../components/Course.vue'
 import Wrapper from '../components/Wrapper.vue'
 import PanelWrapper from '../components/PanelWrapper.vue'
 import LabelSwitch from '../components/LabelSwitch.vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 const router = useRouter()
+const route = useRoute()
 log('web/course')
 
 let loading = $ref(true), list = $ref(null), hideList = $ref({}), showSub = $ref({}), subjects = $ref([])
@@ -60,11 +61,24 @@ get('cache/quarter').then(data => {
   else state.course.quarter = quarters[0]
 })
 
-watch(() => state.course.quarter, v => {
-  focus = false
-  state.course.focus = cache.get('course' + v) || {}
-  fetchList()
-})
+watch(
+  () => route.query.courseId,
+  v => {
+    focus = v || ''
+  },
+  { immediate: true }
+)
+
+watch(
+  () => state.course.quarter,
+  (v, old) => {
+    if (!route.query.quarter || v !== route.query.quarter) {
+      focus = ''
+    }
+    state.course.focus = cache.get('course' + v) || {}
+    fetchList()
+  }
+)
 
 watch(() => state.course.focus, v => {
   const res = {}
@@ -73,6 +87,15 @@ watch(() => state.course.focus, v => {
   }
   cache.set('course' + state.course.quarter, res)
 }, { deep: true })
+
+watch(() => route.query.quarter, v => {
+  if (typeof v === 'string' && v !== state.course.quarter){
+    state.course.quarter=v
+  }
+},
+{immediate: true}
+)
+
 </script>
 
 <template>
@@ -119,7 +142,8 @@ watch(() => state.course.focus, v => {
           </PanelWrapper>
         </template>
       </div>
-      <Course v-model="focus" />
+      <Course v-model="focus"
+      :quarter="state.course.quarter"/>
     </div>
   </div>
 </template>

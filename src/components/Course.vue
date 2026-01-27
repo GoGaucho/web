@@ -3,11 +3,18 @@ import { watch } from 'vue'
 import { CheckIcon } from '@heroicons/vue/24/outline'
 import { get } from '../firebase.js'
 import state from '../model.js'
-const props = defineProps(['modelValue'])
-const emits = defineEmits(['update:modelValue'])
 import Wrapper from './Wrapper.vue'
 import Instructor from './Instructor.vue'
 import LabelSwitch from './LabelSwitch.vue'
+
+const props = defineProps({
+  modelValue: String,
+  quarter: {
+    type: String,
+    default: () => state.course.quarter,
+  }
+})
+const emits = defineEmits(['update:modelValue'])
 
 // control UI
 const levels = { U: 'Undergraduate', G: 'Graduate', L: 'Lower Division', S: 'Upper Division' }
@@ -21,18 +28,32 @@ function leaveInstructor () {
   if (!state.screen.md) instructorName = ''
 }
 
-watch(() => props.modelValue, async v => {
-  if (!v) return
-  course = {}
-  course = await get('course/' + state.course.quarter + v)
-  for (const s in course.sections) {
-    if (course.sections[s].session) {
-      isSummer = true
-      break
+watch(
+  () => [props.modelValue, props.quarter],
+  async ([v, q]) => {
+    if (!v) {
+      course = {}
+      isSummer = false
+      return
     }
-  }
-  setTimeout(() => { course.show = 1 })
-})
+
+    course = {}
+    isSummer = false
+    const quarter = q || state.course.quarter
+
+    course = await get('course/' + quarter + v)
+
+    for (const s in course.sections) {
+      if (course.sections[s].session) {
+        isSummer = true
+        break
+      }
+    }
+    setTimeout(() => { course.show = 1 })
+  },
+  { immediate: true }
+)
+
 
 function toggleFocus () {
   const k = props.modelValue

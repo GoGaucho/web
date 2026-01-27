@@ -3,12 +3,12 @@ import { watch } from 'vue'
 import LabelSwitch from './LabelSwitch.vue'
 import Toggle from './Toggle.vue'
 import state from '../model.js'
-import { MapPinIcon } from '@heroicons/vue/24/outline'
+import { MapPinIcon, BookOpenIcon } from '@heroicons/vue/24/outline'
 import { useRouter } from 'vue-router'
 import { classrooms } from '../utils/locations.js'
 
 const router = useRouter()
-const props = defineProps(['pieces', 'whole'])
+const props = defineProps(['pieces', 'whole', 'quarter'])
 const ds = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 const colors = [
@@ -86,6 +86,17 @@ const locate = location => {
   if (classrooms[location]) router.push('/map?q=' + location)
 }
 
+// Class to courseInfo redirect
+const courseInfo = (courseId, quarter) => {
+  if (courseId) 
+  router.push({
+    path: '/course',
+    query: {
+      courseId,
+      quarter
+    }})
+}
+
 setInterval(() => { date = new Date() }, 60e3)
 document.onvisibilitychange = () => { date = new Date() }
 </script>
@@ -115,14 +126,49 @@ document.onvisibilitychange = () => { date = new Date() }
         <div class="grid grid-cols-7 gap-px relative w-full overflow-y-hidden all-transition" :style="{ width: state.screen.md || !props.whole ? '140%' : '100%', height: showTime ? '976px' : '736px' }"><!-- body -->
           <div v-for="j in 112" class="all-transition bg-gray-100 hover:bg-gray-50 rounded" />
           <template v-for="p in props.pieces">
-            <div v-if="!isHide(p)" :style="pStyle(p)" class="all-transition absolute p-1 text-xs rounded-r-sm overflow-hidden"
-            @click="locate(p.location)" :class="classrooms[p.location] && 'cursor-pointer group'">
-              <MapPinIcon :class="colorMap[p.key][1]" class="w-5 h-5 absolute opacity-0 top-1 right-1 group-hover:opacity-100 transition-opacity" />
+            <div v-if="!isHide(p)" :style="pStyle(p)"
+                class="all-transition absolute p-1 text-xs rounded-r-sm overflow-hidden z-20"
+                :class="classrooms[p.location] ? 'group' : 'group'">
+
+              <div
+                class="
+                  absolute
+                  right-1
+                  top-auto bottom-1
+                  xl:top-1 xl:bottom-auto
+                  flex flex-col gap-1
+                  xl:flex-row xl:items-center
+                "
+              >
+                <BookOpenIcon
+                  @click.stop="courseInfo(p.key, props.quarter)"
+                  :class="colorMap[p.key][1]"
+                  class="
+                    w-[clamp(14px,4vw,20px)]
+                    h-[clamp(14px,4vw,20px)]
+                    opacity-0 group-hover:opacity-100
+                    hover:opacity-70
+                    z-30 transition-opacity cursor-pointer
+                  "
+                />
+                <MapPinIcon
+                  v-if="classrooms[p.location]"
+                  @click.stop="locate(p.location)"
+                  :class="colorMap[p.key][1]"
+                  class="
+                    w-[clamp(14px,4vw,20px)]
+                    h-[clamp(14px,4vw,20px)]
+                    opacity-0 group-hover:opacity-100
+                    hover:opacity-70
+                    z-30 transition-opacity cursor-pointer
+                  "
+                />
+              </div>
               <div class="font-semibold text-shadow text-[0.7rem] sm:text-xs" :class="colorMap[p.key][1]">{{ p.title || p.key }}</div>
               <div class="text-[0.6rem] sm:text-xs opacity-90" :class="colorMap[p.key][1]" v-if="showTime">{{ twelveHour ? twelvify(p.time) : p.time }}</div>
               <div class="text-[0.625rem] sm:text-xs opacity-90" :class="colorMap[p.key][1]">{{ p.location }}</div>
               <div class="all-transition absolute bottom-0 top-0 left-0 w-0.5" :class="colorMap[p.key][0]" />
-              <div class="absolute bottom-0 top-0 left-0 right-0" :class="colorMap[p.key][0]" style="opacity: 15%;"/>
+              <div class="absolute bottom-0 top-0 left-0 right-0 pointer-events-none" :class="colorMap[p.key][0]" style="opacity: 15%;"/>
             </div>
           </template>
           <div class="flex items-center absolute" :style="cStyle">
