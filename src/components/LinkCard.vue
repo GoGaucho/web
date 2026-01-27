@@ -1,5 +1,5 @@
 <script setup>
-const props = defineProps(['href', 'icon', 'title', 'description'])
+const props = defineProps(['href', 'icon', 'title', 'description', 'phone'])
 </script>
 
 <template>
@@ -11,6 +11,7 @@ const props = defineProps(['href', 'icon', 'title', 'description'])
     <div class="flex-grow">
       <h4 class="font-bold">{{ props.title }}</h4>
       <p class="text-xs text-gray-500">{{ props.description }}</p>
+      <p class="text-xs text-gray-500">{{ props.phone }}</p>
     </div>
   </a>
 </template>
