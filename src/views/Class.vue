@@ -171,7 +171,7 @@ function removeCustom (i) {
     </div>
     <div class="w-full flex flex-wrap justify-center items-start" v-if="data" :key="q">
       <div class="flex-grow bg-white sm:p-2 sm:pb-4 lg:px-6 pb-4 rounded shadow m-0 sm:m-4 lg:mr-0" v-if="data.schedule"><!-- schedule -->
-        <Schedule :pieces="pieces" whole="1" />
+        <Schedule :pieces="pieces" :quarter='q' whole="1" />
       </div>
       <div class="m-2 w-full lg:w-72 xl:w-80"><!-- side -->
         <div :show="1" v-if="data.schedule" class="p-2">
