@@ -10,47 +10,47 @@ import Course from '../components/Course.vue'
 import Wrapper from '../components/Wrapper.vue'
 import PanelWrapper from '../components/PanelWrapper.vue'
 import LabelSwitch from '../components/LabelSwitch.vue'
+import Fuse from 'fuse.js'
+import { courseFuseOptions, flattenCourseData, fuzzyQuery } from '../utils/fuzz.js'
 import { useRouter, useRoute } from 'vue-router'
 const router = useRouter()
 const route = useRoute()
 log('web/course')
 
-let loading = $ref(true), list = $ref(null), hideList = $ref({}), showSub = $ref({}), subjects = $ref([])
-let quarters = $ref([]), focus = $ref('')
+let loading = $ref(true), list = $ref(null), showCourses = $ref({})
+let quarters = $ref([]), focus = $ref(''), flatCourses = [], fuse = null
 const query = reactive({
   search: '', college: '', GE: {}
 })
 const showFocus = $computed(() => Object.keys(state.course.focus).filter(x => state.course.focus[x]).length)
 
-function isHide (k, v, key, ges) {
-  const genames = v[1].split(',')
-  for (const g of ges) {
-    if (!genames.includes(g)) return true
-  }
-  if (!k.includes(key) && !v[0].includes(key)) return true
-}
-
 const computeResult = debounce(() => {
-  hideList = {}
-  showSub = {}
   const key = query.search.replaceAll(' ', '').toUpperCase()
   const ges = Object.keys(query.GE).filter(x => query.GE[x]).map(x => query.college + '-' + x)
-  for (const sub in list) {
-    let hasOne = false
-    for (const k in list[sub]) {
-      hideList[k] = isHide(k, list[sub][k], key, ges)
-      if (!hideList[k]) hasOne = true
+  const res =  fuzzyQuery(key, fuse, flatCourses)
+  showCourses = res.reduce((acc, course) => {
+    const key = course.subject
+    if (ges.length == 0) {
+      if (!acc[key]) acc[key] = []
+      acc[key].push(course) 
+      return acc
     }
-    if (hasOne) showSub[sub] = 0
-  }
-  if (Object.keys(showSub).length === 1) showSub[Object.keys(showSub)[0]] = 1
+    for (const ge of ges) {
+      if (list[key][course.id][1].includes(ge)) {
+        if (!acc[key]) acc[key] = []
+        acc[key].push(course) 
+      }
+    }
+    return acc
+  }, {})
 })
 watch(query, computeResult)
 
 async function fetchList () {
   loading = true
   list = await get('cache/course.' + state.course.quarter).then(data => JSON.parse(data.data))
-  subjects = Object.keys(list).sort()
+  flatCourses = flattenCourseData(list)
+  fuse = fuse ? (fuse.setCollection(flatCourses), fuse) : new Fuse(flatCourses, courseFuseOptions)
   computeResult()
   loading = false
 }
@@ -131,12 +131,12 @@ watch(() => route.query.quarter, v => {
     </div>
     <div class="flex items-start" v-if="!loading">
       <div class="w-full md:w-80 md:mr-6 shadow-md" style="min-width: 20rem;"><!-- course list -->
-        <template v-for="sub in subjects"><!-- subject -->
-          <PanelWrapper v-if="showSub[sub] > -1" :title="sub + ': ' + lookup.subjects[sub]" v-model="showSub[sub]">
-            <template v-for="(v, k) in list[sub]">
+        <template v-for="(courses, subject) in showCourses"><!-- subject -->
+          <PanelWrapper :title="subject + ': ' + lookup.subjects[subject]">
+            <template v-for="course in courses">
               <!-- course -->
-              <div class="bg-white border p-2 cursor-pointer" v-if="!hideList[k]" @click="focus = k">
-                <h3 class="pl-2">{{ k }}: {{ v[0] }}</h3>
+              <div class="bg-white border p-2 cursor-pointer" @click="focus = course.id">
+                <h3 class="pl-2">{{ course.id }}: {{ course.name }}</h3>
               </div>
             </template>
           </PanelWrapper>
