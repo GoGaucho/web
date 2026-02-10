@@ -2,7 +2,7 @@
 import { watch } from 'vue'
 import { get, log } from '../firebase.js'
 import { cache } from '../model.js'
-import { CreditCardIcon, HeartIcon, VideoCameraIcon, ArrowRightCircleIcon, ArrowLeftCircleIcon } from '@heroicons/vue/24/outline'
+import { CreditCardIcon, HeartIcon, VideoCameraIcon, ArrowRightCircleIcon, ArrowLeftCircleIcon,InformationCircleIcon } from '@heroicons/vue/24/outline'
 import Wrapper from '../components/Wrapper.vue'
 log('web/dining')
 
@@ -60,8 +60,13 @@ function showCam () {
       {{ date || 'Loading' }}
       <ArrowRightCircleIcon v-if="date && !isNext" class="cursor-pointer w-5 mx-2" @click="isNext = true" />
     </p>
-    <div class="flex items-center my-4 flex-wrap">
+    <div class="flex gap-6">
+    <div class="flex items-center flex-wrap">
       <a class="cursor-pointer my-1 px-3 py-1 text-sm sm:text-base sm:px-4 sm:py-2 rounded-full border font-bold text-blue-500 bg-white flex items-center all-transition hover:shadow" href="https://ucsb-sp.transactcampus.com/eaccounts/AccountSummary.aspx?menu=0"><CreditCardIcon class="w-5 mr-1" />Check Meal Plan</a>
+    </div>
+    <div class="flex items-center flex-wrap ml-auto">
+      <a class="cursor-pointer my-1 px-3 py-1 text-sm sm:text-base sm:px-4 sm:py-2 rounded-full border font-bold text-blue-500 bg-white flex items-center all-transition hover:shadow" href="https://nutrition.info.dining.ucsb.edu/NetNutrition/1"><InformationCircleIcon class="w-5 mr-1" />Nutrition Facts</a>
+    </div>
     </div>
     <div class="rounded shadow-md p-3 my-4 bg-white" v-if="Object.keys(data).length" :key="date">
       <h2 class="text-2xl flex items-center">
