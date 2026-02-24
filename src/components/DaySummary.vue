@@ -2,7 +2,7 @@
 import { onActivated, watch } from 'vue'
 import { state, cache } from '../model.js'
 import { classrooms } from '../utils/locations.js'
-import { MapPinIcon, AcademicCapIcon } from '@heroicons/vue/24/outline'
+import { MapPinIcon, AcademicCapIcon, BookOpenIcon } from '@heroicons/vue/24/outline'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -144,21 +144,31 @@ tick()
         </div>
         <div class="grow flex items-center m-2"><!-- course list -->
           <div v-if="displayTime && targetClass" class="mx-2 flex flex-col items-start">
-            <span class="text-sm">{{ targetClass.course }}<span v-if="targetClass.session">(session {{ targetClass.session }})</span></span>
+            <div class="text-sm flex items-center justify-between w-full">
+              <span>{{ targetClass.course }}<span v-if="targetClass.session">(session {{ targetClass.session }})</span></span>
+              <div class="flex items-center cursor-pointer">
+                <BookOpenIcon class="w-5 text-gray-600" v-if="targetClass.course" @click="router.push({ path: '/course', query: { courseId: targetClass.course, quarter: state.quarter } })" />
+                <MapPinIcon class="w-5 text-gray-600" v-if="classrooms[targetClass.location]" @click="locate(targetClass.location)"/>
+              </div>
+            </div>
             <span class="font-mono text-4xl font-bold">{{ displayTime }}</span>
-            <div class="text-sm flex items-center" :class="classrooms[targetClass.location] && 'cursor-pointer'" @click="locate(targetClass.location)">
+            <div class="text-sm" :class="classrooms[targetClass.location] && 'cursor-pointer'">
               {{ targetClass.location }}
-              <MapPinIcon class="ml-1 w-5 text-gray-500" v-if="classrooms[targetClass.location]" />
             </div>
           </div>
           <div v-for="c in classes" class="relative rounded-r-sm p-2 mx-1 h-full overflow-hidden w-40 all-transition" :class="c.current ? 'bg-red-50' : (c.next ? 'bg-yellow-50' : 'bg-blue-50')"><!-- course card -->
-            <div>
-              <b>{{ c.course }}</b>
-              <span class="text-xs ml-1" v-if="c.session">(session {{ c.session }})</span>
+            <div class="flex items-center justify-between w-full">
+              <div class="flex items-center">
+                <b>{{ c.course }}</b>
+                <span class="text-xs ml-1" v-if="c.session">(session {{ c.session }})</span>
+              </div>
+              <div class="flex items-center cursor-pointer">
+                <BookOpenIcon class="w-5" :class="c.current ? 'text-red-500' : (c.next ? 'text-yellow-500' : 'text-blue-500')" v-if="c.course" @click="router.push({ path: '/course', query: { courseId: c.course, quarter: state.quarter } })" />
+                <MapPinIcon class="w-5" :class="c.current ? 'text-red-500' : (c.next ? 'text-yellow-500' : 'text-blue-500')" v-if="classrooms[c.location]" @click="locate(c.location)"/>
+              </div>
             </div>
-            <div class="text-sm flex items-center" :class="classrooms[c.location] && 'cursor-pointer'" @click="locate(c.location)">
+            <div class="text-sm">
               {{ c.location }}
-              <MapPinIcon class="ml-1 w-5 text-gray-500" v-if="classrooms[c.location]" />
             </div>
             <div class="text-sm">{{ c.time }}</div>
             <div class="all-transition absolute bottom-0 top-0 left-0 w-0.5" :class="c.current ? 'bg-red-500' : (c.next ? 'bg-yellow-500' : 'bg-blue-500')" />
