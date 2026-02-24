@@ -2,13 +2,14 @@
 import { onActivated, watch } from 'vue'
 import { state, cache } from '../model.js'
 import { classrooms } from '../utils/locations.js'
+import { getTodayHoliday } from '../utils/holidays.js'
 import { MapPinIcon, AcademicCapIcon, BookOpenIcon } from '@heroicons/vue/24/outline'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const todayHoliday = getTodayHoliday()
 let classes = $ref(false)
 let tip = $ref(''), displayTime = $ref(''), target = $ref(0), targetClass = $ref(null)
-
 
 //get all classes / custom events for today, and sort by time
 function getClasses () {
@@ -87,6 +88,7 @@ function currentwTime () {
 function updateStatus () {
   const wTime = currentwTime()
   let t = Infinity // target
+  if (todayHoliday) return tip = `Day off today for ${todayHoliday}! 😌`
   if (!classes || !classes.length) return tip = 'Day Off! 🏖️'
   for (const c of classes) { // check current class
     c.next = false
@@ -156,7 +158,7 @@ tick()
               {{ targetClass.location }}
             </div>
           </div>
-          <div v-for="c in classes" class="relative rounded-r-sm p-2 mx-1 h-full overflow-hidden w-40 all-transition" :class="c.current ? 'bg-red-50' : (c.next ? 'bg-yellow-50' : 'bg-blue-50')"><!-- course card -->
+          <div v-if="!todayHoliday" v-for="c in classes" class="relative rounded-r-sm p-2 mx-1 h-full overflow-hidden w-40 all-transition" :class="c.current ? 'bg-red-50' : (c.next ? 'bg-yellow-50' : 'bg-blue-50')"><!-- course card -->
             <div class="flex items-center justify-between w-full">
               <div class="flex items-center">
                 <b>{{ c.course }}</b>
@@ -173,7 +175,7 @@ tick()
             <div class="text-sm">{{ c.time }}</div>
             <div class="all-transition absolute bottom-0 top-0 left-0 w-0.5" :class="c.current ? 'bg-red-500' : (c.next ? 'bg-yellow-500' : 'bg-blue-500')" />
           </div>
-          <div v-if="classes && !classes.length" class="px-4">You don't have classes today! 👻</div>
+          <div v-if="(classes && !classes.length) || todayHoliday" class="px-4">You don't have classes today! 👻</div>
         </div>
       </div>
     </Transition>
