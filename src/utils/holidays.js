@@ -42,3 +42,20 @@ const getHolidays = (year) => {
     ["Labor Day", date(8, nthWeekdayOfMonth(1, 1, 8).getDate())],
   ]);
 }
+
+export default const getTodayHoliday = () => {
+  const today = new Date();
+  const holidays = getHolidays(today.getFullYear());
+  for (const [name, dates] of holidays) {
+    for (const d of dates) {
+      if (
+        d.getFullYear() === today.getFullYear() &&
+        d.getMonth() === today.getMonth() &&
+        d.getDate() === today.getDate()
+      ) {
+        return name;
+      }
+    }
+  }
+  return null;
+}
