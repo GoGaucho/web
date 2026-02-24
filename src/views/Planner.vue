@@ -1,4 +1,5 @@
 <script setup>
+import { onActivated } from 'vue'
 import { ArrowLeftIcon, CpuChipIcon, InformationCircleIcon } from '@heroicons/vue/24/outline'
 import { get, log } from '../firebase.js'
 import state from '../model.js'
@@ -6,10 +7,11 @@ import PanelWrapper from '../components/PanelWrapper.vue'
 import Schedule from '../components/Schedule.vue'
 import Instructor from '../components/Instructor.vue'
 import { useRouter } from 'vue-router'
-const router = useRouter(), focus = state.course.focus
+const router = useRouter()
 log('web/planner')
 
 let loading = $ref(true), choices = $ref({}), chosenwTime = $ref([])
+let focus = $ref({})
 let isSummer = $computed(() => state.course?.quarter && state.course.quarter[4] === '3')
 
 let instructorName = $ref('')
@@ -17,19 +19,34 @@ function leaveInstructor () {
   if (!state.screen.md) instructorName = ''
 }
 
-const sections = {}, courses = [], conflicts = {}
+let sections = $ref({}), courses = $ref([]), conflicts = $ref({})
+
 async function fetchData () {
-  if (!focus) return router.push('/course')
-  for (const k in focus) if (!focus[k]) delete focus[k]
-  if (!Object.keys(focus).length) return router.push('/course')
-  for (const k in focus) {
-    const c = focus[k] = await get('course/' + state.course.quarter + k)
+  // read and filter course from the state.course.focus
+  const focusKeys = Object.keys(state.course.focus || {}).filter(k => state.course.focus[k])
+  // if no course focused, return user to the course page
+  if (!focusKeys.length) return router.push('/course')
+
+  const prevChoices = choices || {}
+  //reset the local
+  focus = {}
+  choices = {}
+  chosenwTime = []
+  sections = {}
+  courses = []
+  conflicts = {}
+
+  for (const k of focusKeys) {
+    const c = await get('course/' + state.course.quarter + k)
     focus[k] = c
-    choices[k] = {}
+    // if the user already made selections for this course before reload, restore them. Otherwise start with an empty selection.
+    choices[k] = prevChoices[k] ? { ...prevChoices[k] } : {}
     courses.push(k)
     for (const s in c.sections) {
       sections[s] = c.sections[s]
-      for (const p of sections[s].periods) p.wTime = JSON.parse(p.wTime)
+      for (const p of sections[s].periods) {
+        if (typeof p.wTime === 'string') p.wTime = JSON.parse(p.wTime)
+      }
     }
   }
   const isOverlap = (x, y) => x[1] >= y[0] && x[0] <= y[1]
@@ -53,7 +70,13 @@ async function fetchData () {
   computeStatus()
   loading = false
 }
-fetchData()
+// When user changes selected courses and returns to Planner, re-fetch and rebuild data on activation
+async function init () {
+  loading = true
+  await fetchData()
+}
+
+onActivated(init)
 
 function isConflict (_choices, s, exception = '') {
   for (const k in _choices) {
@@ -141,6 +164,8 @@ let pieces = $computed(() => {
 })
 
 function auto () {
+  // ensure statuses are up-to-date before starting auto selection
+  computeStatus()
   function scan () {
     for (const k in choices) {
       const c = choices[k]
@@ -196,7 +221,7 @@ function help () {
     <div class="flex items-start overflow-x-auto" style="min-height: 70vh;">
       <div class="overflow-x-auto shadow-md" :style="{ minWidth: isSummer ? '560px' : '480px' }">
         <!-- course list -->
-        <PanelWrapper v-if="!loading" v-for="(v, k) in focus" :title="k" :class="choices[k]?.done ? 'bg-blue-100' : 'bg-gray-100'">
+        <PanelWrapper v-if="!loading" v-for="(v, k) in focus" :key="k" :title="k" :class="choices[k]?.done ? 'bg-blue-100' : 'bg-gray-100'">
           <table v-if="v.tree" class="w-full text-center">
             <tr>
               <th v-if="isSummer">Session</th>
