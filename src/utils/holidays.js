@@ -26,35 +26,31 @@ const getHolidays = (year) => {
     return [new Date(year, month, day)];
   }
 
+  const fmt = (d) => d.toISOString().slice(0, 10);
+
   return new Map([
-    ["Veterans Day", date(10, 11)],
-    ["Thanksgiving", (() => { const t = nthWeekdayOfMonth(4, 4, 10); return [t, new Date(year, 10, t.getDate() + 1)]; })()],
-    ["Christmas", dateRange(11, 24, 11, 25)],
-    ["New Years", dateRange(11, 31, 0, 1, year + 1)],
-    ["Winter Break", dateRange(11, 13, 0, 4, year + 1)],
-    ["M.L.K. Jr. Day", date(0, nthWeekdayOfMonth(3, 1, 0).getDate())],
-    ["Presidents Day", date(1, nthWeekdayOfMonth(3, 1, 1).getDate())],
-    ["Cesar Chavez Day", date(2, 27)],
-    ["Spring Break", dateRange(2, 21, 2, 29)],
-    ["Memorial Day", [getMemorialDay()]],
-    ["Juneteenth", date(5, 19)],
-    ["Independence Day", dateRange(6, 3, 6, 4)],
-    ["Labor Day", date(8, nthWeekdayOfMonth(1, 1, 8).getDate())],
+    ["Veterans Day", date(10, 11).map(fmt)],
+    ["Thanksgiving", (() => { const t = nthWeekdayOfMonth(4, 4, 10); return [t, new Date(year, 10, t.getDate() + 1)]; })().map(fmt)],
+    ["Christmas", dateRange(11, 24, 11, 25).map(fmt)],
+    ["New Years", dateRange(11, 31, 0, 1, year + 1).map(fmt)],
+    ["Winter Break", dateRange(11, 13, 0, 4, year + 1).map(fmt)],
+    ["M.L.K. Jr. Day", date(0, nthWeekdayOfMonth(3, 1, 0).getDate()).map(fmt)],
+    ["Presidents Day", date(1, nthWeekdayOfMonth(3, 1, 1).getDate()).map(fmt)],
+    ["Cesar Chavez Day", date(2, 27).map(fmt)],
+    ["Spring Break", dateRange(2, 21, 2, 29).map(fmt)],
+    ["Memorial Day", [getMemorialDay()].map(fmt)],
+    ["Juneteenth", date(5, 19).map(fmt)],
+    ["Independence Day", dateRange(6, 3, 6, 4).map(fmt)],
+    ["Labor Day", date(8, nthWeekdayOfMonth(1, 1, 8).getDate()).map(fmt)],
   ]);
 }
 
-export default const getTodayHoliday = () => {
-  const today = new Date();
-  const holidays = getHolidays(today.getFullYear());
+export const getTodayHoliday = () => {
+  const today = new Date().toISOString().slice(0, 10);
+  const holidays = getHolidays(new Date().getFullYear());
   for (const [name, dates] of holidays) {
-    for (const d of dates) {
-      if (
-        d.getFullYear() === today.getFullYear() &&
-        d.getMonth() === today.getMonth() &&
-        d.getDate() === today.getDate()
-      ) {
-        return name;
-      }
+    if (dates.includes(today)) {
+      return name;
     }
   }
   return null;
