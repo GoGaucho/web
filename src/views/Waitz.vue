@@ -1,5 +1,7 @@
 <script setup>
 import { get, log } from '../firebase.js'
+import { InformationCircleIcon } from '@heroicons/vue/24/outline'
+
 log('web/waitz')
 
 let data = $ref(undefined)
@@ -15,9 +17,19 @@ function getClass (c) {
 
 <template>
   <div class="p-4 sm:p-10">
+    <div class="flex items-center justify-between flex-wrap">
+    <div>
     <h1 class="text-2xl">Building Capacity</h1>
     <p v-if="!data" class="text-sm text-gray-500">Loading...</p>
     <p v-else class="text-sm text-gray-500">Data from waitz.io</p>
+    </div>
+    <a
+        href="https://recreation.ucsb.edu/facilities/livecount"
+        target="_blank"
+        class="cursor-pointer my-2 px-3 py-1 text-sm sm:text-base sm:px-4 sm:py-2 rounded-full border 
+        font-bold text-blue-500 bg-white flex items-center all-transition hover:shadow">
+        <InformationCircleIcon class="w-5 mr-1" /> Recreation Center Capacity </a>
+  </div>
     <div class="my-2 sm:my-4 p-4 sm:p-6 bg-white shadow rounded" v-for="(l, name) in data">
       <div class="flex items-center flex-wrap">
         <div class="flex-grow">
