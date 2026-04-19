@@ -1,5 +1,5 @@
 <script setup>
-import { LinkIcon, MapIcon, BuildingLibraryIcon, BookOpenIcon, SwatchIcon, AcademicCapIcon } from '@heroicons/vue/24/outline'
+import { LinkIcon, MapIcon, BuildingLibraryIcon, BookOpenIcon, SwatchIcon, AcademicCapIcon, SparklesIcon } from '@heroicons/vue/24/outline'
 import banner from '../assets/banner.svg'
 import diningImg from '../assets/portola.jpg'
 import Wrapper from '../components/Wrapper.vue'
@@ -47,6 +47,7 @@ init()
         <div class="button" @click="router.push('/dining')"><SwatchIcon class="w-6 mr-2" />Dining</div>
         <div class="button" @click="router.push('/course')"><BookOpenIcon class="w-6 mr-2" />Course</div>
         <div class="button" @click="router.push('/waitz')"><BuildingLibraryIcon class="w-6 mr-2" />Building Capacity</div>
+        <div class="button" @click="router.push('/study')"><SparklesIcon class="w-6 mr-2" />Find a Study Spot</div>
         <hr>
       </div>
       <div class="w-full sm:w-56 my-4 sm:my-0">
