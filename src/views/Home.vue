@@ -5,6 +5,7 @@ import diningImg from '../assets/portola.jpg'
 import Wrapper from '../components/Wrapper.vue'
 import LinkCard from '../components/LinkCard.vue'
 import DaySummary from '../components/DaySummary.vue'
+import NewTag from '../components/NewTag.vue'
 import links from '../utils/links.js'
 import { get } from '../firebase.js'
 import { state, cache } from '../model.js'
@@ -47,7 +48,7 @@ init()
         <div class="button" @click="router.push('/dining')"><SwatchIcon class="w-6 mr-2" />Dining</div>
         <div class="button" @click="router.push('/course')"><BookOpenIcon class="w-6 mr-2" />Course</div>
         <div class="button" @click="router.push('/waitz')"><BuildingLibraryIcon class="w-6 mr-2" />Building Capacity</div>
-        <div class="button" @click="router.push('/study')"><SparklesIcon class="w-6 mr-2" />Find a Study Spot</div>
+        <div class="button" @click="router.push('/study')"><SparklesIcon class="w-6 mr-2" />Find a Study Spot<NewTag until="2026-05-01" /></div>
         <hr>
       </div>
       <div class="w-full sm:w-56 my-4 sm:my-0">
