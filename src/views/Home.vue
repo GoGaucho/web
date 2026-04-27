@@ -50,7 +50,7 @@ init()
         <div class="button" @click="router.push('/links')"><LinkIcon class="w-6 mr-2" />All Links</div>
         <hr>
       </div>
-      <div class="-translate-y-3 w-full sm:w-56 my-4 sm:my-0">
+      <div class="-translate-y-1.5 w-full sm:w-56 my-4 sm:my-0">
         <LinkCard class="w-full m-1" v-for="l in links[0]" :title="l.title" :icon="l.icon" :href="l.href" small="1" />
       </div>
     </div>
