@@ -12,7 +12,7 @@
       </div>
       <div class="role-section">
         <h3>Web Developers</h3>
-        <p>James Fu, Joshua Lee, Samantha Lesner, Jayden Tan</p>
+        <p>James Fu, Joshua Lee, Samantha Lesner, Jayden Tan, Chi Dung Nguyen</p>
       </div>
       <div class="role-section">
         <h3>iOS Developers</h3>
