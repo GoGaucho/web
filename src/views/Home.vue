@@ -47,11 +47,11 @@ init()
         <div class="button" @click="router.push('/dining')"><SwatchIcon class="w-6 mr-2" />Dining</div>
         <div class="button" @click="router.push('/course')"><BookOpenIcon class="w-6 mr-2" />Course</div>
         <div class="button" @click="router.push('/waitz')"><BuildingLibraryIcon class="w-6 mr-2" />Building Capacity</div>
+        <div class="button" @click="router.push('/links')"><LinkIcon class="w-6 mr-2" />All Links</div>
         <hr>
       </div>
-      <div class="w-full sm:w-56 my-4 sm:my-0">
+      <div class="-translate-y-1.5 w-full sm:w-56 my-4 sm:my-0">
         <LinkCard class="w-full m-1" v-for="l in links[0]" :title="l.title" :icon="l.icon" :href="l.href" small="1" />
-        <p class="text-xs text-gray-500 px-2 cursor-pointer" @click="router.push('/link')">All links ></p>
       </div>
     </div>
     <div class="h-12" />
