@@ -188,6 +188,15 @@ function auto () {
     }
   }
   while (scan()) {}
+  // Show pop up for conflicted class.
+    if (Object.values(choices).some(c => !c.done)) {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Conflict Detected',
+      text: 'Auto Choose couldn\'t find a conflict-free schedule for your selected courses.'
+      
+    })
+  }
 }
 
 function help () {
