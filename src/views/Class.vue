@@ -7,8 +7,10 @@ import { onSnapshot, setDoc, doc } from 'firebase/firestore'
 import * as parse from '../utils/parse.js'
 import Schedule from '../components/Schedule.vue'
 import Registration from '../components/Registration.vue'
+import { signInWithPopup, getAuth, GoogleAuthProvider } from "firebase/auth"
+import { gapi } from "gapi-script"
 
-let q = $ref(''), qs = $ref([]), data = $ref({}), custom = $ref([])
+let q = $ref(''), qs = $ref([]), data = $ref({}), custom = $ref([]), syncedEvents = []
 log('web/class')
 
 const pieces = $computed(() => {
@@ -73,6 +75,20 @@ function fetchCustom(){
   })
 }
 
+let listener = null
+async function fetchSyncedEvents(){
+  cache.set("syncedEvents", false)
+  if(listener) listener()
+
+  syncedEvents = []
+  listener = onSnapshot(doc(db, `user/${state.user.uid}/schedule/${q}`), doc => {
+    const s = doc.data()
+    if (!s) return
+    syncedEvents = JSON.parse(s['syncedEvents'])
+    cache.set("syncedEvents", syncedEvents, 86400e6)
+  })
+}
+
 function getData () {
 
   custom = cache.get('custom' + q)
@@ -90,7 +106,12 @@ function getData () {
   }else{
     qs = data.quarters
   }
-  
+
+  syncedEvents = cache.get("syncedEvents")
+  if (!syncedEvents) {
+    syncedEvents = []
+    fetchSyncedEvents()
+  }
 }
 
 window.onsignin = getData
@@ -155,7 +176,310 @@ function removeCustom (i) {
   submitCustom()
 }
 
+async function signInWithGoogle(){
+  const auth = getAuth();
+  const provider = new GoogleAuthProvider()
+  provider.addScope("https://www.googleapis.com/auth/calendar.events");
 
+  try{
+    const result = await signInWithPopup(auth, provider)
+    const credential = GoogleAuthProvider.credentialFromResult(result)
+
+    // cache.set("googleToken", credential.accessToken, 86400e6)
+    console.log("Google login success")
+    alert("Successfully signed in with Google.")
+    return credential.accessToken
+  }catch(error){
+    console.error("Google login error: ", error)
+    alert("Failed to sign in with Google. Please try again later.")
+    return null
+  }
+}
+
+function getWeekStartDates(start, end){
+  const weeks = []
+  const current = new Date(start)
+  while (current <= end){
+    weeks.push(current.toISOString())
+    current.setDate(current.getDate() + 7)
+  }
+  return weeks
+}
+
+function getDateTime(weekStart, start, duration){
+  const date = new Date(weekStart)
+  const dayOffset = Math.floor(start / 1440)
+  const startTime = start % 1440
+  const startHour = Math.floor(startTime / 60)
+  const startMinute = startTime % 60
+
+  date.setDate(date.getDate() + dayOffset)
+  date.setHours(startHour, startMinute, 0, 0)
+
+  const endDate = new Date(date)
+  endDate.setMinutes(endDate.getMinutes() + duration)
+
+  return {start: date.toISOString(), end: endDate.toISOString()}
+}
+
+function filterEvents(previousEvents, currentEvents){
+  if (!previousEvents) return { toBeAdded: currentEvents, toBeRemoved: [] }
+  if (!currentEvents) return { toBeAdded: [], toBeRemoved: previousEvents }
+  const eventExists = (event, events) => events.some(
+    (e) => 
+      e.summary === event.summary && 
+      e.location === event.location && 
+      e.start.dateTime === event.start.dateTime && 
+      e.end.dateTime === event.end.dateTime
+  )
+
+  const toBeAdded = currentEvents.filter(
+    (event) => !eventExists(event, previousEvents)
+  )
+
+  const toBeRemoved = previousEvents.filter( 
+    (event) => !eventExists(event, currentEvents)
+  ) 
+
+  return { toBeAdded, toBeRemoved }
+}
+
+async function deleteEventsGoogleCalendar(toBeRemoved){
+  // gapi setup
+  // Have to make sure a valid token is stored in cache before calling this function
+  await new Promise((resolve, reject) => {
+    gapi.load("client:auth2", resolve);
+  });
+  await gapi.client.init({
+    apiKey: "AIzaSyC7WZFIjRUQ01A-SCVs0V_bNdhC8YCPzoI",
+    clientId: "1:1083649636208:web:690b97b048d194077241b5",
+    discoveryDocs: [
+      "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest",
+    ],
+    scope: "https://www.googleapis.com/auth/calendar.events",
+  });
+  gapi.auth.setToken({ access_token: cache.get("googleCalendarToken") })
+
+  // due to the Google Calendar's quota limit, parallel requests are not allowed
+  // await Promise.all(
+  //   toBeRemoved.map(async (event) => {
+  //     try{
+  //       await gapi.client.calendar.events.delete({
+  //         calendarId: "primary",
+  //         eventId: event.id,
+  //       })
+  //       console.log(`Event deleted: ${event.summary}`)
+  //     }catch(error){
+  //       console.error(`Failed to delete event: ${error.message}`)
+  //     } 
+  //   })
+  // )
+
+  for (let event of toBeRemoved) {
+    try {
+      await gapi.client.calendar.events.delete({
+        calendarId: "primary",
+        eventId: event.id,
+      })  
+      console.log(`Event deleted: ${event.summary}`)
+    } catch (error) {
+      console.error(`Failed to delete event: ${error.message}`)
+    }
+  }
+}
+
+async function submitSyncedEvents(toBeAdded, toBeRemoved){
+  const updatedSyncedEvents = syncedEvents.concat(toBeAdded).filter(event => !toBeRemoved.some(e => e.id === event.id))
+  setDoc(doc(db, `user/${state.user.uid}/schedule/${q}`), { "syncedEvents":  
+    JSON.stringify(updatedSyncedEvents)
+  }, { merge: true })
+  cache.set("syncedEvents", updatedSyncedEvents);
+}
+
+async function syncToGoogleCalendar(){
+  console.log("local cache: ", cache.get("syncedEvents"))
+
+  // fetch current quarter data
+  const stat = (await getDoc(doc(db, "cache", "quarter"))).data()
+  let quarterStart = new Date(stat.currentBeginClasses)
+  let quarterEnd= new Date(stat.currentEndClasses)
+  let currentQuarter = stat.current
+
+  if (q != currentQuarter) {
+    alert("You can only synchronize to Google Calendar for the current quarter. To do so please switch to the current quarter in the dropdown widget to the right of **My Classes**")
+    return 
+  }
+
+  // check if user has already exported to Google Calendar for the current quarter
+  if (cache.get("syncedEvents").length !== 0){
+    const confirmation = confirm("You have already exported to Google Calendar for this quarter. Are you sure you want to do it again?")
+    if (!confirmation){
+      alert("Export cancelled.")
+      return
+    }
+  }
+
+  // confirm export to Google Calendar
+  const confirmation = confirm(
+      "This feature will synchronize your current schedule from GoGaucho to Google Calendar " +
+      "for **all TEN weeks** in the **CURRENT** quarter. It will include both verified events " +
+      "from GOLD and custom events. While you can choose which account to export to, it " +
+      "is recommended to stick to the **DEFAULT** account ending with @ucsb.edu. Currently we only " + 
+      "support exporting to one google account. Due to the Google Calendar's quota limit, this " +
+      "process maytake around a minute or two. You will be noticed by **Successfully synchronized " +
+      "to Google Calendar.** as soon as the process is complete.\n\n" + 
+      "Click OK to proceed or Cancel to abort."
+  )
+  if (!confirmation){
+    alert("Export cancelled.")  
+    return
+  }
+
+  try{
+    // Load the Google API client library
+    await new Promise((resolve, reject) => {
+      gapi.load("client:auth2", resolve);
+    });
+
+    // Initialize the Google API client
+    await gapi.client.init({
+      apiKey: "AIzaSyC7WZFIjRUQ01A-SCVs0V_bNdhC8YCPzoI",
+      clientId: "1:1083649636208:web:690b97b048d194077241b5",
+      discoveryDocs: [
+        "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest",
+      ],
+      scope: "https://www.googleapis.com/auth/calendar.events",
+    });
+    console.log("GAPI client initialized");
+
+    // fetch user's access token 
+    const token = await signInWithGoogle()
+    if(!token){
+      alert("Invalid Token")
+      throw new Error("Invalid Token")
+    }
+    gapi.auth.setToken({ access_token: token })
+    cache.set("googleCalendarToken", token)
+  
+    // Calculate the start and end dates of the current quarter
+    let startOFWeeks = getWeekStartDates(quarterStart, quarterEnd)
+
+    // Create events for each verified course on GOLD for each week in a quarter
+    let events = []
+    let schedule = data.schedule
+    console.log("Schedule: ", schedule)
+    for (const weekStart of startOFWeeks){
+      for (const courseKey in schedule){
+      const course = schedule[courseKey]
+      const periods = course.periods
+        for (const period of periods){
+          for (const time of period.wTime){
+            const [startMinutes, endMinutes] = time
+            const { start, end } = getDateTime(weekStart, startMinutes, endMinutes - startMinutes)
+            const event = {
+              summary: course.title,
+              location: period.location,
+              description: `Instructors: ${period.instructors.join(', ')}\nInstruction Type: ${period.instructionTypeCode}`,
+              start: { dateTime: start, timeZone: "America/Los_Angeles" },
+              end: { dateTime: end, timeZone: "America/Los_Angeles" }
+            }
+            events.push(event)
+          }
+        }
+      }
+    }
+
+    // Create events for each custom event for each week in a quarter
+    for (const weekStart of startOFWeeks){
+      for (const customEvent of custom){
+        for (const time of customEvent.wTime){
+          const [startTime, endTime] = time
+          const { start, end } = getDateTime(weekStart, startTime, endTime - startTime)
+          const event = {
+            summary: customEvent.title,
+            location: customEvent.location,
+            description: "null",
+            start: { dateTime: start, timeZone: "America/Los_Angeles" },
+            end: { dateTime: end, timeZone: "America/Los_Angeles" }
+          }
+          events.push(event)
+        }
+      }
+    }
+
+    // Sync events to Google Calendar
+    console.log("events: ", events)
+    const { toBeAdded, toBeRemoved } = filterEvents(cache.get("syncedEvents"), events)
+    console.log("toBeAdded: ", toBeAdded)
+    console.log("toBeRemoved: ", toBeRemoved)
+
+    // due to the Google Calendar's quota limit, parallel requests are not allowed
+    // await Promise.all(
+    //   toBeAdded.map(async (event) => {
+    //     try{
+    //       const response = await gapi.client.calendar.events.insert({
+    //         calendarId: "primary",
+    //         resource: event,
+    //       });
+    //       event.id = response.result.id
+    //       console.log(`Event created: ${response.result.htmlLink}`);
+    //     }catch(error){
+    //       console.error(`Failed to create event: ${event.summary}`, error);
+    //     } 
+    //   })
+    // )
+    
+    for (let event of events) {
+      try {
+        const response = await gapi.client.calendar.events.insert({
+          calendarId: "primary",
+          resource: event,
+        });
+        event.id = response.result.id;
+        console.log(`Event created: ${response.result.htmlLink}`);
+      } catch (error) {
+        console.error(`Failed to create event: ${event.summary}`, error);
+      }
+    }
+    deleteEventsGoogleCalendar(toBeRemoved)
+    
+    submitSyncedEvents(toBeAdded, toBeRemoved)
+    console.log(cache.get("syncedEvents"))
+    alert("Successfully synchronized to Google Calendar.")
+  }catch(error){
+    console.error("Google Calendar API error: ", error)
+    alert("Failed to export to Google Calendar. Please try again later.")
+  }
+}
+
+async function undoSync(){
+  console.log("local cache: ", cache.get("syncedEvents"))
+  if (cache.get("syncedEvents").length == 0){
+    alert("No export to undo.")
+    return
+  }
+  const confirmation = confirm(
+    "This will remove all changes synchronized to your Google Calendar. Click OK to proceed or Cancel "+
+    "to abort. If you choose to proceed, you will be notified by **Successfully undid synchronization** "+
+    "when the process is complete."
+  )
+  if (!confirmation){
+    alert("Undo cancelled.")
+    return
+  }
+  if (cache.get("googleCalendarToken") == null){
+    const token = await signInWithGoogle()
+    if(!token){
+      alert("Invalid Token")
+      throw new Error("Invalid Token")
+    }
+    gapi.auth.setToken({ access_token: token })
+    cache.set("googleCalendarToken", token)
+  }
+  deleteEventsGoogleCalendar(cache.get("syncedEvents"))
+  submitSyncedEvents([], cache.get("syncedEvents"))
+  alert("Successfully undid synchronization.")
+}
 </script>
 
 <template>
@@ -167,7 +491,17 @@ function removeCustom (i) {
           <option v-for="o in qs" :value="o">{{ parse.quarter(o) }}</option>
         </select>
       </div>
-      <ArrowPathIcon class="w-6 text-gray-500 cursor-pointer" @click="fetchData" />
+      <div class="flex items-center space-x-2">
+        <button 
+          class="bg-blue-500 text-white px-3 py-1 rounded shadow hover:bg-blue-600 transition" @click="undoSync">
+          Undo Sync
+        </button>
+        <button 
+          class="bg-blue-500 text-white px-3 py-1 rounded shadow hover:bg-blue-600 transition" @click="syncToGoogleCalendar">
+          Sync to Google Calendar
+        </button>
+        <ArrowPathIcon class="w-6 text-gray-500 cursor-pointer" @click="fetchData" />
+      </div>
     </div>
     <div class="w-full flex flex-wrap justify-center items-start" v-if="data" :key="q">
       <div class="flex-grow bg-white sm:p-2 sm:pb-4 lg:px-6 pb-4 rounded shadow m-0 sm:m-4 lg:mr-0" v-if="data.schedule"><!-- schedule -->
