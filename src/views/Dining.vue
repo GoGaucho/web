@@ -6,6 +6,7 @@ import { CreditCardIcon, HeartIcon, VideoCameraIcon, ArrowRightCircleIcon, Arrow
 import Wrapper from '../components/Wrapper.vue'
 import WeeklyMenu from '../components/WeeklyMenu.vue'
 import { dishColorClass as getClass } from '../utils/dining.js'
+import { selectDiningMeal } from '../utils/diningSelection.mjs'
 log('web/dining')
 
 const dcs = {
@@ -26,22 +27,9 @@ watch($$(isNext), v => {
   })
 }, { immediate: true })
 
-function isPast (period) {
-  const m = period.match(/\s\-\s(\d*?):(\d*?)\s(\w)M$/)
-  if (!m) return false
-  const d = new Date()
-  const dTime = (Number(m[1]) + (m[3] === 'P' ? 12 : 0)) * 60 + Number(m[2])
-  return dTime < d.getHours() * 60 + d.getMinutes()
-}
-
-watch($$(dc), () => {
+watch([$$(dc), $$(data), $$(date)], () => {
   cache.set('dining', dc)
-  if (!data[dc] || data[dc][mc]) return
-  mc = ''
-  for (const m in data[dc]) {
-    mc = m
-    if (!isPast(data[dc][m].hour)) break
-  }
+  mc = selectDiningMeal(data[dc], mc, date)
 })
 
 function showCam () {
@@ -87,9 +75,11 @@ function showCam () {
       </h2>
       <p class="flex items-center text-gray-700 my-2" :set="v = data[dc] && data[dc][mc]">
         <select class="px-2 mr-2 appearance-none bg-white font-bold block rounded cursor-pointer border" v-model="mc" v-if="v">
-          <option v-for="(v, m) in data[dc]" :value="m">{{ m[0].toUpperCase() + m.substring(1) }}</option>
+          <template v-for="(meal, m) in data[dc]" :key="m">
+            <option v-if="meal" :value="m">{{ m[0].toUpperCase() + m.substring(1) }}</option>
+          </template>
         </select>
-        {{ v ? v.hour : 'closed' }}
+        {{ v ? v.hour : 'Menu unavailable for this date' }}
       </p>
       <hr class="mt-1 mb-2">
       <div :key="dc + mc" :set="v = data[dc] && data[dc][mc]" class="w-full">
