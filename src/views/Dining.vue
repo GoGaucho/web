@@ -4,6 +4,9 @@ import { get, log } from '../firebase.js'
 import { cache } from '../model.js'
 import { CreditCardIcon, HeartIcon, VideoCameraIcon, ArrowRightCircleIcon, ArrowLeftCircleIcon,InformationCircleIcon } from '@heroicons/vue/24/outline'
 import Wrapper from '../components/Wrapper.vue'
+import WeeklyMenu from '../components/WeeklyMenu.vue'
+import { dishColorClass as getClass } from '../utils/dining.js'
+import { selectDiningMeal } from '../utils/diningSelection.mjs'
 log('web/dining')
 
 const dcs = {
@@ -14,6 +17,7 @@ const dcs = {
 }
 
 let data = $ref({}), date = $ref(undefined), dc = $ref(''), mc = $ref(''), isNext = $ref(false)
+let menuView = $ref('today')
 
 watch($$(isNext), v => {
   get('cache/dining' + (v ? '-next' : '')).then(r => {
@@ -23,29 +27,10 @@ watch($$(isNext), v => {
   })
 }, { immediate: true })
 
-function isPast (period) {
-  const m = period.match(/\s\-\s(\d*?):(\d*?)\s(\w)M$/)
-  if (!m) return false
-  const d = new Date()
-  const dTime = (Number(m[1]) + (m[3] === 'P' ? 12 : 0)) * 60 + Number(m[2])
-  return dTime < d.getHours() * 60 + d.getMinutes()
-}
-
-watch($$(dc), () => {
+watch([$$(dc), $$(data), $$(date)], () => {
   cache.set('dining', dc)
-  if (!data[dc] || data[dc][mc]) return
-  mc = ''
-  for (const m in data[dc]) {
-    mc = m
-    if (!isPast(data[dc][m].hour)) break
-  }
+  mc = selectDiningMeal(data[dc], mc, date)
 })
-
-function getClass (n) {
-  if (n.includes('(w/nuts)')) return 'nuts'
-  if (n.includes('(v)') || n.includes('(vgn)')) return 'vgn'
-  return 'meat'
-}
 
 function showCam () {
   Swal.fire({ title: dcs[dc], showConfirmButton: false, html: `<img src="https://api.ucsb.edu/dining/cams/v2/stream/${dc}?ucsb-api-key=%20s5MpI868GtPpozL8Q6bfnmMMIUXDeznl">` })
@@ -55,7 +40,18 @@ function showCam () {
 <template>
   <div class="p-4 sm:p-10">
     <h1 class="text-2xl">Dining Commons</h1>
-    <p class="text-sm text-gray-500 flex items-center">
+    <div class="flex gap-2 my-3" role="group" aria-label="Menu view">
+      <button
+        v-for="view in [{ id: 'today', label: 'Today' }, { id: 'week', label: 'Weekly menu' }]"
+        :key="view.id"
+        type="button"
+        class="px-4 py-2 rounded-full border font-bold text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
+        :class="menuView === view.id ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-blue-500'"
+        :aria-pressed="menuView === view.id"
+        @click="menuView = view.id; isNext = false"
+      >{{ view.label }}</button>
+    </div>
+    <p v-if="menuView === 'today'" class="text-sm text-gray-500 flex items-center">
       <ArrowLeftCircleIcon v-if="date && isNext" class="cursor-pointer w-5 mx-2" @click="isNext = false" />
       {{ date || 'Loading' }}
       <ArrowRightCircleIcon v-if="date && !isNext" class="cursor-pointer w-5 mx-2" @click="isNext = true" />
@@ -68,7 +64,8 @@ function showCam () {
       <a class="cursor-pointer my-1 px-3 py-1 text-sm sm:text-base sm:px-4 sm:py-2 rounded-full border font-bold text-blue-500 bg-white flex items-center all-transition hover:shadow" href="https://nutrition.info.dining.ucsb.edu/NetNutrition/1"><InformationCircleIcon class="w-5 mr-1" />Nutrition Facts</a>
     </div>
     </div>
-    <div class="rounded shadow-md p-3 my-4 bg-white" v-if="Object.keys(data).length" :key="date">
+    <WeeklyMenu v-if="menuView === 'week'" :dining-commons="dcs" :initial-dining-common="dc" />
+    <div class="rounded shadow-md p-3 my-4 bg-white" v-if="menuView === 'today' && Object.keys(data).length" :key="date">
       <h2 class="text-2xl flex items-center">
         Meals
         <select class="text-base bg-white border font-bold mx-2 px-4 py-1 rounded-full appearance-none cursor-pointer" v-model="dc">
@@ -78,9 +75,11 @@ function showCam () {
       </h2>
       <p class="flex items-center text-gray-700 my-2" :set="v = data[dc] && data[dc][mc]">
         <select class="px-2 mr-2 appearance-none bg-white font-bold block rounded cursor-pointer border" v-model="mc" v-if="v">
-          <option v-for="(v, m) in data[dc]" :value="m">{{ m[0].toUpperCase() + m.substring(1) }}</option>
+          <template v-for="(meal, m) in data[dc]" :key="m">
+            <option v-if="meal" :value="m">{{ m[0].toUpperCase() + m.substring(1) }}</option>
+          </template>
         </select>
-        {{ v ? v.hour : 'closed' }}
+        {{ v ? v.hour : 'Menu unavailable for this date' }}
       </p>
       <hr class="mt-1 mb-2">
       <div :key="dc + mc" :set="v = data[dc] && data[dc][mc]" class="w-full">
@@ -96,15 +95,3 @@ function showCam () {
     </div>
   </div>
 </template>
-
-<style scoped>
-.meat {
-  @apply border-red-400 from-red-50
-}
-.vgn {
-  @apply border-green-400 from-green-50
-}
-.nuts {
-  @apply border-yellow-400 from-yellow-50
-}
-</style>
