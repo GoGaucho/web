@@ -12,6 +12,16 @@ const loading = ref(false)
 const error = ref('')
 const mealOrder = ['breakfast', 'brunch', 'lunch', 'dinner', 'late-night']
 const selectedDay = computed(() => days.value.find(day => day.date === selectedDate.value))
+const selectedDateIndex = computed(() =>
+  days.value.findIndex(day => day.date === selectedDate.value)
+)
+function changeDay(direction) {
+  const newIndex = selectedDateIndex.value + direction
+  if (newIndex >= 0 && newIndex < days.value.length) {
+    selectedDate.value = days.value[newIndex].date
+  }
+}
+
 const meals = computed(() => mealOrder.filter(name => selectedDay.value?.meals[name]))
 const stations = computed(() => selectedDay.value?.meals[meal.value] || {})
 let currentRequest = 0
@@ -56,12 +66,45 @@ function mealLabel(name) {
         <option v-for="(name, code) in props.diningCommons" :key="code" :value="code">{{ name }}</option>
       </select>
     </h2>
-    <p v-if="days.length && !loading" class="flex items-center text-gray-700 my-2">
-      <label for="weekly-menu-date" class="text-sm mr-2">Date</label>
-      <select id="weekly-menu-date" v-model="selectedDate" class="px-2 appearance-none bg-white font-bold block rounded cursor-pointer border">
-        <option v-for="day in days" :key="day.date" :value="day.date">{{ day.date }}</option>
-      </select>
-    </p>
+    <div
+      v-if="days.length && !loading"
+      class="flex items-center text-gray-700 my-2 gap-2"
+>
+      <label for="weekly-menu-date" class="text-sm">
+          Date
+      </label>
+  <button
+    type="button"
+    aria-label="Previous day"
+    :disabled="selectedDateIndex <= 0"
+    class="border rounded px-2 py-1 disabled:opacity-40 disabled:cursor-not-allowed"
+    @click="changeDay(-1)"
+  >
+    &larr;
+  </button>
+  <select
+    id="weekly-menu-date"
+    v-model="selectedDate"
+    class="px-2 bg-white font-bold rounded cursor-pointer border"
+  >
+    <option
+      v-for="day in days"
+      :key="day.date"
+      :value="day.date"
+    >
+      {{ day.date }}
+    </option>
+  </select>
+  <button
+    type="button"
+    aria-label="Next day"
+    :disabled="selectedDateIndex >= days.length - 1"
+    class="border rounded px-2 py-1 disabled:opacity-40 disabled:cursor-not-allowed"
+    @click="changeDay(1)"
+  >
+    &rarr;
+  </button>
+</div>
     <p v-if="meals.length && !loading" class="flex items-center text-gray-700 my-2">
       <select v-model="meal" aria-label="Meal" class="px-2 mr-2 appearance-none bg-white font-bold block rounded cursor-pointer border">
         <option v-for="name in meals" :key="name" :value="name">{{ mealLabel(name) }}</option>
