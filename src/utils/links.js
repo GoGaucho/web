@@ -1,4 +1,6 @@
-export default [[{
+import { contacts } from './contacts.js'
+
+const links = [[{
   title: 'Canvas',
   href: 'https://ucsb.instructure.com/login/saml',
   icon: '/icons/links/Canvas.png',
@@ -27,6 +29,7 @@ export default [[{
   description: 'Study Room Booking'
 } , {
   title: 'Disabled Students (DSP)',
+  contactId: 'dsp',
   icon: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5sFLow2UaR_rlscTrUOE1DWolaKL3fIiIWTcsoJhJ7BMevUeGn2jzrcAT5pShvH7CEsk&usqp=CAU',
   description: 'Learning Accommodations',
   href: 'https://dsp.sa.ucsb.edu/services/'
@@ -38,6 +41,7 @@ export default [[{
 }],
 [{
   title: 'Student Health',
+  contactId: 'student-health',
   description: 'Campus Healthcare Services',
   href: 'https://sso.ucsb.edu/cas/login?service=https%3a%2f%2fmyhealth.ucsb.edu%2f',
   icon: '/icons/links/SH.png'
@@ -50,23 +54,20 @@ export default [[{
   title: 'CAPS (24/7)',
   href: 'https://caps.sa.ucsb.edu/',
   description: 'Counseling & Psychological Services',
-  phone: '(805) 893-4411',
-    // href: 'tel:8058934411',
+  contactId: 'caps',
   icon: 'http://www.ucsbmhp.com/uploads/1/0/8/8/108877365/editor/caps-logo-color-fw_1.png'
 }],
 [{
   title: 'UC Police',
   href: 'https://www.police.ucsb.edu/',
   icon: 'https://www.police.ucsb.edu/sites/default/files/UCPD_Badge-High-ResNoBackground.png',
-  // href: 'tel:8058933446',
-  phone: '(805) 893-3446'
+  contactId: 'police'
 }, {
   title: 'CSO Escort',
   href: 'https://www.police.ucsb.edu/cso/cso-safety-escorts',
   icon: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQUkO2XdcKHxNQPLOmxSQ0cWiJ9Eap2Epx_Mg&s',
   description: 'Free Safety Campus Escort',
-  phone: '(805) 893-2000'
-  // href: 'tel:8058932000',
+  contactId: 'cso'
 }, {
   title: 'ICE Sighting Tracker',
   description: 'Daily Nexus',
@@ -105,3 +106,14 @@ export default [[{
   href: 'https://apps.apple.com/pl/app/storkecentral/id1594777645',
   icon: 'https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/e8/9f/22/e89f22bf-4dae-3373-f927-4121d971a97d/AppIcon-0-0-1x_U007emarketing-0-7-0-85-220.png/230x0w.webp'
 }]]
+
+// Keep the existing grouped links and share contact data with the directory.
+export const studentServices = contacts.map(contact => {
+  const link = links.flat().find(link => link.contactId === contact.id)
+  return { ...contact, link }
+})
+
+export default links.map(group => group.map(link => ({
+  ...link,
+  ...(link.contactId ? { phone: contacts.find(contact => contact.id === link.contactId).phone } : {})
+})))
