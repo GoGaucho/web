@@ -1,6 +1,15 @@
 {
+  "functions": {
+    "source": "functions"
+  },
   "hosting": {
     "public": "dist",
+    "rewrites": [
+      {
+        "source": "/api/dining/week",
+        "function": { "functionId": "weeklyDiningMenu", "region": "us-central1" }
+      }
+    ],
     "ignore": [
       "firebase.json",
       "**/.*",

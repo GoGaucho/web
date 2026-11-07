@@ -1,0 +1,10 @@
+{
+  "name": "gogaucho-dining-functions",
+  "private": true,
+  "main": "index.cjs",
+  "engines": { "node": "22" },
+  "dependencies": {
+    "cheerio": "^1.2.0",
+    "firebase-functions": "^6.0.0"
+  }
+}
