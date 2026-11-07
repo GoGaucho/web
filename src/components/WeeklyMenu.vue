@@ -23,7 +23,22 @@ function dateLabel(date) {
   return `${parts.weekday} ${parts.month}/${parts.day}`
 }
 
-const today = dateLabel(new Date())
+const now = new Date()
+const today = dateLabel(now)
+const campusToday = Object.fromEntries(campusDate.formatToParts(now).map(({ type, value }) => [type, value]))
+
+function displayDate(label) {
+  const match = label.match(/(\d{1,2})\/(\d{1,2})$/)
+  if (!match) return label
+
+  const [, month, day] = match
+  const monthOffset = Number(month) - Number(campusToday.month)
+  // UCSB publishes a week without years, so pick the year nearest the campus date.
+  let year = Number(campusToday.year)
+  if (monthOffset > 6) year--
+  if (monthOffset < -6) year++
+  return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+}
 const dailyDays = computed(() => cachedMenus.value.map(({ date, data }) => ({
   date: dateLabel(new Date(`${date}T12:00:00Z`)),
   menuDate: date,
@@ -125,7 +140,7 @@ function mealLabel(name) {
       :class="{ 'font-semibold': selectedDate === today }"
     >
       <option v-for="day in days" :key="day.date" :value="day.date">
-        {{ day.date === today ? 'Today, ' : '' }}{{ day.date }}
+        {{ day.date === today ? 'Today, ' : '' }}{{ displayDate(day.date) }}
       </option>
     </select>
     <button
