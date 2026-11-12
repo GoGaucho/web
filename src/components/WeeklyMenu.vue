@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
-import { ArrowLeftCircleIcon, ArrowRightCircleIcon, VideoCameraIcon } from '@heroicons/vue/24/outline'
+//import { ArrowLeftCircleIcon, ArrowRightCircleIcon, VideoCameraIcon } from '@heroicons/vue/24/outline'
 import { get } from '../firebase.js'
 import { cache } from '../model.js'
 import { selectDiningMeal } from '../utils/diningSelection.mjs'
@@ -26,7 +26,17 @@ function dateLabel(date) {
 const now = new Date()
 const today = dateLabel(now)
 const campusToday = Object.fromEntries(campusDate.formatToParts(now).map(({ type, value }) => [type, value]))
+const tomorrowDate = new Date(now.getTime() + 24 * 60 * 60 * 1000)
+const tomorrow = dateLabel(tomorrowDate)
 
+function dayTabLabel(date) {
+  if (date === today) return 'Today'
+  if (date === tomorrow) return 'Tomorrow'
+  return ''
+}
+function dayNumber(date) {
+  return date.split('/')[1]
+}
 function displayDate(label) {
   const match = label.match(/(\d{1,2})\/(\d{1,2})$/)
   if (!match) return label
@@ -62,7 +72,7 @@ const loading = ref(false)
 const error = ref('')
 const mealOrder = ['breakfast', 'brunch', 'lunch', 'dinner', 'late-night']
 const selectedDay = computed(() => days.value.find(day => day.date === selectedDate.value))
-const selectedDateIndex = computed(() =>
+/*const selectedDateIndex = computed(() =>
   days.value.findIndex(day => day.date === selectedDate.value)
 )
 function changeDay(direction) {
@@ -70,7 +80,7 @@ function changeDay(direction) {
   if (newIndex >= 0 && newIndex < days.value.length) {
     selectedDate.value = days.value[newIndex].date
   }
-}
+}*/
 
 const meals = computed(() => mealOrder.filter(name => selectedDay.value?.meals[name]))
 const mealHours = computed(() => dailyMenu.value?.dailyMeals?.[meal.value]?.hour)
@@ -123,36 +133,58 @@ function mealLabel(name) {
 </script>
 
 <template>
-  <div v-if="days.length && !loading" class="flex items-center gap-2 my-1 text-sm text-gray-500">
-    <label for="weekly-menu-date" class="sr-only">Menu date</label>
+<div v-if="days.length && !loading" class="my-3">
+  <div class="flex gap-2 overflow-x-auto pb-2">
+
     <button
-      v-if="selectedDateIndex > 0"
+      v-for="day in days"
+      :key="day.date"
       type="button"
-      aria-label="Previous day"
-      @click="changeDay(-1)"
+      @click="selectedDate = day.date"
+      :aria-label="`View menu for ${displayDate(day.date)}`"
+      :aria-pressed="selectedDate === day.date"
+      class="flex flex-col items-center justify-center
+             min-w-[80px] px-3 py-2 rounded-lg border
+             transition-colors cursor-pointer"
+      :class="
+        selectedDate === day.date
+          ? 'bg-blue-100 border-blue-500 text-blue-700 font-semibold'
+          : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-100'
+      "
     >
-      <ArrowLeftCircleIcon class="w-5" aria-hidden="true" />
+      <span class="text-xs">
+        {{ day.date.split(' ')[0] }}
+      </span>
+      <span class="text-lg">
+        {{ dayNumber(day.date) }}
+      </span>
+      <span class="text-xs h-4">
+        {{ dayTabLabel(day.date) }}
+      </span>
+
     </button>
-    <select
-      id="weekly-menu-date"
-      v-model="selectedDate"
-      class="bg-transparent border border-gray-300 rounded px-2 py-0.5 cursor-pointer"
-      :class="{ 'font-semibold': selectedDate === today }"
-    >
-      <option v-for="day in days" :key="day.date" :value="day.date">
-        {{ day.date === today ? 'Today, ' : '' }}{{ displayDate(day.date) }}
-      </option>
-    </select>
+
+  </div>
+  <div class="flex items-center justify-between mt-2">
+
+    <p class="text-sm font-semibold text-gray-700">
+      {{ dayTabLabel(selectedDate) || displayDate(selectedDate) }}'s Menu
+      <span class="text-gray-500 font-normal">
+        ({{ displayDate(selectedDate) }})
+      </span>
+    </p>
     <button
-      v-if="selectedDateIndex < days.length - 1"
+      v-if="selectedDate !== today && days.some(day => day.date === today)"
       type="button"
-      aria-label="Next day"
-      @click="changeDay(1)"
+      @click="selectedDate = today"
+      class="text-sm text-blue-500 hover:underline"
     >
-      <ArrowRightCircleIcon class="w-5" aria-hidden="true" />
+      Back to Today
     </button>
   </div>
-  <slot name="actions" />
+</div>
+  
+  <slot name="actions"/>
   <section class="rounded shadow-md p-3 my-4 bg-white" aria-labelledby="weekly-menu-heading" :aria-busy="loading">
     <h2 id="weekly-menu-heading" class="text-2xl flex items-center flex-wrap">
       Meals
