@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
-//import { ArrowLeftCircleIcon, ArrowRightCircleIcon, VideoCameraIcon } from '@heroicons/vue/24/outline'
+import { VideoCameraIcon } from '@heroicons/vue/24/outline'
 import { get } from '../firebase.js'
 import { cache } from '../model.js'
 import { selectDiningMeal } from '../utils/diningSelection.mjs'
