@@ -17,60 +17,51 @@ export function getCampusDate (now = new Date()) {
   return new Date(Date.UTC(year, month - 1, day, hour, minute, second))
 }
 
-const getHolidays = (year) => {
-  function nthWeekdayOfMonth(n, weekday, month) {
-    const firstDayOfMonth = new Date(Date.UTC(year, month, 1));
-    const firstWeekday = firstDayOfMonth.getUTCDay();
-    const offset = (weekday - firstWeekday + 7) % 7;
-    return new Date(Date.UTC(year, month, 1 + offset + (n - 1) * 7));
-  }
+// https://catalog.ucsb.edu/academicsandpolicies/introcampus/calendar
+// https://career.ucsb.edu/recruiters/recruitment-calendar
+// https://ccs.ucsb.edu/sites/default/files/documents/StudentHandbook2025-26_6.pdf
+const holidays = new Map([
+  ['2025-11-11', 'Veterans Day'],
+  ['2025-11-27', 'Thanksgiving'],
+  ['2025-11-28', 'Thanksgiving'],
+  ['2025-12-24', 'Christmas'],
+  ['2025-12-25', 'Christmas'],
+  ['2025-12-31', 'New Year'],
+  ['2026-01-01', 'New Year'],
+  ['2026-01-19', 'Martin Luther King Jr. Day'],
+  ['2026-02-16', 'Presidents Day'],
+  ['2026-03-27', 'Cesar Chavez Day'],
+  ['2026-05-25', 'Memorial Day'],
+  ['2026-06-19', 'Juneteenth'],
+  ['2026-07-03', 'Independence Day'],
+  ['2026-09-07', 'Labor Day'],
+  ['2026-11-11', 'Veterans Day'],
+  ['2026-11-26', 'Thanksgiving'],
+  ['2026-11-27', 'Thanksgiving'],
+  ['2026-12-24', 'Christmas'],
+  ['2026-12-25', 'Christmas'],
+  ['2026-12-31', 'New Year'],
+  ['2027-01-01', 'New Year'],
+  ['2027-01-18', 'Martin Luther King Jr. Day'],
+  ['2027-02-15', 'Presidents Day'],
+  ['2027-03-26', 'Farmworkers Day'],
+  ['2027-05-31', 'Memorial Day'],
+  ['2027-06-18', 'Juneteenth'],
+  ['2027-07-05', 'Independence Day'],
+  ['2027-09-06', 'Labor Day']
+])
 
-  const getMemorialDay = () => {
-    const lastDayOfMay = new Date(Date.UTC(year, 4, 31));
-    const lastWeekday = lastDayOfMay.getUTCDay();
-    const offset = (lastWeekday - 1 + 7) % 7;
-    return new Date(Date.UTC(year, 4, 31 - offset));
-  }
+const breaks = [
+  ['2025-12-13', '2026-01-04', 'Winter Break'],
+  ['2026-03-21', '2026-03-29', 'Spring Break'],
+  ['2026-12-12', '2027-01-03', 'Winter Break'],
+  ['2027-03-20', '2027-03-28', 'Spring Break']
+]
 
-  const dateRange = (startMonth, startDay, endMonth, endDay) => {
-    const dates = [];
-    const end = new Date(Date.UTC(year, endMonth, endDay));
-    for (let d = new Date(Date.UTC(year, startMonth, startDay)); d <= end; d.setUTCDate(d.getUTCDate() + 1)) {
-      dates.push(new Date(d));
-    }
-    return dates;
-  }
-
-  const date = (month, day) => {
-    return [new Date(Date.UTC(year, month, day))];
-  }
-
-  const fmt = (d) => d.toISOString().slice(0, 10);
-
-  return new Map([
-    ["Veterans Day", date(10, 11).map(fmt)],
-    ["Thanksgiving", (() => { const t = nthWeekdayOfMonth(4, 4, 10); return [t, new Date(Date.UTC(year, 10, t.getUTCDate() + 1))]; })().map(fmt)],
-    ["Christmas", dateRange(11, 24, 11, 25).map(fmt)],
-    ["New Years", [...date(11, 31), ...date(0, 1)].map(fmt)],
-    ["Winter Break", [...dateRange(11, 13, 11, 31), ...dateRange(0, 1, 0, 4)].map(fmt)],
-    ["M.L.K. Jr. Day", date(0, nthWeekdayOfMonth(3, 1, 0).getUTCDate()).map(fmt)],
-    ["Presidents Day", date(1, nthWeekdayOfMonth(3, 1, 1).getUTCDate()).map(fmt)],
-    ["Cesar Chavez Day", date(2, 27).map(fmt)],
-    ["Spring Break", dateRange(2, 21, 2, 29).map(fmt)],
-    ["Memorial Day", [getMemorialDay()].map(fmt)],
-    ["Juneteenth", date(5, 19).map(fmt)],
-    ["Independence Day", dateRange(6, 3, 6, 4).map(fmt)],
-    ["Labor Day", date(8, nthWeekdayOfMonth(1, 1, 8).getUTCDate()).map(fmt)],
-  ]);
-}
-
+// shortcut: Dates are maintained in source through summer 2027, extend from the published UCSB calendar for later terms.
 export const getTodayHoliday = (campusDate = getCampusDate()) => {
-  const today = campusDate.toISOString().slice(0, 10);
-  const holidays = getHolidays(campusDate.getUTCFullYear());
-  for (const [name, dates] of holidays) {
-    if (dates.includes(today)) {
-      return name;
-    }
-  }
-  return null;
+  const today = campusDate.toISOString().slice(0, 10)
+  return holidays.get(today) ??
+    breaks.find(([start, end]) => today >= start && today <= end)?.[2] ??
+    null
 }
