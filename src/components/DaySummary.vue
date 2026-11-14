@@ -2,12 +2,13 @@
 import { onActivated, watch } from 'vue'
 import { state, cache } from '../model.js'
 import { classrooms } from '../utils/locations.js'
-import { getTodayHoliday } from '../utils/holidays.js'
+import { getCampusDate, getTodayHoliday } from '../utils/holidays.js'
 import { MapPinIcon, AcademicCapIcon, BookOpenIcon } from '@heroicons/vue/24/outline'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const todayHoliday = getTodayHoliday()
+let campusDate = getCampusDate()
+let todayHoliday = $ref(getTodayHoliday(campusDate))
 let classes = $ref(false)
 let tip = $ref(''), displayTime = $ref(''), target = $ref(0), targetClass = $ref(null)
 
@@ -20,8 +21,7 @@ function getClasses () {
   if (!schedule && !custom) return classes = false
   classes = []
   
-  // if (!state.hasClasses) return
-  const day = (new Date()).getDay()
+  const day = (campusDate.getUTCDay() + 6) % 7
   for (const c in schedule) {
     //session only works for summer session
     const session = schedule[c].session?.substring(5).trim()
@@ -29,7 +29,7 @@ function getClasses () {
     for (const p of periods) {
       for (const w of p.wTime) {
         //only show classes for today
-        if (w[0] < (day - 1) * 1440 || w[1] > day * 1440) continue
+        if (w[0] < day * 1440 || w[1] > (day + 1) * 1440) continue
         classes.push({
           course: c, session,
           location: p.location,
@@ -46,7 +46,7 @@ function getClasses () {
     for (const c of custom) {
       //each c is a json object with title, location, time, and wTime
       for (const w of c.wTime) {
-        if (w[0] < (day - 1) * 1440 || w[1] > day * 1440) continue
+        if (w[0] < day * 1440 || w[1] > (day + 1) * 1440) continue
         classes.push({
           course: c.title, session: null,
           location: c.location,
@@ -78,15 +78,10 @@ function locate (location) {
   if (classrooms[location]) router.push('/map?q=' + location)
 }
 
-function currentwTime () {
-  const date = new Date()
-  const day = date.getDay(), hour = date.getHours(), minute = date.getMinutes()
-  return (day - 1) * 1440 + hour * 60 + minute
-}
-
-//updating status of classes, called per tick
-function updateStatus () {
-  const wTime = currentwTime()
+// Updating status of classes, called per tick.
+function updateStatus (wTime) {
+  target = 0
+  targetClass = null
   let t = Infinity // target
   if (todayHoliday) return tip = `Day off today for ${todayHoliday}! 😌`
   if (!classes || !classes.length) return tip = 'Day Off! 🏖️'
@@ -121,14 +116,21 @@ const sleep = ms => new Promise(r => setTimeout(r, ms))
 
 async function tick () {
   while (1) {
-    const wTime = currentwTime()
+    const now = getCampusDate()
+    if (now.toISOString().slice(0, 10) !== campusDate.toISOString().slice(0, 10)) {
+      campusDate = now
+      todayHoliday = getTodayHoliday(campusDate)
+      getClasses()
+    }
+    const day = (now.getUTCDay() + 6) % 7
+    const wTime = day * 1440 + now.getUTCHours() * 60 + now.getUTCMinutes()
+    updateStatus(wTime)
     const delta = target - wTime - 1
     if (delta < 0) displayTime = ''
     else {
-      const hr = Math.trunc(delta / 60).toString(), min = Math.trunc(delta % 60).toString(), sec = Math.trunc(59 - new Date().getSeconds()).toString()
+      const hr = Math.trunc(delta / 60).toString(), min = Math.trunc(delta % 60).toString(), sec = (59 - now.getUTCSeconds()).toString()
       displayTime = `${hr.padStart(2, '0')}:${min.padStart(2, '0')}:${sec.padStart(2, '0')}`
     }
-    updateStatus()
     await sleep(1000 - (Date.now() - 500) % 1000)
   }
 }
