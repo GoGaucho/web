@@ -1,14 +1,23 @@
 <script setup>
-import { onActivated } from 'vue'
+import { onActivated, onDeactivated, watch } from 'vue'
 import { ArrowPathIcon, XCircleIcon } from '@heroicons/vue/24/outline'
 import { call, db, log, get } from '../firebase.js'
-import { state, cache } from '../model.js'
-import { onSnapshot, setDoc, doc } from 'firebase/firestore'
+import { state, cache, getSchoolToken, studentCacheKey } from '../model.js'
+import { getAuth } from 'firebase/auth'
+import { onSnapshot, runTransaction, doc } from 'firebase/firestore'
 import * as parse from '../utils/parse.js'
 import Schedule from '../components/Schedule.vue'
 import Registration from '../components/Registration.vue'
+import CalendarExport from '../components/CalendarExport.vue'
 
 let q = $ref(''), qs = $ref([]), data = $ref({}), custom = $ref([])
+let loadedQuarter = $ref(''), loading = $ref(false)
+let customQuarter = $ref(''), customError = $ref('')
+let loadedUser = $ref('')
+let classError = $ref(''), needsSignIn = $ref(false), customSaving = $ref(false), saveError = $ref('')
+let dataRequest = 0, customRequest = 0
+let active = false, unsub = null
+const canEditCustom = $computed(() => !!state.user.uid && customQuarter === q && !customSaving)
 log('web/class')
 
 const pieces = $computed(() => {
@@ -21,6 +30,7 @@ const pieces = $computed(() => {
         wTime: w, key: k,
         time: p.time.replace(/^(.*?)\s/, ''),
         location: p.location,
+        session: data.schedule[k].session || '',
         label: ss ? ['Session ' + ss] : []
       })
     }
@@ -42,74 +52,144 @@ const pieces = $computed(() => {
 
 // fetch data from server, and write result to local cache
 async function fetchData () {
-  cache.set('class' + q, false)
-
-  const token = cache.get('token')
-  if (!token) return window.signin('Please verify your identity')
-  data = {}
+  const requestedQuarter = q, requestedUser = state.user.uid, request = ++dataRequest
+  loadedQuarter = ''
+  classError = ''
+  needsSignIn = false
+  if (!requestedQuarter || !requestedUser) return
+  const user = getAuth().currentUser
+  const token = user?.uid === requestedUser && getSchoolToken(user)
+  if (!token) {
+    loading = false
+    state.loading = false
+    needsSignIn = true
+    return
+  }
+  const isCurrent = () => active && request === dataRequest && requestedQuarter === q &&
+    requestedUser === state.user.uid && requestedUser === getAuth().currentUser?.uid
+  loading = true
   state.loading = true
-  const raw = await call('student', { q, token })
-  state.loading = false
-  if (!raw) return
-  data = raw
-  qs = data.quarters
-
-  cache.set('class' + q, raw, 86400e6)
+  try {
+    const raw = await call('student', { q: requestedQuarter, token })
+    if (!isCurrent()) return
+    if (!Array.isArray(raw?.quarters)) throw new Error('Missing schedule')
+    data = raw
+    qs = data.quarters
+    loadedQuarter = requestedQuarter
+    loadedUser = requestedUser
+    cache.set(studentCacheKey('class', requestedUser, requestedQuarter), raw)
+  } catch {
+    if (isCurrent()) classError = 'Could not load your classes.'
+  } finally {
+    if (request === dataRequest) {
+      loading = false
+      state.loading = false
+    }
+  }
 }
 
-let unsub = null
-function fetchCustom(){
-  // fetch customize schedule
-  cache.set('custom' + q, false)
+function readCustomEvents (snapshot) {
+  const raw = snapshot.data()?.['+']
+  if (raw === undefined) return []
+  const events = JSON.parse(raw)
+  if (!Array.isArray(events) || events.some(event => typeof event?.title !== 'string' ||
+    typeof event.time !== 'string' || !Array.isArray(event.wTime) || event.wTime.some(w => !Array.isArray(w) || w.length !== 2 || !w.every(Number.isInteger)))) {
+    throw new Error('Invalid custom events')
+  }
+  return events
+}
 
-  if(unsub) unsub()
+function fetchCustom () {
+  const requestedQuarter = q, requestedUser = state.user.uid
+  const request = ++customRequest
+  customQuarter = ''
+  customError = ''
+  unsub?.()
+  if (!requestedQuarter || !requestedUser) return
+  const isCurrent = () => active && request === customRequest && requestedQuarter === q && requestedUser === state.user.uid
+  const failed = () => {
+    if (!isCurrent()) return
+    customQuarter = ''
+    customError = 'Custom events could not be loaded. Try again before editing or exporting.'
+  }
+  unsub = onSnapshot(doc(db, `user/${requestedUser}/schedule/${requestedQuarter}`), { includeMetadataChanges: true }, snapshot => {
+    if (!isCurrent()) return
+    if (snapshot.metadata.fromCache || snapshot.metadata.hasPendingWrites) {
+      customQuarter = ''
+      return
+    }
+    try {
+      custom = readCustomEvents(snapshot)
+      cache.set(studentCacheKey('custom', requestedUser, requestedQuarter), custom)
+      customQuarter = requestedQuarter
+      customError = ''
+    } catch { failed() }
+  }, failed)
+}
 
+function resetData () {
+  dataRequest++
+  customRequest++
+  loadedQuarter = ''
+  loadedUser = ''
+  customQuarter = ''
+  customError = ''
+  classError = ''
+  saveError = ''
+  customSaving = false
+  needsSignIn = false
+  edit = {}
+  data = {}
   custom = []
-  unsub = onSnapshot(doc(db, `user/${state.user.uid}/schedule/${q}`), doc => {
-    const c = doc.data()
-    if (!c) return
-    custom = JSON.parse(c['+'])
-    cache.set('custom' + q, custom, 86400e6)
-  })
+  loading = false
+  state.loading = false
+  if (unsub) {
+    unsub()
+    unsub = null
+  }
 }
 
 function getData () {
-
-  custom = cache.get('custom' + q)
-
-  if (!custom || custom.length === 0) {
-    custom = []
-    fetchCustom()
-  }
-
-  data = cache.get('class' + q)
-
-  if (!data) {
-    data = {}
-    fetchData()
-  }else{
-    qs = data.quarters
-  }
-  
+  resetData()
+  const uid = state.user.uid
+  if (!active || !uid || !q) return
+  custom = cache.get(studentCacheKey('custom', uid, q)) || []
+  fetchCustom()
+  data = cache.get(studentCacheKey('class', uid, q)) || {}
+  if (Array.isArray(data.quarters)) qs = data.quarters
+  fetchData()
 }
 
-window.onsignin = getData
-
-const sleep = ms => new Promise(r => setTimeout(r, ms))
+watch(() => state.user.uid, () => {
+  if (active) getData()
+}, { flush: 'sync' })
 
 async function init () {
-  if (!state.quarter) {
-    state.quarter = (await get('cache/quarter')).current
+  active = true
+  window.onsignin = getData
+  try {
+    if (!state.quarter) {
+      const quarter = await get('cache/quarter')
+      if (!active) return
+      state.quarter = quarter.current
+    }
+    q = state.quarter
+    qs = [parse.quarterLast(q), q, parse.quarterNext(q)]
+    getData()
+  } catch {
+    if (active) classError = 'Could not load the current quarter.'
   }
-  q = state.quarter
-  //initialize qs
-  qs = [parse.quarterLast(q), q, parse.quarterNext(q)]
-  await sleep(500)
-  if (state.user.uid) getData()
-  else window.signin('Please verify your identity')
 }
 
 onActivated(init)
+onDeactivated(() => {
+  active = false
+  resetData()
+})
+
+function signInForClasses () {
+  window.signin('Please verify your identity')
+}
 
 // following are about customize schedule
 const wTime = (d, hr, min) => d * 1440 + hr * 60 + Number(min)
@@ -130,29 +210,51 @@ let ready = $computed(() => {
   return [ws, `${ds} ${m[2]}:${m[3]} - ${m[4]}:${m[5]}`]
 })
 
-function submitCustom () {
-  setDoc(doc(db, `user/${state.user.uid}/schedule/${q}`), {
-    '+': JSON.stringify(custom)
-  }, { merge: true })
-  //updat the cache data for custom event
-  cache.set('custom' + q, custom, 86400e6)
+async function submitCustom (update) {
+  if (!canEditCustom) return false
+  const uid = state.user.uid, quarter = q, request = customRequest
+  const isCurrent = () => active && request === customRequest && state.user.uid === uid && q === quarter && getAuth().currentUser?.uid === uid
+  const ref = doc(db, `user/${uid}/schedule/${quarter}`)
+  customSaving = true
+  saveError = ''
+  try {
+    await runTransaction(db, async transaction => {
+      const snapshot = await transaction.get(ref)
+      if (!isCurrent()) throw new Error('Schedule changed')
+      const next = update(readCustomEvents(snapshot))
+      transaction.set(ref, { '+': JSON.stringify(next) }, { merge: true })
+    })
+    if (!isCurrent()) return false
+    customSaving = false
+    // Require a fresh server snapshot after the committed change before another edit or export.
+    fetchCustom()
+    return true
+  } catch {
+    if (isCurrent()) saveError = 'Could not save your custom event. Try again.'
+    return false
+  } finally {
+    if (isCurrent()) customSaving = false
+  }
 }
 
-function addCustom () {
+async function addCustom () {
   if (!ready) return
-  custom.push({
+  const event = {
     title: edit.title,
     location: edit.location,
     wTime: ready[0],
     time: ready[1]
-  })
-  submitCustom()
-  edit = {}
+  }
+  if (await submitCustom(events => [...events, event])) edit = {}
 }
 
 function removeCustom (i) {
-  custom.splice(i, 1)
-  submitCustom()
+  const event = JSON.stringify(custom[i])
+  submitCustom(events => {
+    const index = events.findIndex(current => JSON.stringify(current) === event)
+    if (index !== -1) events.splice(index, 1)
+    return events
+  })
 }
 
 
@@ -160,15 +262,23 @@ function removeCustom (i) {
 
 <template>
   <div>
-    <div class="flex justify-between items-center w-full p-4 pb-2 sm:px-10">
-      <div class="flex items-center">
+    <div class="flex flex-wrap justify-between items-center gap-3 w-full p-4 pb-2 sm:px-10">
+      <div class="flex flex-wrap gap-y-2 items-center">
         <h1 class="text-2xl">My Classes</h1>
         <select class="ml-3 px-2 py-1 rounded appearance-none text-sm block shadow bg-white cursor-pointer" v-model="q" @change="getData">
           <option v-for="o in qs" :value="o">{{ parse.quarter(o) }}</option>
         </select>
+        <div class="ml-3">
+          <CalendarExport :pieces="pieces" :quarter="q" :google-user-id="state.user.uid" :google-user-email="state.user.email" :disabled="loading || loadedUser !== state.user.uid || loadedQuarter !== q || !canEditCustom" />
+        </div>
       </div>
-      <ArrowPathIcon class="w-6 text-gray-500 cursor-pointer" @click="fetchData" />
+      <button type="button" aria-label="Refresh classes" :disabled="loading || !state.user.uid" @click="fetchData"><ArrowPathIcon class="w-6 text-gray-500" /></button>
     </div>
+    <p v-if="!state.user.uid || needsSignIn" class="mx-4 mb-2 text-sm sm:mx-10">
+      <button type="button" class="underline" @click="signInForClasses">Sign in to load your classes</button>
+    </p>
+    <p v-if="classError" class="mx-4 mb-2 text-sm text-red-700 sm:mx-10" role="alert">{{ classError }} <button type="button" class="underline" @click="q ? fetchData() : init()">Retry</button></p>
+    <p v-if="customError" class="mx-4 mb-2 text-sm text-red-700 sm:mx-10" role="alert">{{ customError }} <button type="button" class="underline focus-visible:ring-2 focus-visible:ring-blue-500" :disabled="customSaving" @click="fetchCustom">Retry</button></p>
     <div class="w-full flex flex-wrap justify-center items-start" v-if="data" :key="q">
       <div class="flex-grow bg-white sm:p-2 sm:pb-4 lg:px-6 pb-4 rounded shadow m-0 sm:m-4 lg:mr-0" v-if="data.schedule"><!-- schedule -->
         <Schedule :pieces="pieces" :quarter='q' whole="1" />
@@ -181,7 +291,7 @@ function removeCustom (i) {
               <div class="m-2 flex items-center flex-wrap" v-for="(c, i) in custom">
                 <b>{{ c.title }}</b>
                 <span class="text-xs text-gray-500 mx-2">{{ c.time }}</span>
-                <XCircleIcon class="w-5 text-red-500 cursor-pointer" @click="removeCustom(i)"/>
+                <button type="button" :aria-label="'Remove ' + c.title" :disabled="!canEditCustom" @click="removeCustom(i)"><XCircleIcon class="w-5 text-red-500" /></button>
               </div>
             </div>
             <div class="flex flex-wrap items-center m-2 mb-0">
@@ -190,7 +300,8 @@ function removeCustom (i) {
               <input class="rounded border bg-transparent appearance-none m-1 px-1" placeholder="MTWRFSU 08:00 - 23:59" v-model="edit.time">
             </div>
             <p class="text-xs text-gray-500 mx-4">Time format: 24-hour hh:mm</p>
-            <button class="all-transition rounded shadow text-white font-bold m-4 mt-2 px-2 py-1" :class="ready ? 'bg-blue-500 hover:shadow-md' : 'bg-gray-300'" @click="addCustom">Add Event</button>
+            <p v-if="saveError" role="alert" class="mx-4 text-sm text-red-700">{{ saveError }}</p>
+            <button class="all-transition rounded shadow text-white font-bold m-4 mt-2 px-2 py-1 bg-blue-500 disabled:bg-gray-300" :disabled="!ready || !canEditCustom" @click="addCustom">{{ customSaving ? 'Saving…' : 'Add Event' }}</button>
           </div>
         </div>
         <Registration v-if="data.registration" :data="data.registration"/>

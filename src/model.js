@@ -15,6 +15,30 @@ export const cache = {
   }
 }
 
+export const studentCacheKey = (kind, uid, quarter = '') => `${kind}:${uid}:${quarter}`
+
+export function getSchoolToken (user) {
+  if (!user?.uid) return null
+  const key = studentCacheKey('token', user.uid)
+  const token = cache.get(key)
+  if (token) return token
+
+  // Upgrade older sessions only when the Google identity matches Firebase.
+  const legacy = cache.get('token')
+  try {
+    const payload = legacy?.split('.')[1]?.replace(/-/g, '+').replace(/_/g, '/')
+    if (!payload) return null
+    const { sub, exp } = JSON.parse(atob(payload))
+    if (!sub || !Number.isFinite(exp) || !user.providerData.some(provider => provider.providerId === 'google.com' && provider.uid === sub)) return null
+    const remaining = exp * 1000 - Date.now()
+    if (remaining <= 0) return null
+    cache.set(key, legacy, Math.min(remaining, 3500e3))
+    return legacy
+  } catch {
+    return null
+  }
+}
+
 // automatically clear cache
 setTimeout(() => {
   for (const _k in LS) {
@@ -31,6 +55,7 @@ export const state = reactive({
   hasClasses: false,
   course: {},
   user: {},
+  calendarImportRecoveries: {},
   screen: { sm: false, md: false, lg: false },
   isStandalone: window.matchMedia('(display-mode: standalone)').matches
 })

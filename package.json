@@ -3,6 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
+    "test": "node --test tests/*.test.*",
+    "calendar:refresh": "node scripts/refresh-academic-calendar.mjs",
     "build": "vite build",
     "preview": "vite preview"
   },

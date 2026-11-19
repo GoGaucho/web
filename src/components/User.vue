@@ -1,7 +1,7 @@
 <script setup>
 import { AcademicCapIcon } from '@heroicons/vue/24/outline'
 import Wrapper from './Wrapper.vue'
-import { state, cache } from '../model.js'
+import { state, cache, studentCacheKey } from '../model.js'
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
 import { log } from '../firebase.js'
 import { useRouter } from 'vue-router'
@@ -20,32 +20,34 @@ const provider = new GoogleAuthProvider(), auth = getAuth()
 provider.setCustomParameters({ hd: 'ucsb.edu' })
 
 // listeners
-auth.onAuthStateChanged(u => {
-  state.user = { time: Date.now() }
-  if (u) state.user = {
+function updateUser (u) {
+  state.user = u ? {
     uid: u.uid,
     name: u.displayName,
     email: u.email,
     photoURL: u.photoURL,
     time: Date.now()
-  }
-})
+  } : { time: Date.now() }
+}
+auth.onAuthStateChanged(updateUser)
 
 function signout () {
   showPanel = false
+  if (auth.currentUser) cache.set(studentCacheKey('token', auth.currentUser.uid), false, 0)
   cache.set('token', false, 0)
   auth.signOut()
 }
 
 // manual signin
 async function signin (prompt) {
-  signout()
   if (prompt) state.loading = prompt
   const res = await signInWithPopup(auth, provider).catch(() => false)
   if (prompt) state.loading = false
   if (!res) return
   const credential = GoogleAuthProvider.credentialFromResult(res)
-  cache.set('token', credential.idToken, 3500e3)
+  if (credential?.idToken) cache.set(studentCacheKey('token', res.user.uid), credential.idToken, 3500e3)
+  cache.set('token', false, 0)
+  updateUser(res.user)
   if (window.onsignin) window.onsignin()
   log('web_login')
 }
