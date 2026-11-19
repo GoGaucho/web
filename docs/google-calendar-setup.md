@@ -10,7 +10,7 @@ Configure consent for `calendar.app.created`, `openid` and `email`. The account 
 
 Run `npm run calendar:refresh` with Node.js 22 and network access to update the [bundled date snapshot](../src/data/academic-calendar.json). The importer discovers published years in the [UCSB Registrar’s academic calendar](https://registrar.sa.ucsb.edu/calendars/academic-calendars) and checks each quarter's holiday dates against the report's instruction day count. The Power BI report endpoint is undocumented and its format can change.
 
-The Firebase Hosting workflow restores the last deployed snapshot, then checks for updated dates weekly and on merges to `main`. An incomplete scheduled refresh stops before deployment. A merge can still deploy with the restored dates if the Registrar is unavailable. Local builds and tests use the bundled data without querying the report.
+The current snapshot covers 24 Fall, Winter, and Spring quarters through Spring 2034. Run the refresh command to pick up corrections or newly published years. An incomplete response leaves the saved snapshot intact. Local builds and tests use the bundled data without querying the report.
 
 New Google copies omit enrolled class occurrences on holidays during the instruction period. Custom events retain their normal recurrence. Summer needs separate verified session dates, and finals need an enrolled-course exam source.
 
