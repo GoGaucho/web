@@ -47,7 +47,7 @@ init()
         <div class="button" @click="router.push('/dining')"><SwatchIcon class="w-6 mr-2" />Dining</div>
         <div class="button" @click="router.push('/course')"><BookOpenIcon class="w-6 mr-2" />Course</div>
         <div class="button" @click="router.push('/waitz')"><BuildingLibraryIcon class="w-6 mr-2" />Building Capacity</div>
-        <div class="button" @click="router.push('/link')"><LinkIcon class="w-6 mr-2" />All Links</div>
+        <RouterLink class="button rounded focus-visible:ring-2 focus-visible:ring-blue-600" to="/link"><LinkIcon class="w-6 shrink-0 mr-2" /><span>Links and Phone Numbers</span></RouterLink>
         <hr>
       </div>
       <div class="-translate-y-1.5 w-full sm:w-56 my-4 sm:my-0">
