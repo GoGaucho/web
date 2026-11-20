@@ -32,7 +32,8 @@ test('search matches names, descriptions, categories, and existing link labels',
   for (const [query, id] of [['dSp', 'dsp'], ['U-Mail', 'student-help'], ['Learning Accommodations', 'dsp'], ['UC Police', 'police']]) {
     assert.ok(filterContacts(studentServices, query).some(service => service.id === id))
   }
-  assert.ok(filterContacts(studentServices, 'Technology Support').every(service => service.category === 'Technology Support'))
+  assert.deepEqual(filterContacts(studentServices, '  tEchnology SUPPort ').map(service => service.id), ['student-help', 'resnet'])
+  assert.deepEqual(filterContacts(studentServices, 'Campus Safety 24/7').map(service => service.id), ['care', 'cso'])
   assert.equal(filterContacts(studentServices, '   ').length, contacts.length)
   assert.deepEqual(filterContacts(studentServices, 'not-a-real-service'), [])
 })

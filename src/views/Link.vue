@@ -1,20 +1,21 @@
 <script setup>
 import { computed, ref } from 'vue'
+import { ChevronDownIcon } from '@heroicons/vue/24/solid'
 import { log } from '../firebase.js'
 import links, { studentServices } from '../utils/links.js'
 import { categories, filterContacts } from '../utils/contacts.js'
 import LinkCard from '../components/LinkCard.vue'
 import ContactCard from '../components/ContactCard.vue'
 
-// App.vue's KeepAlive retains this selection and directory filters on return.
+// App.vue's KeepAlive retains the selected tab, search, and expanded categories on return.
 const tabs = [
   { id: 'campus-links', label: 'Campus Links' },
   { id: 'student-services', label: 'Phone Directory' }
 ]
 const selectedTab = ref('campus-links')
 const query = ref('')
-const category = ref('')
-const services = studentServices
+const searchQuery = computed(() => query.value.trim())
+const expandedCategories = ref(new Set(['Campus Safety', 'Health & Wellness']))
 const categoryColors = {
   'Campus Safety': 'border-red-300',
   'Health & Wellness': 'border-green-300',
@@ -22,13 +23,19 @@ const categoryColors = {
   'Academic & Financial Support': 'border-purple-300',
   'Campus Services': 'border-amber-300'
 }
-const results = computed(() => filterContacts(services, query.value, category.value))
+const results = computed(() => filterContacts(studentServices, searchQuery.value))
 const groups = computed(() => categories.map(name => ({ name, services: results.value.filter(service => service.category === name) })).filter(group => group.services.length))
 const campusLinks = links
 
-function resetFilters() {
+function clearSearch() {
   query.value = ''
-  category.value = ''
+}
+
+function rememberExpansion(name, event) {
+  const section = event.currentTarget
+  if (searchQuery.value || !section.isConnected) return
+  if (section.open) expandedCategories.value.add(name)
+  else expandedCategories.value.delete(name)
 }
 
 function handleTabKeydown(event, index) {
@@ -66,35 +73,32 @@ log('web/link')
     <section id="student-services" v-show="selectedTab === 'student-services'" role="tabpanel" aria-labelledby="student-services-tab" tabindex="0" class="max-w-4xl focus-visible:ring-2 focus-visible:ring-blue-500">
       <h2 class="sr-only">Student Services Phone Directory</h2>
 
-      <div class="my-3 flex flex-col gap-2 sm:flex-row sm:items-end sm:gap-4">
-        <label for="service-search" class="min-w-0 flex-1 text-sm font-bold">
+      <div class="my-3">
+        <label for="service-search" class="block text-sm font-bold">
           Search
           <input id="service-search" v-model="query" type="search" placeholder="Service or phone number" class="mt-1 block w-full rounded border bg-white px-2 py-1 text-base font-normal focus-visible:ring-2 focus-visible:ring-blue-500" aria-describedby="search-help">
-        </label>
-        <label for="service-category" class="min-w-0 text-sm font-bold sm:w-64">
-          Category
-          <select id="service-category" v-model="category" class="mt-1 block w-full rounded border bg-white px-2 py-1 text-base font-normal focus-visible:ring-2 focus-visible:ring-blue-500">
-            <option value="">All services</option>
-            <option v-for="name in categories" :key="name" :value="name">{{ name }}</option>
-          </select>
         </label>
       </div>
       <p id="search-help" class="text-xs text-gray-500">Search by name, description, category, or number.</p>
       <div class="my-2 flex flex-wrap items-center gap-x-4 text-xs text-gray-500">
-        <p role="status" aria-live="polite" aria-atomic="true">{{ results.length }} {{ results.length === 1 ? 'service' : 'services' }} found<span v-if="category"> in {{ category }}</span></p>
-        <button v-if="query || category" type="button" class="rounded py-2 text-blue-600 hover:underline focus-visible:ring-2 focus-visible:ring-blue-500" @click="resetFilters">Clear search and filters</button>
+        <p role="status" aria-live="polite" aria-atomic="true">{{ results.length }} {{ results.length === 1 ? 'service' : 'services' }} found</p>
+        <button v-if="query" type="button" class="rounded py-2 text-blue-600 hover:underline focus-visible:ring-2 focus-visible:ring-blue-500" @click="clearSearch">Clear search</button>
       </div>
       <div v-if="!results.length" class="border-t py-4 text-sm">
         <h3 class="font-bold">No services found</h3>
         <p class="mt-1 text-gray-500">Try another service name, phone number, or category.</p>
-        <button type="button" class="mt-1 rounded py-2 text-blue-600 hover:underline focus-visible:ring-2 focus-visible:ring-blue-500" @click="resetFilters">Show all services</button>
+        <button type="button" class="mt-1 rounded py-2 text-blue-600 hover:underline focus-visible:ring-2 focus-visible:ring-blue-500" @click="clearSearch">Show all services</button>
       </div>
-      <section v-for="group in groups" :key="group.name" class="mb-4" :aria-label="group.name">
-        <h3 class="my-2 border-l-4 pl-2 text-sm font-bold text-gray-900" :class="categoryColors[group.name]">{{ group.name }}</h3>
-        <div class="rounded border border-b-0 bg-white">
+      <!-- Key by the search query so each new set of matches opens automatically. -->
+      <details v-for="group in groups" :key="`${group.name}:${searchQuery}`" class="group mb-3 rounded border bg-white" :open="Boolean(searchQuery) || expandedCategories.has(group.name)" @toggle="rememberExpansion(group.name, $event)">
+        <summary class="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded border-l-4 px-3 py-2 text-sm font-bold text-gray-900 hover:bg-gray-50 focus-visible:ring-2 focus-visible:ring-blue-500 [&::-webkit-details-marker]:hidden" :class="categoryColors[group.name]">
+          {{ group.name }}
+          <ChevronDownIcon aria-hidden="true" class="h-5 w-5 shrink-0 text-gray-500 motion-safe:transition-transform group-open:rotate-180" />
+        </summary>
+        <div class="-mb-px border-t">
           <ContactCard v-for="service in group.services" :key="service.id" :service="service" />
         </div>
-      </section>
+      </details>
       <p class="my-3 text-xs text-gray-500">Numbers verified with UCSB on October 31, 2026.</p>
     </section>
   </div>
