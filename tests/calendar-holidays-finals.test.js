@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createCalendar } from '../src/utils/calendar.js'
-import { getAcademicCalendar } from '../src/utils/academic-calendar.js'
+import { getAcademicCalendar, getScheduleCalendar } from '../src/utils/academic-calendar.js'
 
 const now = new Date('2026-11-13T12:00:00Z')
 const meeting = (day = 2, extra = {}) => ({ key: 'CMPSC 16', wTime: [day * 1440 + 540, day * 1440 + 600], location: 'WEEKLY ROOM', ...extra })
@@ -36,9 +36,55 @@ test('academic metadata returns independent values and never guesses unsupported
   first.startDate = '2026-01-01'
   assert.equal(getAcademicCalendar('20264').startDate, '2026-09-24')
   assert.deepEqual(getAcademicCalendar('20264').noClassDates, ['2026-11-11', '2026-11-26', '2026-11-27'])
-  for (const quarter of ['20263', '20273', '20994', '', undefined, 'toString', 'constructor']) {
+  for (const quarter of ['20233', '20303', '20994', '', undefined, 'toString', 'constructor']) {
     assert.equal(getAcademicCalendar(quarter), null, String(quarter))
   }
+})
+
+test('summer export uses each published session range and skips only matching class holidays', () => {
+  const quarter = '20263'
+  const pieces = [
+    meeting(4, { key: 'A class', session: 'Sess A (6/22 - 8/1)' }),
+    meeting(0, { key: 'B class', session: 'Session B' }),
+    meeting(4, { key: 'C class', session: 'C' }),
+    meeting(4, { key: 'D class', session: 'Sess. D (6/22 - 7/11)' }),
+    meeting(0, { key: 'E class', session: 'Session E' }),
+    meeting(0, { key: 'F class', session: 'Session F' }),
+    meeting(0, { key: 'G class', session: 'Session G' }),
+    meeting(4, { key: 'custom', title: 'Study' }),
+    { key: 'TBA' }
+  ]
+  const metadata = getScheduleCalendar(quarter, pieces)
+  assert.deepEqual(metadata.noClassDates, ['2026-07-03', '2026-09-07'])
+  assert.equal(metadata.academicYear, '2025-2026')
+  const result = calendar({ ...metadata, quarter, pieces })
+  assert.deepEqual(result.events.map(event => [
+    event.summary, event.start.dateTime.slice(0, 10), event.recurrence[0].split('UNTIL=')[1], exclusions(event.recurrence)
+  ]), [
+    ['A class', '2026-06-26', '20260801T065959Z', ['20260703T090000']],
+    ['B class', '2026-08-03', '20260912T065959Z', ['20260907T090000']],
+    ['C class', '2026-06-26', '20260829T065959Z', ['20260703T090000']],
+    ['D class', '2026-06-26', '20260711T065959Z', ['20260703T090000']],
+    ['E class', '2026-07-13', '20260801T065959Z', []],
+    ['F class', '2026-08-03', '20260822T065959Z', []],
+    ['G class', '2026-08-24', '20260912T065959Z', ['20260907T090000']],
+    ['Study', '2026-06-26', '20260912T065959Z', []]
+  ])
+})
+
+test('summer export uses the selected year and requires every timed class to have a known session', () => {
+  const quarter = '20273'
+  const pieces = [meeting(0, { session: 'Sess A (6/21 - 7/31)' })]
+  const metadata = getScheduleCalendar(quarter, pieces)
+  const result = calendar({ ...metadata, quarter, pieces })
+  assert.equal(result.events[0].start.dateTime, '2027-06-21T09:00:00')
+  assert.deepEqual(exclusions(result.events[0].recurrence), ['20270705T090000'])
+  for (const session of ['', 'Session H', 'unknown']) {
+    const pieces = [meeting(0, { session })]
+    const dates = getScheduleCalendar(quarter, pieces)
+    assert.throws(() => calendar({ ...dates, quarter, pieces }), /session|class dates/i)
+  }
+  assert.equal(getScheduleCalendar('20303', pieces), null)
 })
 
 test('future calendar copies skip observed holidays and keep custom events', () => {

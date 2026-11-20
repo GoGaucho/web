@@ -101,6 +101,9 @@ export function createCalendar ({ quarter, pieces, startDate, endDate, sessionRa
   const unavailableFinals = new Set()
   const ranges = new Map()
   for (const piece of pieces.filter(isTimedPiece)) {
+    if (quarter.endsWith('3') && piece.key !== 'custom' && !piece.session) {
+      throw new Error('A summer class is missing its session.')
+    }
     if (!piece.session || ranges.has(piece.session)) continue
     const range = sessionRanges[piece.session]
     if (!range) throw new Error(`Enter the class dates for ${piece.session}.`)

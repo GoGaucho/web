@@ -4,8 +4,8 @@ import { getAuth } from 'firebase/auth'
 import { CalendarDaysIcon } from '@heroicons/vue/24/outline'
 import state from '../model.js'
 import { quarter as quarterName } from '../utils/parse.js'
-import { createCalendar, isTimedPiece, normalizeClassDate, sessionDateRange } from '../utils/calendar.js'
-import { getAcademicCalendar } from '../utils/academic-calendar.js'
+import { createCalendar, isTimedPiece } from '../utils/calendar.js'
+import { getScheduleCalendar } from '../utils/academic-calendar.js'
 import { prepareGoogleCalendar, authorizeGoogleCalendar, googleCalendarErrorMessage } from '../utils/google-calendar-auth.js'
 import { createGoogleCalendar, googleCalendarUrl } from '../utils/google-calendar.js'
 
@@ -19,9 +19,7 @@ const props = defineProps({
 
 const dialog = ref(null)
 const dialogHeading = ref(null), googleSubmit = ref(null)
-const startDate = ref(''), endDate = ref(''), sessionRanges = ref({})
-const noClassDates = ref([])
-const loadingDates = ref(false), status = ref('')
+const status = ref('')
 const busy = ref(false), cancelling = ref(false)
 const loadingGoogle = ref(false), googleReady = ref(false), googleSetupError = ref('')
 const googleAdded = ref(false), googleError = ref(''), googleUrl = ref('')
@@ -40,21 +38,16 @@ let operation = 0, activeOperation = null
 const calendarName = computed(() => 'UCSB Schedule Calendar ' + (props.quarter ? quarterName(props.quarter) : ''))
 const hasRecovery = computed(() => recovery.value?.userId === props.googleUserId && Boolean(props.googleUserId))
 const timedPieces = computed(() => props.pieces.filter(isTimedPiece))
-const sessions = computed(() => [...new Set(timedPieces.value.map(p => p.session).filter(Boolean))])
-const hasDates = computed(() => startDate.value && endDate.value && sessions.value.every(s => sessionRanges.value[s]?.startDate && sessionRanges.value[s]?.endDate))
+const dates = computed(() => getScheduleCalendar(props.quarter, timedPieces.value))
 const result = computed(() => {
-  if (!hasDates.value) return { error: '' }
+  if (!dates.value || !timedPieces.value.length) return { error: '' }
   try {
-    return createCalendar({
-      quarter: props.quarter, pieces: props.pieces,
-      startDate: startDate.value, endDate: endDate.value,
-      sessionRanges: sessionRanges.value, noClassDates: noClassDates.value
-    })
+    return createCalendar({ ...dates.value, quarter: props.quarter, pieces: props.pieces })
   } catch (error) {
     return { error: error.message }
   }
 })
-const canAddGoogle = computed(() => !props.disabled && !busy.value && !loadingDates.value &&
+const canAddGoogle = computed(() => !props.disabled && !busy.value &&
   !loadingGoogle.value && googleReady.value && !googleAdded.value && !hasRecovery.value &&
   Boolean(props.googleUserId) && Boolean(result.value.events?.length))
 
@@ -67,34 +60,11 @@ async function open () {
   googleAdded.value = false
   googleUrl.value = ''
   importSnapshot.value = null
-  startDate.value = ''
-  endDate.value = ''
-  noClassDates.value = []
-  sessionRanges.value = Object.fromEntries(sessions.value.map(s => [s, sessionDateRange(s, props.quarter)]))
   const currentRequest = ++request
-  loadingDates.value = true
   loadingGoogle.value = true
   dialog.value.showModal()
   dialogHeading.value.focus()
-  await Promise.all([loadDates(currentRequest), prepareConnection(currentRequest)])
-}
-
-async function loadDates (currentRequest) {
-  try {
-    const dates = getAcademicCalendar(props.quarter)
-    if (currentRequest !== request || !dialog.value.open) return
-    if (dates) {
-      startDate.value = normalizeClassDate(dates.startDate)
-      endDate.value = normalizeClassDate(dates.endDate)
-      noClassDates.value = [...dates.noClassDates]
-    }
-  } catch {
-    // Adding stays unavailable without verified class dates and no-class dates.
-    startDate.value = ''
-    endDate.value = ''
-  } finally {
-    if (currentRequest === request) loadingDates.value = false
-  }
+  await prepareConnection(currentRequest)
 }
 
 async function prepareConnection (currentRequest) {
@@ -127,7 +97,6 @@ async function retryConnection () {
 
 function finishClose () {
   request++
-  loadingDates.value = false
   loadingGoogle.value = false
   dialog.value?.close()
 }
@@ -243,8 +212,8 @@ function clearRecovery () {
           Choose your personal or school Google account.
         </p>
         <p v-if="importSnapshot?.email" class="mt-2 text-sm text-gray-600">Google account: <b>{{ importSnapshot.email }}</b></p>
-        <p v-if="loadingDates || loadingGoogle" class="mt-3 text-sm text-gray-500" role="status">Preparing your calendar…</p>
-        <p v-else-if="!hasDates || result.error" :id="id + '-error'" class="mt-3 text-sm text-red-700" role="alert">This quarter’s calendar isn’t ready yet. Please try again later.</p>
+        <p v-if="loadingGoogle" class="mt-3 text-sm text-gray-500" role="status">Preparing your calendar…</p>
+        <p v-else-if="!dates || result.error" :id="id + '-error'" class="mt-3 text-sm text-red-700" role="alert">This quarter’s calendar isn’t ready yet. Please try again later.</p>
         <div v-if="hasRecovery" class="mt-3 rounded border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900" role="alert">
           <p>{{ recovery.message }}</p>
           <a :href="recovery.url" target="_blank" rel="noopener noreferrer" class="mt-2 inline-block underline focus-visible:ring-2 focus-visible:ring-blue-500">Open Google Calendar</a>
