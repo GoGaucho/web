@@ -9,8 +9,11 @@ function parseWeeklyMenu(html) {
   $('[id$="-body"] table').each((_, table) => {
     const meal = $(table).parent().attr('id').replace(/-body$/, '')
     const dates = $(table).find('thead th h4').map((_, el) => $(el).text().trim()).get()
-    dates.forEach(date => {
+    dates.forEach((date, index) => {
       if (!days.has(date)) days.set(date, { date, meals: {} })
+      const hoursId = $(table).find('thead th').eq(index).find('[id$="-Hours"]').attr('id')
+      const ticks = hoursId?.match(/^(\d+)-/)?.[1]
+      if (ticks) days.get(date).menuDate = new Date(Number(BigInt(ticks) / 10000n) - 62135596800000).toISOString().slice(0, 10)
     })
     let station = ''
     $(table).find('tbody tr').each((_, row) => {
@@ -33,6 +36,17 @@ function parseWeeklyMenu(html) {
   return [...days.values()]
 }
 
+function parseMealHours(html, dc) {
+  const $ = load(html)
+  const hours = {}
+  $(`#${dc}-body h5`).each((_, heading) => {
+    const hour = $(heading).find('small').text().trim()
+    const meal = $(heading).clone().children().remove().end().text().trim().toLowerCase().replace(/\s+/g, '-')
+    if (hour && meal) hours[meal] = hour
+  })
+  return hours
+}
+
 async function weeklyMenuHandler(req, res) {
   res.setHeader('Content-Type', 'application/json; charset=utf-8')
   if (req.method !== 'GET') {
@@ -51,7 +65,22 @@ async function weeklyMenuHandler(req, res) {
       const source = `https://apps.dining.ucsb.edu/menu/week?dc=${dc}`
       const response = await fetch(source, { signal: AbortSignal.timeout(15000) })
       if (!response.ok) throw new Error(`Menu source returned ${response.status}`)
-      entry = { expires: Date.now() + 300000, data: { days: parseWeeklyMenu(await response.text()), source } }
+      const days = parseWeeklyMenu(await response.text())
+      await Promise.all(days.map(async day => {
+        if (!day.menuDate) return
+        try {
+          const dailyUrl = new URL('https://apps.dining.ucsb.edu/menu/day')
+          dailyUrl.searchParams.set('dc', dc)
+          dailyUrl.searchParams.set('d', day.menuDate)
+          for (const meal of Object.keys(day.meals)) dailyUrl.searchParams.append('m', meal)
+          const daily = await fetch(dailyUrl, { signal: AbortSignal.timeout(10000) })
+          if (!daily.ok) throw new Error(`Hours source returned ${daily.status}`)
+          day.hours = parseMealHours(await daily.text(), dc)
+        } catch (error) {
+          console.error('Dining hours:', day.menuDate, error.message)
+        }
+      }))
+      entry = { expires: Date.now() + 300000, data: { days, source } }
       cache.set(dc, entry)
     }
     // Cache in memory only, so dates cannot remain stale in a browser overnight.
@@ -64,4 +93,4 @@ async function weeklyMenuHandler(req, res) {
   }
 }
 
-module.exports = { parseWeeklyMenu, weeklyMenuHandler }
+module.exports = { parseWeeklyMenu, parseMealHours, weeklyMenuHandler }
