@@ -1,0 +1,242 @@
+{
+  "20264": {
+    "startDate": "2026-09-24",
+    "endDate": "2026-12-04",
+    "finalsStartDate": "2026-12-05",
+    "finalsEndDate": "2026-12-11",
+    "noClassDates": [
+      "2026-11-11",
+      "2026-11-26",
+      "2026-11-27"
+    ]
+  },
+  "20271": {
+    "startDate": "2027-01-04",
+    "endDate": "2027-03-12",
+    "finalsStartDate": "2027-03-13",
+    "finalsEndDate": "2027-03-19",
+    "noClassDates": [
+      "2027-01-18",
+      "2027-02-15"
+    ]
+  },
+  "20272": {
+    "startDate": "2027-03-29",
+    "endDate": "2027-06-04",
+    "finalsStartDate": "2027-06-05",
+    "finalsEndDate": "2027-06-11",
+    "noClassDates": [
+      "2027-05-31"
+    ]
+  },
+  "20274": {
+    "startDate": "2027-09-23",
+    "endDate": "2027-12-03",
+    "finalsStartDate": "2027-12-04",
+    "finalsEndDate": "2027-12-10",
+    "noClassDates": [
+      "2027-11-11",
+      "2027-11-25",
+      "2027-11-26"
+    ]
+  },
+  "20281": {
+    "startDate": "2028-01-10",
+    "endDate": "2028-03-17",
+    "finalsStartDate": "2028-03-18",
+    "finalsEndDate": "2028-03-24",
+    "noClassDates": [
+      "2028-01-17",
+      "2028-02-21"
+    ]
+  },
+  "20282": {
+    "startDate": "2028-04-03",
+    "endDate": "2028-06-09",
+    "finalsStartDate": "2028-06-10",
+    "finalsEndDate": "2028-06-16",
+    "noClassDates": [
+      "2028-05-29"
+    ]
+  },
+  "20284": {
+    "startDate": "2028-09-28",
+    "endDate": "2028-12-08",
+    "finalsStartDate": "2028-12-09",
+    "finalsEndDate": "2028-12-15",
+    "noClassDates": [
+      "2028-11-10",
+      "2028-11-23",
+      "2028-11-24"
+    ]
+  },
+  "20291": {
+    "startDate": "2029-01-08",
+    "endDate": "2029-03-16",
+    "finalsStartDate": "2029-03-17",
+    "finalsEndDate": "2029-03-23",
+    "noClassDates": [
+      "2029-01-15",
+      "2029-02-19"
+    ]
+  },
+  "20292": {
+    "startDate": "2029-04-02",
+    "endDate": "2029-06-08",
+    "finalsStartDate": "2029-06-09",
+    "finalsEndDate": "2029-06-15",
+    "noClassDates": [
+      "2029-05-28"
+    ]
+  },
+  "20294": {
+    "startDate": "2029-09-27",
+    "endDate": "2029-12-07",
+    "finalsStartDate": "2029-12-08",
+    "finalsEndDate": "2029-12-14",
+    "noClassDates": [
+      "2029-11-12",
+      "2029-11-22",
+      "2029-11-23"
+    ]
+  },
+  "20301": {
+    "startDate": "2030-01-07",
+    "endDate": "2030-03-15",
+    "finalsStartDate": "2030-03-16",
+    "finalsEndDate": "2030-03-22",
+    "noClassDates": [
+      "2030-01-21",
+      "2030-02-18"
+    ]
+  },
+  "20302": {
+    "startDate": "2030-04-01",
+    "endDate": "2030-06-07",
+    "finalsStartDate": "2030-06-08",
+    "finalsEndDate": "2030-06-14",
+    "noClassDates": [
+      "2030-05-27"
+    ]
+  },
+  "20304": {
+    "startDate": "2030-09-26",
+    "endDate": "2030-12-06",
+    "finalsStartDate": "2030-12-07",
+    "finalsEndDate": "2030-12-13",
+    "noClassDates": [
+      "2030-11-11",
+      "2030-11-28",
+      "2030-11-29"
+    ]
+  },
+  "20311": {
+    "startDate": "2031-01-06",
+    "endDate": "2031-03-14",
+    "finalsStartDate": "2031-03-15",
+    "finalsEndDate": "2031-03-21",
+    "noClassDates": [
+      "2031-01-20",
+      "2031-02-17"
+    ]
+  },
+  "20312": {
+    "startDate": "2031-03-31",
+    "endDate": "2031-06-06",
+    "finalsStartDate": "2031-06-07",
+    "finalsEndDate": "2031-06-13",
+    "noClassDates": [
+      "2031-05-26"
+    ]
+  },
+  "20314": {
+    "startDate": "2031-09-25",
+    "endDate": "2031-12-05",
+    "finalsStartDate": "2031-12-06",
+    "finalsEndDate": "2031-12-12",
+    "noClassDates": [
+      "2031-11-11",
+      "2031-11-27",
+      "2031-11-28"
+    ]
+  },
+  "20321": {
+    "startDate": "2032-01-05",
+    "endDate": "2032-03-12",
+    "finalsStartDate": "2032-03-13",
+    "finalsEndDate": "2032-03-19",
+    "noClassDates": [
+      "2032-01-19",
+      "2032-02-16"
+    ]
+  },
+  "20322": {
+    "startDate": "2032-03-29",
+    "endDate": "2032-06-04",
+    "finalsStartDate": "2032-06-05",
+    "finalsEndDate": "2032-06-11",
+    "noClassDates": [
+      "2032-05-31"
+    ]
+  },
+  "20324": {
+    "startDate": "2032-09-23",
+    "endDate": "2032-12-03",
+    "finalsStartDate": "2032-12-04",
+    "finalsEndDate": "2032-12-10",
+    "noClassDates": [
+      "2032-11-11",
+      "2032-11-25",
+      "2032-11-26"
+    ]
+  },
+  "20331": {
+    "startDate": "2033-01-03",
+    "endDate": "2033-03-11",
+    "finalsStartDate": "2033-03-12",
+    "finalsEndDate": "2033-03-18",
+    "noClassDates": [
+      "2033-01-17",
+      "2033-02-21"
+    ]
+  },
+  "20332": {
+    "startDate": "2033-03-28",
+    "endDate": "2033-06-03",
+    "finalsStartDate": "2033-06-04",
+    "finalsEndDate": "2033-06-10",
+    "noClassDates": [
+      "2033-05-30"
+    ]
+  },
+  "20334": {
+    "startDate": "2033-09-22",
+    "endDate": "2033-12-02",
+    "finalsStartDate": "2033-12-03",
+    "finalsEndDate": "2033-12-09",
+    "noClassDates": [
+      "2033-11-11",
+      "2033-11-24",
+      "2033-11-25"
+    ]
+  },
+  "20341": {
+    "startDate": "2034-01-09",
+    "endDate": "2034-03-17",
+    "finalsStartDate": "2034-03-18",
+    "finalsEndDate": "2034-03-24",
+    "noClassDates": [
+      "2034-01-16",
+      "2034-02-20"
+    ]
+  },
+  "20342": {
+    "startDate": "2034-04-03",
+    "endDate": "2034-06-09",
+    "finalsStartDate": "2034-06-10",
+    "finalsEndDate": "2034-06-16",
+    "noClassDates": [
+      "2034-05-29"
+    ]
+  }
+}
