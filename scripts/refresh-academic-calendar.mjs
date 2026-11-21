@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import { readFile, rename, rm, writeFile } from 'node:fs/promises'
+import summerSessions from '../src/data/summer-sessions.json' with { type: 'json' }
 import { normalizeClassDate } from '../src/utils/calendar.js'
 
 const source = 'https://registrar.sa.ucsb.edu/calendars/academic-calendars'
@@ -7,6 +8,7 @@ const snapshotPath = new URL('../src/data/academic-calendar.json', import.meta.u
 const publishedSnapshot = 'https://firebase-gogaucho.web.app/academic-calendar.json'
 const day = 86400000
 const terms = [['Fall', 4], ['Winter', 1], ['Spring', 2]]
+const firstAcademicYear = 2026
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 async function request (url, options) {
@@ -80,9 +82,18 @@ async function readSnapshot () {
   for (const [quarter, dates] of Object.entries(previous)) {
     const { startDate, endDate, finalsStartDate, finalsEndDate, noClassDates } = dates || {}
     const valid = value => Boolean(value) && normalizeClassDate(value) === value
+    const validHolidays = Array.isArray(noClassDates) && noClassDates.length &&
+      noClassDates.every(date => valid(date) && startDate <= date && date <= endDate)
+    if (Object.hasOwn(summerSessions, quarter)) {
+      if (!valid(startDate) || !valid(endDate) || startDate >= endDate || !validHolidays) {
+        throw new Error(`Invalid published calendar for ${quarter}.`)
+      }
+      snapshot[quarter] = { startDate, endDate, noClassDates }
+      continue
+    }
     if (!/^\d{4}[124]$/.test(quarter) || ![startDate, endDate, finalsStartDate, finalsEndDate].every(valid) ||
       !(startDate < endDate && endDate < finalsStartDate && finalsStartDate <= finalsEndDate) ||
-      !Array.isArray(noClassDates) || !noClassDates.length || !noClassDates.every(date => valid(date) && startDate <= date && date <= endDate)) {
+      !validHolidays) {
       throw new Error(`Invalid published calendar for ${quarter}.`)
     }
     snapshot[quarter] = { startDate, endDate, finalsStartDate, finalsEndDate, noClassDates }
@@ -154,16 +165,35 @@ async function queryReport (queries) {
 
 const [yearResult] = await queryReport([reportQuery(['Calendar.Academic Year'])])
 const yearRows = readRows(yearResult, 1).map(([year]) => year)
-const years = [...new Set(yearRows.filter(year => /^\d{4}-\d{4}$/.test(year) && Number(year.slice(0, 4)) >= 2026 &&
-  Number(year.slice(0, 4)) + 1 === Number(year.slice(5))))].sort()
+const summerQuarter = year => year.slice(5) + '3'
+const years = [...new Set(yearRows.filter(year => /^\d{4}-\d{4}$/.test(year) &&
+  Number(year.slice(0, 4)) + 1 === Number(year.slice(5)) &&
+  (Number(year.slice(0, 4)) >= firstAcademicYear || Object.hasOwn(summerSessions, summerQuarter(year)))))].sort()
 if (!years.length) throw new Error('The Registrar report returned no supported academic years.')
 
 for (const year of years) {
-  const [holidayResult, quarterResult] = await queryReport([
-    reportQuery(['Holidays.Holiday', 'Holidays.Quarter Name', 'Holidays.date'], year),
-    reportQuery(['Calendar.Event', 'Calendar.Fall Quarter', 'Calendar.Winter Quarter', 'Calendar.Spring Quarter'], year)
-  ])
-  const holidays = readRows(holidayResult, 3).map(([, , dates]) => parseRange(dates))
+  const includeQuarters = Number(year.slice(0, 4)) >= firstAcademicYear
+  const queries = [reportQuery(['Holidays.Holiday', 'Holidays.Quarter Name', 'Holidays.date'], year)]
+  if (includeQuarters) queries.push(reportQuery(['Calendar.Event', 'Calendar.Fall Quarter', 'Calendar.Winter Quarter', 'Calendar.Spring Quarter'], year))
+  const [holidayResult, quarterResult] = await queryReport(queries)
+  const holidayRows = readRows(holidayResult, 3)
+  const quarter = summerQuarter(year)
+  const sessions = summerSessions[quarter]
+  if (sessions) {
+    const sessionDates = Object.values(sessions)
+    const startDate = sessionDates.map(session => session.startDate).sort()[0]
+    const endDate = sessionDates.map(session => session.endDate).sort().at(-1)
+    const summerHolidays = holidayRows.filter(([, term]) => term === `SUMMER ${year.slice(5)}`)
+    const names = new Set(summerHolidays.map(([name]) => name))
+    if (!['Juneteenth', 'Independence Day', 'Labor Day'].every(name => names.has(name))) {
+      throw new Error(`The Registrar returned incomplete holidays for Summer ${year.slice(5)}.`)
+    }
+    const noClassDates = noClassesWithin(summerHolidays.map(([, , dates]) => parseRange(dates)), startDate, endDate)
+    snapshot[quarter] = { startDate, endDate, noClassDates }
+  }
+
+  if (!includeQuarters) continue
+  const holidays = holidayRows.map(([, , dates]) => parseRange(dates))
   const quarterRows = readRows(quarterResult, 4)
   const row = label => {
     const matches = quarterRows.filter(([name]) => name === label)

@@ -10,9 +10,11 @@ Configure consent for `calendar.app.created`, `openid` and `email`. The account 
 
 Run `npm run calendar:refresh` with Node.js 22 and network access to update the [bundled date snapshot](../src/data/academic-calendar.json). The importer discovers published years in the [UCSB Registrar’s academic calendar](https://registrar.sa.ucsb.edu/calendars/academic-calendars) and checks each quarter's holiday dates against the report's instruction day count. The Power BI report endpoint is undocumented and its format can change.
 
-The current snapshot covers 24 Fall, Winter, and Spring quarters through Spring 2034. Run the refresh command to pick up corrections or newly published years. An incomplete response leaves the saved snapshot intact. Local builds and tests use the bundled data without querying the report.
+The current snapshot covers 24 Fall, Winter, and Spring quarters through Spring 2034, plus Summer 2024–2029. Run the refresh command to pick up corrections or newly published years. An incomplete response leaves the saved snapshot intact. Local builds and tests use the bundled data without querying the report.
 
-New Google copies omit enrolled class occurrences on holidays during the instruction period. Custom events retain their normal recurrence. Summer needs separate verified session dates, and finals need an enrolled-course exam source.
+New Google copies omit enrolled class occurrences on holidays during the instruction period. Custom events retain their normal recurrence. Finals need an enrolled-course exam source.
+
+Summer dates for sessions A–G come from the [UCSB Summer Sessions multi-year calendar](https://summer.ucsb.edu/sites/default/files/documents/Faculty%20and%20Staff/UCSB%20Summer%20Calendars%202024-2029..pdf). When UCSB publishes new years, add each session’s **Instruction Begins** and **Instruction Ends** dates to [summer-sessions.json](../src/data/summer-sessions.json) and run the refresh command to populate the Registrar’s holiday dates for those years. Custom events span the full Summer instruction period. An enrolled class needs a recognized session to export.
 
 ## Validation
 
