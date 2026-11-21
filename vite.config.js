@@ -16,6 +16,8 @@ const weeklyMenuApi = {
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  server: { headers: { 'Cross-Origin-Opener-Policy': 'same-origin-allow-popups' } },
+  preview: { headers: { 'Cross-Origin-Opener-Policy': 'same-origin-allow-popups' } },
   plugins: [
     weeklyMenuApi,
     vue(),
