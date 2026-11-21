@@ -205,23 +205,6 @@ function removeCustom (i) {
     <div class="w-full flex flex-wrap justify-center items-start" v-if="data" :key="q">
       <div class="flex-grow bg-white sm:p-2 sm:pb-4 lg:px-6 pb-4 rounded shadow m-0 sm:m-4 lg:mr-0" v-if="data.schedule"><!-- schedule -->
         <Schedule :pieces="pieces" :quarter='q' whole="1" />
-        <section v-if="state.user.uid" class="border-t mt-4 px-4 pt-4 sm:px-2" aria-labelledby="final-exams">
-          <h2 id="final-exams" class="text-lg font-bold">Final exams</h2>
-          <p v-if="finals === null" class="mt-2 text-sm text-gray-500">Loading finals…</p>
-          <template v-else>
-            <ul v-if="finals.length" class="mt-2 divide-y">
-              <li v-for="exam in finals" :key="exam.courseId" class="py-2 text-sm">
-                <span class="font-bold mr-2">{{ exam.courseId }}</span>
-                {{ formatFinal(exam) || 'Date and time not listed' }}
-                <p v-if="exam.comments" class="text-gray-600">{{ exam.comments }}</p>
-              </li>
-            </ul>
-            <p v-if="finalsIncomplete" class="mt-2 text-sm text-gray-600">
-              {{ finals.length ? 'Some final exam details are unavailable.' : 'Final exam details are unavailable.' }}
-            </p>
-            <p v-else-if="!finals.length" class="mt-2 text-sm text-gray-500">No finals listed.</p>
-          </template>
-        </section>
       </div>
       <div class="m-2 w-full lg:w-72 xl:w-80"><!-- side -->
         <div :show="1" v-if="data.schedule" class="p-2">
@@ -244,6 +227,27 @@ function removeCustom (i) {
           </div>
         </div>
         <Registration v-if="data.registration" :data="data.registration"/>
+        <section v-if="data.schedule && state.user.uid" class="px-2 pb-2" aria-labelledby="final-exams">
+          <div class="rounded shadow-md overflow-hidden bg-white">
+            <h2 id="final-exams" class="text-white font-bold p-2 bg-[#0b254e]">Final Exams</h2>
+            <div class="px-4">
+              <p v-if="finals === null" class="my-2 text-sm text-gray-500">Loading finals…</p>
+              <template v-else>
+                <ul v-if="finals.length">
+                  <li v-for="exam in finals" :key="exam.courseId" class="py-2">
+                    <b class="block">{{ exam.courseId }}</b>
+                    <code class="block overflow-x-auto whitespace-nowrap text-xs">{{ formatFinal(exam) || 'Date and time not listed' }}</code>
+                    <p v-if="exam.comments" class="text-sm text-gray-600">{{ exam.comments }}</p>
+                  </li>
+                </ul>
+                <p v-if="finalsIncomplete" class="my-2 text-sm text-gray-600">
+                  {{ finals.length ? 'Some final exam details are unavailable.' : 'Final exam details are unavailable.' }}
+                </p>
+                <p v-else-if="!finals.length" class="my-2 text-sm text-gray-500">No finals listed.</p>
+              </template>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
     <p class="m-4" v-else>No data</p>
