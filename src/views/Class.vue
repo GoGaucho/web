@@ -8,6 +8,7 @@ import { onSnapshot, runTransaction, doc } from 'firebase/firestore'
 import * as parse from '../utils/parse.js'
 import Schedule from '../components/Schedule.vue'
 import Registration from '../components/Registration.vue'
+import CalendarExport from '../components/CalendarExport.vue'
 
 let q = $ref(''), qs = $ref([]), data = $ref({}), custom = $ref([])
 let loadedQuarter = $ref(''), loading = $ref(false)
@@ -29,6 +30,7 @@ const pieces = $computed(() => {
         wTime: w, key: k,
         time: p.time.replace(/^(.*?)\s/, ''),
         location: p.location,
+        session: data.schedule[k].session || '',
         label: ss ? ['Session ' + ss] : []
       })
     }
@@ -267,6 +269,7 @@ function removeCustom (i) {
           <option v-for="o in qs" :value="o">{{ parse.quarter(o) }}</option>
         </select>
         <div class="ml-3">
+          <CalendarExport :pieces="pieces" :quarter="q" :google-user-id="state.user.uid" :google-user-email="state.user.email" :disabled="loading || loadedUser !== state.user.uid || loadedQuarter !== q || !canEditCustom" />
         </div>
       </div>
       <button type="button" aria-label="Refresh classes" :disabled="loading || !state.user.uid" @click="fetchData"><ArrowPathIcon class="w-6 text-gray-500" /></button>

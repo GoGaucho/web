@@ -55,6 +55,7 @@ export const state = reactive({
   hasClasses: false,
   course: {},
   user: {},
+  calendarImportRecoveries: {},
   screen: { sm: false, md: false, lg: false },
   isStandalone: window.matchMedia('(display-mode: standalone)').matches
 })

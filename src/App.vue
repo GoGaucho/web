@@ -5,6 +5,7 @@ const Bar = defineAsyncComponent(() => import('./components/Bar.vue'))
 const embed = window.location.hash.includes('embed')
 
 import state from './model.js'
+const calendarRecovery = $computed(() => state.user.uid ? state.calendarImportRecoveries[state.user.uid] : null)
 
 let height = $computed(() => {
   if (embed) return '100vh'
@@ -15,6 +16,11 @@ let height = $computed(() => {
 
 <template>
   <Bar v-if="!embed" />
+  <div v-if="calendarRecovery" class="fixed bottom-20 sm:bottom-4 left-4 right-4 z-50 mx-auto max-w-lg rounded-lg border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 shadow-lg" role="alert">
+    <p>{{ calendarRecovery.message }}</p>
+    <a :href="calendarRecovery.url" target="_blank" rel="noopener noreferrer" class="mt-2 inline-block underline focus-visible:ring-2 focus-visible:ring-blue-500">Open Google Calendar</a>
+    <button type="button" class="ml-3 mt-2 underline focus-visible:ring-2 focus-visible:ring-blue-500" @click="delete state.calendarImportRecoveries[state.user.uid]">I’ve checked my calendar</button>
+  </div>
   <div class="relative overflow-y-auto" :style="{ height }">
     <Transition name="fade">
       <div v-if="state.loading" class="absolute z-20 top-0 left-0 right-0 bottom-0 flex flex-col items-center justify-between bg-gray-50">
