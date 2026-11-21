@@ -1,6 +1,6 @@
 <script setup>
 import { onActivated, watch } from 'vue'
-import { state, cache } from '../model.js'
+import { state, cache, studentCacheKey } from '../model.js'
 import { classrooms } from '../utils/locations.js'
 import { MapPinIcon, AcademicCapIcon, BookOpenIcon } from '@heroicons/vue/24/outline'
 import { useRouter } from 'vue-router'
@@ -13,8 +13,10 @@ let tip = $ref(''), displayTime = $ref(''), target = $ref(0), targetClass = $ref
 //get all classes / custom events for today, and sort by time
 function getClasses () {
 
-  const schedule = cache.get('class' + state.quarter)?.schedule
-  const custom = cache.get('custom' + state.quarter)
+  const uid = state.user.uid
+  if (!uid) return classes = false
+  const schedule = cache.get(studentCacheKey('class', uid, state.quarter))?.schedule
+  const custom = cache.get(studentCacheKey('custom', uid, state.quarter))
 
   if (!schedule && !custom) return classes = false
   classes = []
@@ -65,13 +67,7 @@ getClasses()
 onActivated(getClasses)
 
 watch(() => state.quarter, getClasses)
-watch(() => state.user.time, () => {
-  if (!state.user.name) {
-    classes = false
-    cache.set('class' + state.quarter, false)
-    cache.set('custom' + state.quarter, false)
-  } else getClasses()
-})
+watch(() => state.user.uid, getClasses)
 
 function locate (location) {
   if (classrooms[location]) router.push('/map?q=' + location)

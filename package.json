@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
-    "test": "node --experimental-default-type=module --test tests/*.test.js",
+    "test": "node --test tests/*.test.*",
     "build": "vite build",
     "preview": "vite preview"
   },
