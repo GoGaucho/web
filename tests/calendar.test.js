@@ -30,20 +30,19 @@ test('a one-day date range includes its matching weekday once', () => {
   assert.match(result.content, /RRULE:FREQ=WEEKLY;UNTIL=20260303T075959Z\r\n/)
 })
 
-test('weekday starts advance from a midweek bound independently, including Sunday', () => {
+test('a grouped series starts on its first actual weekday within a midweek bound', () => {
   const result = calendar({
     pieces: [meeting(0), meeting(2), meeting(6)], startDate: '2026-03-04', endDate: '2026-03-17'
   })
-  assert.equal(result.eventCount, 3)
-  const actual = events(result.content)
-  for (const [index, date] of ['20260309', '20260304', '20260308'].entries()) {
-    assert.equal(property(actual[index], 'DTSTART;TZID=America/Los_Angeles'), `${date}T090000`)
-    assert.equal(property(actual[index], 'RRULE'), 'FREQ=WEEKLY;UNTIL=20260318T065959Z')
-  }
+  assert.equal(result.eventCount, 1)
+  const [event] = events(result.content)
+  assert.equal(property(event, 'DTSTART;TZID=America/Los_Angeles'), '20260304T090000')
+  assert.equal(property(event, 'RRULE'), 'FREQ=WEEKLY;UNTIL=20260318T065959Z;BYDAY=MO,WE,SU')
 })
 
 test('all seven Monday-based weekday offsets export on the right dates', () => {
-  const result = calendar({ pieces: Array.from({ length: 7 }, (_, day) => meeting(day)), endDate: '2026-03-08' })
+  const pieces = Array.from({ length: 7 }, (_, day) => meeting(day, { key: `Class ${day}` }))
+  const result = calendar({ pieces, endDate: '2026-03-08' })
   assert.equal(result.eventCount, 7)
   assert.deepEqual(events(result.content).map(event => property(event, 'DTSTART;TZID=America/Los_Angeles')),
     Array.from({ length: 7 }, (_, index) => `2026030${index + 2}T090000`))
@@ -276,12 +275,11 @@ test('narrower session ranges control individual meetings while ordinary meeting
       'Session B': { startDate: '2026-03-20', endDate: '2026-03-22' }
     }
   })
-  assert.equal(result.eventCount, 4)
+  assert.equal(result.eventCount, 3)
   assert.deepEqual(events(result.content).map(event => [
     property(event, 'DTSTART;TZID=America/Los_Angeles'), property(event, 'RRULE')
   ]), [
-    ['20260309T090000', 'FREQ=WEEKLY;UNTIL=20260317T065959Z'],
-    ['20260311T090000', 'FREQ=WEEKLY;UNTIL=20260317T065959Z'],
+    ['20260309T090000', 'FREQ=WEEKLY;UNTIL=20260317T065959Z;BYDAY=MO,WE'],
     ['20260320T090000', 'FREQ=WEEKLY;UNTIL=20260323T065959Z'],
     ['20260308T090000', 'FREQ=WEEKLY;UNTIL=20260323T065959Z']
   ])
@@ -366,9 +364,9 @@ test('UIDs are stable across downloads, timestamps, input ordering and date rang
   assert.notEqual(first.content, second.content)
 })
 
-test('distinct lecture, section, session, weekday, custom title, location and quarter retain distinct UIDs', () => {
+test('distinct lecture, section, session, time, custom title, location and quarter retain distinct UIDs', () => {
   const pieces = [
-    meeting(), meeting(0, { section: '0101' }), meeting(1),
+    meeting(), meeting(0, { section: '0101' }), meeting(1, { wTime: [2000, 2060] }),
     meeting(0, { session: 'Session A' }), meeting(0, { session: 'Session B' }),
     meeting(0, { title: 'Custom one' }), meeting(0, { title: 'Custom two' }),
     meeting(0, { location: 'Different building' }), meeting(0, { key: 'MATH 4A' })
@@ -383,9 +381,30 @@ test('distinct lecture, section, session, weekday, custom title, location and qu
 test('identical meetings deduplicate without counting them as skipped', () => {
   const piece = meeting()
   const result = calendar({ pieces: [piece, { ...piece, wTime: [...piece.wTime] }, meeting(2)] })
-  assert.equal(result.eventCount, 2)
+  assert.equal(result.eventCount, 1)
   assert.equal(result.skippedCount, 0)
-  assert.equal(events(result.content).length, 2)
+  assert.match(result.events[0].recurrence[0], /BYDAY=MO,WE$/)
+})
+
+test('a course keeps its color across separate lecture and section series', () => {
+  const result = calendar({
+    pieces: [
+      meeting(0),
+      meeting(2),
+      meeting(1, { wTime: [2040, 2100] }),
+      meeting(3, { section: '0101', location: 'Section room' }),
+      meeting(2, { location: 'Alternate room' }),
+      meeting(2, { key: 'MATH 4A' }),
+      meeting(2, { key: 'custom', title: 'Study' })
+    ]
+  })
+  const [lecture, otherTime, section, otherRoom, math, custom] = result.events
+  assert.equal(result.eventCount, 6)
+  assert.match(lecture.recurrence[0], /BYDAY=MO,WE$/)
+  assert.ok(['1','2','3','4','5','6','7','8','9','10','11'].includes(lecture.colorId))
+  assert.deepEqual([otherTime.colorId, section.colorId, otherRoom.colorId], Array(3).fill(lecture.colorId))
+  assert.notEqual(math.colorId, lecture.colorId)
+  assert.equal(custom.colorId, undefined)
 })
 
 test('timed-piece validation permits whole-day boundaries and Sunday midnight endpoints', () => {
@@ -415,7 +434,7 @@ test('empty schedules, schedules with only malformed meetings and ranges with no
 })
 
 test('meetings ending at midnight use the next calendar date, including Sunday into Monday', () => {
-  const result = calendar({ pieces: [meeting(0, { wTime: [1380, 1440] }), meeting(6, { wTime: [10020, 10080] })] })
+  const result = calendar({ pieces: [meeting(0, { wTime: [1380, 1440] }), meeting(6, { key: 'MATH 4A', wTime: [10020, 10080] })] })
   assert.deepEqual(events(result.content).map(event => property(event, 'DTEND;TZID=America/Los_Angeles')),
     ['20260303T000000', '20260309T000000'])
 })
@@ -488,7 +507,7 @@ test('Google payloads use the same valid post-gap Sunday start and bounded sprin
     summary: 'CMPSC 16', location: 'PHELPS 3525', description: 'CMPSC 16',
     start: { dateTime: '2026-03-15T02:30:00', timeZone: 'America/Los_Angeles' },
     end: { dateTime: '2026-03-15T03:30:00', timeZone: 'America/Los_Angeles' },
-    recurrence: ['RRULE:FREQ=WEEKLY;UNTIL=20260316T065959Z'], visibility: 'private'
+    recurrence: ['RRULE:FREQ=WEEKLY;UNTIL=20260316T065959Z'], visibility: 'private', colorId: '9'
   }])
 })
 

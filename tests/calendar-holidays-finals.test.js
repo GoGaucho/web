@@ -100,14 +100,27 @@ test('future calendar copies skip observed holidays and keep custom events', () 
 test('Fall Veterans Day and Thanksgiving closures exclude only matching enrolled weekdays with file/API parity', () => {
   const metadata = getAcademicCalendar('20264')
   const result = calendar({ ...metadata, pieces: Array.from({ length: 5 }, (_, day) => meeting(day)) })
-  assert.equal(result.eventCount, 5)
-  assert.deepEqual(result.events.map(event => exclusions(event.recurrence)), [[], [],
-    ['20261111T090000'], ['20261126T090000'], ['20261127T090000']])
+  assert.equal(result.eventCount, 1)
+  assert.match(result.events[0].recurrence[0], /BYDAY=MO,TU,WE,TH,FR$/)
+  assert.deepEqual(exclusions(result.events[0].recurrence),
+    ['20261111T090000', '20261126T090000', '20261127T090000'])
   for (const [index, event] of fileEvents(result.content).entries()) {
     const fileRules = event.split('\r\n').filter(line => /^(RRULE:|EXDATE;)/.test(line))
     assert.deepEqual(fileRules, result.events[index].recurrence)
     assert.equal(result.events[index].start.timeZone, 'America/Los_Angeles')
   }
+})
+
+test('a holiday on the first scheduled weekday starts a grouped series on the next meeting day', () => {
+  const result = calendar({
+    startDate: '2026-11-09', endDate: '2026-11-27',
+    pieces: [meeting(0), meeting(2)], noClassDates: ['2026-11-09', '2026-11-23']
+  })
+  const [event] = result.events
+  assert.equal(result.eventCount, 1)
+  assert.equal(event.start.dateTime, '2026-11-11T09:00:00')
+  assert.match(event.recurrence[0], /BYDAY=MO,WE$/)
+  assert.deepEqual(exclusions(event.recurrence), ['20261123T090000'])
 })
 
 test('closure exceptions are sorted, deduplicated and limited to the effective session and weekday', () => {

@@ -1,4 +1,6 @@
 const DAY = 86400000
+const weekdays = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU']
+const courseColors = ['9', '11', '10', '6', '3', '7', '5', '4', '2', '1', '8']
 const encoder = new TextEncoder()
 
 function parseDate (value) {
@@ -70,6 +72,11 @@ function daylightBounds (year) {
   ]
 }
 
+function isSpringGap (date, minutes) {
+  return date.getUTCDay() === 0 && minutes >= 120 && minutes < 180 &&
+    date.getTime() === daylightBounds(date.getUTCFullYear())[0]
+}
+
 function endOfPacificDay (date) {
   const [spring, fall] = daylightBounds(date.getUTCFullYear())
   const offset = date >= spring && date < fall ? 7 : 8
@@ -77,10 +84,8 @@ function endOfPacificDay (date) {
     .toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
 }
 
-// Stable across downloads, while keeping lecture, section and custom meetings distinct.
-function uid (quarter, piece) {
-  const identity = JSON.stringify([piece.key, piece.section || '', piece.session || '', piece.title || '', piece.location || '', piece.wTime])
-  return `${quarter}-${encodeURIComponent(identity)}@gogaucho.app`
+function meetingIdentity (piece, timing) {
+  return JSON.stringify([piece.key, piece.section || '', piece.session || '', piece.title || '', piece.location || '', timing])
 }
 
 function validateRange (startDate, endDate) {
@@ -100,7 +105,8 @@ export function createCalendar ({ quarter, pieces, startDate, endDate, sessionRa
   const finalEnd = parseDate(finalsEndDate)
   const unavailableFinals = new Set()
   const ranges = new Map()
-  for (const piece of pieces.filter(isTimedPiece)) {
+  const timedPieces = pieces.filter(isTimedPiece)
+  for (const piece of timedPieces) {
     if (quarter.endsWith('3') && piece.key !== 'custom' && !piece.session) {
       throw new Error('A summer class is missing its session.')
     }
@@ -145,21 +151,26 @@ export function createCalendar ({ quarter, pieces, startDate, endDate, sessionRa
   const stamp = now.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
   const seen = new Set()
   const events = []
-  let eventCount = 0, skippedCount = 0
-  for (const piece of pieces) {
-    if (!isTimedPiece(piece)) {
-      skippedCount++
-      continue
-    }
+  const courses = [...new Set(timedPieces.filter(piece => piece.key !== 'custom').map(piece => piece.key))].sort()
+  const colors = new Map(courses.map((course, index) => [course, courseColors[index % courseColors.length]]))
+  const series = new Map()
+  let eventCount = 0, skippedCount = pieces.length - timedPieces.length
+  for (const piece of timedPieces) {
     const [first, last] = ranges.get(piece.session) || [start, end]
     const weekday = Math.floor(piece.wTime[0] / 1440)
     const offset = (weekday - (first.getUTCDay() + 6) % 7 + 7) % 7
     let date = new Date(first.getTime() + offset * DAY)
     const minutes = piece.wTime[0] % 1440
+    const duration = piece.wTime[1] - piece.wTime[0]
+    const key = meetingIdentity(piece, piece.key === 'custom' ? piece.wTime : [minutes, duration])
+    if (!series.has(key)) {
+      series.set(key, { piece, minutes, duration, last, firstDate: null, days: new Set(), activeDays: new Set() })
+    }
+    const meeting = series.get(key)
+    meeting.days.add(weekday)
     const isClosed = day => piece.key !== 'custom' && closures.has(day.toISOString().slice(0, 10))
-    const isGap = day => day.getTime() === daylightBounds(day.getUTCFullYear())[0] && weekday === 6 && minutes >= 120 && minutes < 180
     // Anchor on an actual class, including when the first week is a closure.
-    while (date <= last && (isClosed(date) || isGap(date))) {
+    while (date <= last && (isClosed(date) || isSpringGap(date, minutes))) {
       date = new Date(date.getTime() + 7 * DAY)
     }
     if (date > last) {
@@ -168,27 +179,36 @@ export function createCalendar ({ quarter, pieces, startDate, endDate, sessionRa
     }
     // DTEND makes recurring events keep an exact elapsed duration. Reject a
     // clock-change crossing rather than silently move the displayed end time.
-    if (weekday === 6 && minutes < 120 && minutes + piece.wTime[1] - piece.wTime[0] >= 120) {
+    if (weekday === 6 && minutes < 120 && minutes + duration >= 120) {
       for (let year = date.getUTCFullYear(); year <= last.getUTCFullYear(); year++) {
         if (daylightBounds(year).some(day => day >= date && day <= last && !isClosed(new Date(day)))) {
           throw new Error(`${piece.title || piece.key}: this overnight meeting crosses a daylight-saving time change. Choose a date range excluding that day and add that occurrence separately in your calendar.`)
         }
       }
     }
-    const id = uid(quarter, piece)
-    if (seen.has(id)) continue
-    seen.add(id)
+    if (!meeting.firstDate || date < meeting.firstDate) meeting.firstDate = date
+    meeting.activeDays.add(weekday)
+  }
+
+  for (const { piece, minutes, duration, firstDate, last, days, activeDays } of series.values()) {
+    if (!firstDate) continue
+    const timing = [...days].sort((a, b) => a - b).map(day => [day * 1440 + minutes, day * 1440 + minutes + duration])
+    const identity = meetingIdentity(piece, timing.length === 1 ? timing[0] : timing)
+    const id = `${quarter}-${encodeURIComponent(identity)}@gogaucho.app`
     const description = [piece.key, piece.section && `Section ${piece.section}`, piece.session].filter(Boolean).join('\n')
-    const startTime = dateTime(date, minutes)
-    const endTime = dateTime(date, minutes + piece.wTime[1] - piece.wTime[0])
-    const recurrence = `RRULE:FREQ=WEEKLY;UNTIL=${endOfPacificDay(last)}`
+    const startTime = dateTime(firstDate, minutes)
+    const endTime = dateTime(firstDate, minutes + duration)
+    const byDay = [...activeDays].sort((a, b) => a - b).map(day => weekdays[day])
+    const recurrence = `RRULE:FREQ=WEEKLY;UNTIL=${endOfPacificDay(last)}${byDay.length > 1 ? `;BYDAY=${byDay.join(',')}` : ''}`
     const excluded = piece.key === 'custom' ? [] : [...closures].sort().map(parseDate).filter(day =>
-      day >= date && day <= last && (day.getUTCDay() + 6) % 7 === weekday && !isGap(day)
+      day >= firstDate && day <= last && activeDays.has((day.getUTCDay() + 6) % 7) &&
+      !isSpringGap(day, minutes)
     ).map(day => dateTime(day, minutes))
     const recurrenceRules = [recurrence]
     if (excluded.length) recurrenceRules.push(`EXDATE;TZID=America/Los_Angeles:${excluded.join(',')}`)
     events.push({
       summary: piece.title || piece.key,
+      ...(colors.has(piece.key) ? { colorId: colors.get(piece.key) } : {}),
       location: piece.location || '',
       description,
       start: googleTime(startTime),
