@@ -1,15 +1,43 @@
 <script setup>
-import { onActivated } from 'vue'
+import { onActivated, watch } from 'vue'
 import { ArrowPathIcon, XCircleIcon } from '@heroicons/vue/24/outline'
 import { call, db, log, get } from '../firebase.js'
 import { state, cache } from '../model.js'
 import { onSnapshot, setDoc, doc } from 'firebase/firestore'
 import * as parse from '../utils/parse.js'
+import { enrolledLecture } from '../utils/enrolledLecture.mjs'
+import { formatFinal } from '../utils/formatFinal.mjs'
 import Schedule from '../components/Schedule.vue'
 import Registration from '../components/Registration.vue'
 
 let q = $ref(''), qs = $ref([]), data = $ref({}), custom = $ref([])
+let finals = $ref(null), finalsIncomplete = $ref(false)
 log('web/class')
+
+watch(() => [q, data.schedule, state.user.uid], async ([quarter, schedule, uid], _, onCleanup) => {
+  let active = true
+  onCleanup(() => { active = false })
+  finals = null
+  finalsIncomplete = false
+  if (!quarter || !schedule || !uid) return
+
+  const results = await Promise.allSettled(Object.entries(schedule)
+    .filter(([, entry]) => !entry.isCustomEvent)
+    .map(async ([courseId, entry]) => {
+      const course = await get('course/' + quarter + courseId)
+      const enrollCode = enrolledLecture(course, entry.periods)
+      if (!active || !enrollCode) return
+      const exam = await call('courseFinal', { quarter, enrollCode })
+      return { courseId, ...exam }
+    }))
+
+  if (!active) return
+  finalsIncomplete = results.some(result => result.status === 'rejected' || !result.value)
+  finals = results.flatMap(result => result.value?.hasFinals ? [result.value] : [])
+    .sort((a, b) => (a.examDate || '99999999').localeCompare(b.examDate || '99999999') ||
+      (a.beginTime || '99:99').localeCompare(b.beginTime || '99:99') ||
+      a.courseId.localeCompare(b.courseId))
+})
 
 const pieces = $computed(() => {
   const res = []
@@ -42,19 +70,24 @@ const pieces = $computed(() => {
 
 // fetch data from server, and write result to local cache
 async function fetchData () {
-  cache.set('class' + q, false)
+  const quarter = q
+  cache.set('class' + quarter, false)
 
   const token = cache.get('token')
   if (!token) return window.signin('Please verify your identity')
   data = {}
   state.loading = true
-  const raw = await call('student', { q, token })
-  state.loading = false
-  if (!raw) return
+  let raw
+  try {
+    raw = await call('student', { q: quarter, token })
+  } finally {
+    if (q === quarter) state.loading = false
+  }
+  if (!raw || cache.get('token') !== token) return
+  cache.set('class' + quarter, raw, 86400e6)
+  if (q !== quarter) return
   data = raw
   qs = data.quarters
-
-  cache.set('class' + q, raw, 86400e6)
 }
 
 let unsub = null
@@ -172,6 +205,23 @@ function removeCustom (i) {
     <div class="w-full flex flex-wrap justify-center items-start" v-if="data" :key="q">
       <div class="flex-grow bg-white sm:p-2 sm:pb-4 lg:px-6 pb-4 rounded shadow m-0 sm:m-4 lg:mr-0" v-if="data.schedule"><!-- schedule -->
         <Schedule :pieces="pieces" :quarter='q' whole="1" />
+        <section v-if="state.user.uid" class="border-t mt-4 px-4 pt-4 sm:px-2" aria-labelledby="final-exams">
+          <h2 id="final-exams" class="text-lg font-bold">Final exams</h2>
+          <p v-if="finals === null" class="mt-2 text-sm text-gray-500">Loading finals…</p>
+          <template v-else>
+            <ul v-if="finals.length" class="mt-2 divide-y">
+              <li v-for="exam in finals" :key="exam.courseId" class="py-2 text-sm">
+                <span class="font-bold mr-2">{{ exam.courseId }}</span>
+                {{ formatFinal(exam) || 'Date and time not listed' }}
+                <p v-if="exam.comments" class="text-gray-600">{{ exam.comments }}</p>
+              </li>
+            </ul>
+            <p v-if="finalsIncomplete" class="mt-2 text-sm text-gray-600">
+              {{ finals.length ? 'Some final exam details are unavailable.' : 'Final exam details are unavailable.' }}
+            </p>
+            <p v-else-if="!finals.length" class="mt-2 text-sm text-gray-500">No finals listed.</p>
+          </template>
+        </section>
       </div>
       <div class="m-2 w-full lg:w-72 xl:w-80"><!-- side -->
         <div :show="1" v-if="data.schedule" class="p-2">
