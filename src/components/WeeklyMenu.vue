@@ -83,7 +83,7 @@ function changeDay(direction) {
 }*/
 
 const meals = computed(() => mealOrder.filter(name => selectedDay.value?.meals[name]))
-const mealHours = computed(() => dailyMenu.value?.dailyMeals?.[meal.value]?.hour)
+const mealHours = computed(() => selectedDay.value?.hours?.[meal.value] || dailyMenu.value?.dailyMeals?.[meal.value]?.hour || 'Hours unavailable')
 const stations = computed(() => selectedDay.value?.meals[meal.value] || {})
 let currentRequest = 0
 
@@ -188,7 +188,7 @@ function mealLabel(name) {
   <section class="rounded shadow-md p-3 my-4 bg-white" aria-labelledby="weekly-menu-heading" :aria-busy="loading">
     <h2 id="weekly-menu-heading" class="text-2xl flex items-center flex-wrap">
       Meals
-      <select v-model="dc" aria-label="Dining common" class="text-base bg-white border font-bold mx-2 px-4 py-1 rounded-full appearance-none cursor-pointer">
+      <select v-model="dc" aria-label="Dining common" class="text-base bg-white border font-bold mx-2 px-4 py-1 rounded-full appearance-auto cursor-pointer">
         <option v-for="(name, code) in props.diningCommons" :key="code" :value="code">{{ name }}</option>
       </select>
       <button type="button" aria-label="Show dining hall camera" class="ml-2 text-gray-500" @click="showCam">
@@ -196,7 +196,7 @@ function mealLabel(name) {
       </button>
     </h2>
     <p v-if="meals.length && !loading" class="flex items-center text-gray-700 my-2">
-      <select v-model="meal" aria-label="Meal" class="px-2 mr-2 appearance-none bg-white font-bold block rounded cursor-pointer border">
+      <select v-model="meal" aria-label="Meal" class="px-2 mr-2 appearance-auto bg-white font-bold block rounded cursor-pointer border">
         <option v-for="name in meals" :key="name" :value="name">{{ mealLabel(name) }}</option>
       </select>
       {{ mealHours }}

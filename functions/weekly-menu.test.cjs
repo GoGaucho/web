@@ -1,6 +1,26 @@
 const { test } = require('node:test')
 const assert = require('node:assert/strict')
-const { parseWeeklyMenu, weeklyMenuHandler } = require('./weekly-menu.cjs')
+const { parseWeeklyMenu, parseMealHours, weeklyMenuHandler } = require('./weekly-menu.cjs')
+
+test('reads per-date hours only from the requested hall', () => {
+  const html = `<div id="carrillo-body">
+    <h5>Breakfast <small>7:15 AM - 10:00 AM</small></h5>
+    <h5>Lunch <small>11:00 AM - 3:00 PM</small></h5>
+    <h5>Late Night <small>9:00 PM - 11:00 PM</small></h5>
+  </div><div id="portola-body"><h5>Lunch <small>Different hours</small></h5></div>`
+  assert.deepEqual(parseMealHours(html, 'carrillo'), {
+    breakfast: '7:15 AM - 10:00 AM', lunch: '11:00 AM - 3:00 PM', 'late-night': '9:00 PM - 11:00 PM'
+  })
+  assert.deepEqual(parseMealHours('<html>Unavailable</html>', 'carrillo'), {})
+})
+
+test('uses UCSB date identifiers across year boundaries', () => {
+  const ticks = (BigInt(Date.UTC(2027, 0, 1)) + 62135596800000n) * 10000n
+  const days = parseWeeklyMenu(`<div id="lunch-body"><table><thead><tr>
+    <th><h4>Fri 1/1</h4><h6 id="${ticks}-carrillo-lunch-Hours"></h6></th>
+    </tr></thead><tbody></tbody></table></div>`)
+  assert.equal(days[0].menuDate, '2027-01-01')
+})
 
 test('keeps empty dates aligned and decodes menu text without copying scripts', () => {
   const days = parseWeeklyMenu(`<script>throw Error('untrusted')</script>
