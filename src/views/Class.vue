@@ -1,15 +1,43 @@
 <script setup>
-import { onActivated } from 'vue'
+import { onActivated, watch } from 'vue'
 import { ArrowPathIcon, XCircleIcon } from '@heroicons/vue/24/outline'
 import { call, db, log, get } from '../firebase.js'
 import { state, cache } from '../model.js'
 import { onSnapshot, setDoc, doc } from 'firebase/firestore'
 import * as parse from '../utils/parse.js'
+import { enrolledLecture } from '../utils/enrolledLecture.mjs'
+import { formatFinal } from '../utils/formatFinal.mjs'
 import Schedule from '../components/Schedule.vue'
 import Registration from '../components/Registration.vue'
 
 let q = $ref(''), qs = $ref([]), data = $ref({}), custom = $ref([])
+let finals = $ref(null), finalsIncomplete = $ref(false)
 log('web/class')
+
+watch(() => [q, data.schedule, state.user.uid], async ([quarter, schedule, uid], _, onCleanup) => {
+  let active = true
+  onCleanup(() => { active = false })
+  finals = null
+  finalsIncomplete = false
+  if (!quarter || !schedule || !uid) return
+
+  const results = await Promise.allSettled(Object.entries(schedule)
+    .filter(([, entry]) => !entry.isCustomEvent)
+    .map(async ([courseId, entry]) => {
+      const course = await get('course/' + quarter + courseId)
+      const enrollCode = enrolledLecture(course, entry.periods)
+      if (!active || !enrollCode) return
+      const exam = await call('courseFinal', { quarter, enrollCode })
+      return { courseId, ...exam }
+    }))
+
+  if (!active) return
+  finalsIncomplete = results.some(result => result.status === 'rejected' || !result.value)
+  finals = results.flatMap(result => result.value?.hasFinals ? [result.value] : [])
+    .sort((a, b) => (a.examDate || '99999999').localeCompare(b.examDate || '99999999') ||
+      (a.beginTime || '99:99').localeCompare(b.beginTime || '99:99') ||
+      a.courseId.localeCompare(b.courseId))
+})
 
 const pieces = $computed(() => {
   const res = []
@@ -42,19 +70,24 @@ const pieces = $computed(() => {
 
 // fetch data from server, and write result to local cache
 async function fetchData () {
-  cache.set('class' + q, false)
+  const quarter = q
+  cache.set('class' + quarter, false)
 
   const token = cache.get('token')
   if (!token) return window.signin('Please verify your identity')
   data = {}
   state.loading = true
-  const raw = await call('student', { q, token })
-  state.loading = false
-  if (!raw) return
+  let raw
+  try {
+    raw = await call('student', { q: quarter, token })
+  } finally {
+    if (q === quarter) state.loading = false
+  }
+  if (!raw || cache.get('token') !== token) return
+  cache.set('class' + quarter, raw, 86400e6)
+  if (q !== quarter) return
   data = raw
   qs = data.quarters
-
-  cache.set('class' + q, raw, 86400e6)
 }
 
 let unsub = null
@@ -194,6 +227,27 @@ function removeCustom (i) {
           </div>
         </div>
         <Registration v-if="data.registration" :data="data.registration"/>
+        <section v-if="data.schedule && state.user.uid" class="px-2 pb-2" aria-labelledby="final-exams">
+          <div class="rounded shadow-md overflow-hidden bg-white">
+            <h2 id="final-exams" class="text-white font-bold p-2 bg-[#0b254e]">Final Exams</h2>
+            <div class="px-4">
+              <p v-if="finals === null" class="my-2 text-sm text-gray-500">Loading finals…</p>
+              <template v-else>
+                <ul v-if="finals.length">
+                  <li v-for="exam in finals" :key="exam.courseId" class="py-2">
+                    <b class="block">{{ exam.courseId }}</b>
+                    <code class="block overflow-x-auto whitespace-nowrap text-xs">{{ formatFinal(exam) || 'Date and time not listed' }}</code>
+                    <p v-if="exam.comments" class="text-sm text-gray-600">{{ exam.comments }}</p>
+                  </li>
+                </ul>
+                <p v-if="finalsIncomplete" class="my-2 text-sm text-gray-600">
+                  {{ finals.length ? 'Some final exam details are unavailable.' : 'Final exam details are unavailable.' }}
+                </p>
+                <p v-else-if="!finals.length" class="my-2 text-sm text-gray-500">No finals listed.</p>
+              </template>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
     <p class="m-4" v-else>No data</p>
