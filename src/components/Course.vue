@@ -1,7 +1,8 @@
 <script setup>
 import { watch } from "vue";
 import { CheckIcon } from "@heroicons/vue/24/outline";
-import { get } from "../firebase.js";
+import { call, get } from "../firebase.js";
+import { formatFinal } from "../utils/formatFinal.mjs";
 import state from "../model.js";
 import Wrapper from "./Wrapper.vue";
 import Instructor from "./Instructor.vue";
@@ -26,7 +27,8 @@ const levels = {
 const gradings = { null: "optional", L: "Letter", P: "P/NP" };
 
 let course = $ref({}),
-  isSummer = $ref(false);
+  isSummer = $ref(false),
+  finals = $ref({});
 let title = $computed(() =>
   props.modelValue
     ? props.modelValue + ": " + (course.title || "")
@@ -40,7 +42,10 @@ function leaveInstructor() {
 
 watch(
   () => [props.modelValue, props.quarter],
-  async ([v, q]) => {
+  async ([v, q], _, onCleanup) => {
+    let active = true;
+    onCleanup(() => { active = false; });
+    finals = {};
     if (!v) {
       course = {};
       isSummer = false;
@@ -51,7 +56,16 @@ watch(
     isSummer = false;
     const quarter = q || state.course.quarter;
 
-    course = await get("course/" + quarter + v);
+    const details = await get("course/" + quarter + v);
+    if (!active) return;
+    course = details || {};
+
+    for (const enrollCode of Object.keys(course.tree || {})) {
+      call("courseFinal", { quarter, enrollCode }).then(
+        final => { if (active) finals[enrollCode] = final; },
+        () => { if (active) finals[enrollCode] = null; },
+      );
+    }
 
     for (const s in course.sections) {
       if (course.sections[s].session) {
@@ -144,6 +158,16 @@ function toggleFocus() {
               </td>
               <td>
                 <div v-for="p in s.periods">{{ p.time }}</div>
+                <div class="mt-1 text-sm">
+                  <b>Final:</b>&nbsp;
+                  <template v-if="finals[lec] === undefined"> Loading…</template>
+                  <template v-else-if="finals[lec] === null"> Unavailable</template>
+                  <template v-else-if="!finals[lec].hasFinals"> No final listed</template>
+                  <template v-else>
+                    {{ formatFinal(finals[lec]) }}
+                    <div v-if="finals[lec].comments">{{ finals[lec].comments }}</div>
+                  </template>
+                </div>
               </td>
               <td>
                 <div v-for="p in s.periods">{{ p.location }}</div>
